@@ -1,12 +1,14 @@
 const Discord = require("discord.js");
 const client = new Discord.Client();
 var msglog = [];
+var errorlog = [];
 var count = 0;
 
 var http = require('http');
 http.createServer(function (req, res) { 
     res.writeHead(200, {'Content-Type': 'text/plain'});
-    res.write('it is running\n');
+    res.write("Errors:\n")
+    res.write(arrayToString(errorlog));
     res.end();
 }).listen(process.env.PORT || 5000);
 
@@ -18,7 +20,7 @@ client.on('message', msg => {
     try {
         reply(msg);
     } catch (error) {
-        console.log(error);
+        errorlog.push(error);
     }
 
 });
@@ -80,4 +82,10 @@ function formatArray(channel) {
     		msglog = msglog.splice(element-(removed++),1);
     	}
     })
+}
+function arrayToString(array){
+	var s = "";
+	array.forEach(function(element){
+		s+=element+"\n";
+	});
 }
