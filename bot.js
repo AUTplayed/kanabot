@@ -3,6 +3,8 @@ const client = new Discord.Client();
 var msglog = [];
 var count = 0;
 
+var http = require('http'); http.createServer(function (req, res) { res.writeHead(200, {'Content-Type': 'text/plain'}); res.send('it is running\n'); }).listen(process.env.PORT || 5000);
+
 client.on('ready', () => {
     console.log(`Logged in as ${client.user.username}#${client.user.discriminator}`);
 });
