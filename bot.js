@@ -88,4 +88,5 @@ function arrayToString(array){
 	array.forEach(function(element){
 		s+=element+"\n";
 	});
+	return s;
 }
