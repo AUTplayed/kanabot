@@ -65,7 +65,7 @@ function formatArray(channel,guild) {
     msglog.forEach(function(element) {
     	if((Date.now()-element.createdTimestamp)>=3600000)
     		toremove.push(msglog.indexOf(element));
-    	if(element.channel.name==channel&&element.guild.name==guild){
+    	else if(element.channel.name==channel&&element.guild.name==guild){
         	element.reply(element.cleanContent);
         	replied = true;
         	toremove.push(msglog.indexOf(element));
