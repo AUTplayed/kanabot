@@ -6,7 +6,7 @@
     "lite": "lite-server",
     "tsc": "tsc",
     "tsc:w": "tsc -w",
-    "test": "node bot.js"
+    "web": "node bot.js"
   },
   "licenses": [
     {
