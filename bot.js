@@ -1,8 +1,10 @@
 const Discord = require("discord.js");
 const client = new Discord.Client();
 var msglog = [];
-var errorlog = [];
-
+var rapecount = 0;
+var starttime;
+//var errorlog = [];
+/*
 var http = require('http');
 http.createServer(function (req, res) { 
     res.writeHead(200, {'Content-Type': 'text/plain'});
@@ -10,16 +12,17 @@ http.createServer(function (req, res) {
     res.write(arrayToString(errorlog));
     res.end();
 }).listen(process.env.PORT || 5000);
-
+*/
 client.on('ready', () => {
-    errorlog.push(`Logged in as ${client.user.username}#${client.user.discriminator}`);
+    console.log(`Logged in as ${client.user.username}#${client.user.discriminator}`);
+    starttime = Date.now();
 });
 
 client.on('message', msg => {
     try {
         reply(msg);
     } catch (error) {
-        errorlog.push(error);
+    	console.log(error);
     }
 
 });
@@ -35,15 +38,18 @@ function reply(msg) {
         	if(formatArray(msg.channel.name,msg.guild.name)==false){
         		msg.reply("nix zum seng");
         	}
+        	else{
+        		rapecount++;
+        	}
         } else if (msg.author.id == 163651635845922816) {
         	if(cleanmsg == 'debug'){
-            	msg.reply("Message Log\n" + msglog);
-        	}
-        	else if(cleanmsg == 'clearLog'){
-        		errorlog=[];
+            	msg.reply("Message Log\n" + arrayToString(msglog));
         	}
         	else if(cleanmsg == 'clearMessages'){
         		msglog = [];
+        	}
+        	else if(cleanmsg == 'rapecount'){
+        		msg.reply("RapeCount: "+rapecount);
         	}
         }
     }
@@ -85,7 +91,7 @@ function formatArray(channel,guild) {
 function arrayToString(array){
 	var s = "";
 	array.forEach(function(element){
-		s+=element+"\n";
+		s+=element.cleanContent+"\n";
 	});
 	return s;
 }
