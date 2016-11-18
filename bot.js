@@ -27,7 +27,7 @@ setInterval(function(){
 
 client.on('ready', () => {
     console.log(`Logged in as ${client.user.username}#${client.user.discriminator}`);
-    starttime = Date.now();
+    starttime = new Date();
 });
 
 client.on('message', msg => {
@@ -61,7 +61,7 @@ function reply(msg) {
         		msglog = [];
         	}
         	else if(cleanmsg == 'rapecount'){
-        		msg.reply("RapeCount: "+rapecount+" seit "+starttime);
+        		msg.reply("RapeCount: "+rapecount+" seit "+starttime.toString());
         	}
         }
     }
