@@ -61,7 +61,7 @@ function reply(msg) {
         		msglog = [];
         	}
         	else if(cleanmsg == 'rapecount'){
-        		msg.reply("RapeCount: "+rapecount+" seit "+starttime.toString());
+        		msg.reply("RapeCount: "+rapecount+" seit "+starttime.toDateString());
         	}
         }
     }
