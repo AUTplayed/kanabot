@@ -1,4 +1,5 @@
 const Discord = require("discord.js");
+var http = require("http");
 const client = new Discord.Client();
 var msglog = [];
 var rapecount = 0;
@@ -13,6 +14,17 @@ http.createServer(function (req, res) {
     res.end();
 }).listen(process.env.PORT || 5000);
 */
+
+var options = {
+	host:"scribblethis.herokuapp.com",
+	path: "/"
+};
+
+setInterval(function(){
+	console.log("request");
+	http.request(options,function(r){}).end();
+},1.2e+6);
+
 client.on('ready', () => {
     console.log(`Logged in as ${client.user.username}#${client.user.discriminator}`);
     starttime = Date.now();
@@ -49,7 +61,7 @@ function reply(msg) {
         		msglog = [];
         	}
         	else if(cleanmsg == 'rapecount'){
-        		msg.reply("RapeCount: "+rapecount);
+        		msg.reply("RapeCount: "+rapecount+" seit "+starttime);
         	}
         }
     }
