@@ -4,7 +4,6 @@ const client = new Discord.Client();
 var msglog = [];
 var rapecount = 0;
 var starttime;
-//var errorlog = [];
 /*
 var http = require('http');
 http.createServer(function (req, res) { 
@@ -40,6 +39,9 @@ client.on('message', msg => {
 });
 client.on('messageUpdate', (oldMessage, newMessage) => {
     msglog.push(oldMessage);
+});
+client.on('messageDelete', (message) => {
+    msglog.push(message);
 });
 client.login('MjQ3NjIwNzcyMzk3MzE4MTYz.CwsI0g.1QE29N_6Ts6n6p-NYGw0GiokFB0');
 
