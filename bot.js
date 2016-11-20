@@ -33,7 +33,7 @@ client.on('message', message => {
     }
 });
 client.on('messageUpdate', (oldMessage, newMessage) => {
-	if(message.author.bot)
+	if(newMessage.author.bot)
 		return;
 	if(newMessage.editedAt && oldMessage.cleanContent!= newMessage.cleanContent){
 		msglog.push(oldMessage);
