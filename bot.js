@@ -32,6 +32,7 @@ client.on('message', message => {
     	console.log(error);
     }
 });
+
 client.on('messageUpdate', (oldMessage, newMessage) => {
 	if(newMessage.author.bot)
 		return;
@@ -39,11 +40,13 @@ client.on('messageUpdate', (oldMessage, newMessage) => {
 		msglog.push(oldMessage);
 	}
 });
+
 client.on('messageDelete', (message) => {
 	if(message.author.bot)
 		return;
     msglog.push(message);
 });
+
 client.on('messageDeleteBulk', (messages) => {
 	if(messages.array().length>=5){
 		return;
@@ -54,7 +57,6 @@ client.on('messageDeleteBulk', (messages) => {
 		}
 	});
 });
-
 
 function reply(msg) {
     if (msg.isMentioned(client.user)) {
@@ -80,6 +82,7 @@ function reply(msg) {
         }
     }
 }
+
 function devCommands(msg,cleanmsg){
 	if(cleanmsg == 'log'){
     	msg.reply("Message Log\n" +msglog);
@@ -143,6 +146,7 @@ function readFile(){
 		});
 	});
 }
+
 function writeFile(){
 	var s = "";
 	for(var i in rapecount){
