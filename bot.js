@@ -26,7 +26,11 @@ setInterval(function(){
 
 client.on('ready', () => {
     console.log(`Logged in as ${client.user.username}#${client.user.discriminator}`);
-    readFile();
+    try{
+    	readFile();
+	} catch(error){
+		console.log(error);
+	}
 });
 
 client.on('message', msg => {
@@ -142,6 +146,9 @@ function rapeStringToArray(string){
 }
 
 function readFile(){
+	fs.open('rapecount.txt','a',(err,fd)=>{
+		if(err) throw err;
+	})
 	fs.readFile('rapecount.txt','utf-8', (err, data) => {
 		if (err) throw err;
 		rapeStringToArray(data);
