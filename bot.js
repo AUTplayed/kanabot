@@ -4,26 +4,16 @@ var fs = require('fs');
 const client = new Discord.Client();
 var msglog = [];
 var rapecount = [];
-/*
-var http = require('http');
-http.createServer(function (req, res) { 
-    res.writeHead(200, {'Content-Type': 'text/plain'});
-    res.write("Log:\n")
-    res.write(arrayToString(errorlog));
-    res.end();
-}).listen(process.env.PORT || 5000);
-*/
 
 var options = {
 	host:"scribblethis.herokuapp.com",
 	path: "/"
 };
-
 setInterval(function(){
-	console.log("request");
 	http.request(options,function(r){}).end();
 },1.2e+6);
 
+client.login('MjQ3NjIwNzcyMzk3MzE4MTYz.CwsI0g.1QE29N_6Ts6n6p-NYGw0GiokFB0');
 client.on('ready', () => {
     console.log(`Logged in as ${client.user.username}#${client.user.discriminator}`);
     try{
@@ -33,35 +23,48 @@ client.on('ready', () => {
 	}
 });
 
-client.on('message', msg => {
+client.on('message', message => {
+	if(message.author.bot)
+		return;
     try {
-        reply(msg);
+        reply(message);
     } catch (error) {
     	console.log(error);
     }
-
 });
 client.on('messageUpdate', (oldMessage, newMessage) => {
+	if(message.author.bot)
+		return;
 	if(newMessage.editedAt && oldMessage.cleanContent!= newMessage.cleanContent){
 		msglog.push(oldMessage);
 	}
-    
 });
 client.on('messageDelete', (message) => {
+	if(message.author.bot)
+		return;
     msglog.push(message);
 });
-client.login('MjQ3NjIwNzcyMzk3MzE4MTYz.CwsI0g.1QE29N_6Ts6n6p-NYGw0GiokFB0');
+client.on('messageDeleteBulk', (messages) => {
+	if(messages.array().length>=5){
+		return;
+	}
+	messages.array().forEach(function(element){
+		if(!element.author.bot){
+			msglog.push(message);
+		}
+	});
+});
+
 
 function reply(msg) {
     if (msg.isMentioned(client.user)) {
-
     	if(!rapecount[msg.guild.name]){
     		rapecount[msg.guild.name]=0;
     		writeFile();
     	}
         var cleanmsg = clearMentions(msg.cleanContent);
         if (cleanmsg == 'gheat' || cleanmsg == 'gseng') {
-        	if(formatArray(msg.channel.name,msg.guild.name)==false){
+        	if(rape(msg.channel.name,msg.guild.name)==false){
         		msg.reply("nix zum seng");
         	}
         	else{
@@ -73,21 +76,24 @@ function reply(msg) {
         	msg.reply("RapeCount: "+rapecount[msg.guild.name]);
         }
         else if (msg.author.id == 163651635845922816) {
-        	if(cleanmsg == 'log'){
-            	msg.reply("Message Log\n" + arrayToString(msglog));
-        	}
-        	else if(cleanmsg == 'cm'){
-        		msglog = [];
-        	}
-        	else if(cleanmsg == 'trc'){
-        		var sum = 0;
-        		for(var i in rapecount){
-        			sum+=parseInt(rapecount[i]);
-        		}
-        		msg.reply("Total Sum of Rapes: "+sum);
-        	}
+        	devCommands(msg);
         }
     }
+}
+function devCommands(msg){
+	if(cleanmsg == 'log'){
+    	msg.reply("Message Log\n" + arrayToString(msglog));
+	}
+	else if(cleanmsg == 'cm'){
+		msglog = [];
+	}
+	else if(cleanmsg == 'trc'){
+		var sum = 0;
+		for(var i in rapecount){
+			sum+=parseInt(rapecount[i]);
+		}
+		msg.reply("Total Sum of Rapes: "+sum);
+	}
 }
 
 function clearMentions(msg) {
@@ -100,7 +106,7 @@ function clearMentions(msg) {
     return cleanmsg.trim();
 }
 
-function formatArray(channel,guild) {
+function rape(channel,guild) {
     var toremove = [];
     var replied = false;
     msglog.forEach(function(element) {
@@ -123,27 +129,6 @@ function formatArray(channel,guild) {
     });
     return replied;
 }
-function formatMessages(array){
-	var s = "";
-	array.forEach(function(element){
-		s+=element.cleanContent+"\n";
-	});
-	return s;
-}
-function rapeArrayToString(){
-	var s = "";
-	for(var i in rapecount){
-		s+=i+","+rapecount[i]+"\n";
-	}
-	return s;
-}
-function rapeStringToArray(string){
-	var servers = string.split("\n");
-	servers.forEach(function(element){
-		var split = element.split(",");
-		rapecount[split[0]]=split[1];
-	});
-}
 
 function readFile(){
 	fs.open('rapecount.txt','a',(err,fd)=>{
@@ -151,11 +136,19 @@ function readFile(){
 	})
 	fs.readFile('rapecount.txt','utf-8', (err, data) => {
 		if (err) throw err;
-		rapeStringToArray(data);
+		var servers = data.split("\n");
+		servers.forEach(function(element){
+			var split = element.split(",");
+			rapecount[split[0]]=split[1];
+		});
 	});
 }
 function writeFile(){
-	fs.writeFile('rapecount.txt',rapeArrayToString(),(err)=>{
+	var s = "";
+	for(var i in rapecount){
+		s+=i+","+rapecount[i]+"\n";
+	}
+	fs.writeFile('rapecount.txt',s,(err)=>{
 		if(err) throw err;
 	});
 }
