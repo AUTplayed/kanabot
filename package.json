@@ -1,5 +1,5 @@
 {
-  "name": "angular-quickstart",
+  "name": "kanabot",
   "version": "1.0.0",
   "scripts": {
     "start": "node bot.js",
