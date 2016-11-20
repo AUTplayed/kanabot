@@ -76,13 +76,13 @@ function reply(msg) {
         	msg.reply("RapeCount: "+rapecount[msg.guild.name]);
         }
         else if (msg.author.id == 163651635845922816) {
-        	devCommands(msg);
+        	devCommands(msg,cleanmsg);
         }
     }
 }
-function devCommands(msg){
+function devCommands(msg,cleanmsg){
 	if(cleanmsg == 'log'){
-    	msg.reply("Message Log\n" + arrayToString(msglog));
+    	msg.reply("Message Log\n" +msglog);
 	}
 	else if(cleanmsg == 'cm'){
 		msglog = [];
