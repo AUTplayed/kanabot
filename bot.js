@@ -78,7 +78,7 @@ function reply(msg) {
         	else if(cleanmsg == 'trc'){
         		var sum = 0;
         		for(var i in rapecount){
-        			sum+=rapecount[i];
+        			sum+=parseInt(rapecount[i]);
         		}
         		msg.reply("Total Sum of Rapes: "+sum);
         	}
