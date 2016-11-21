@@ -60,7 +60,9 @@ client.on('messageDeleteBulk', (messages) => {
 	});
 });
 function database(){
+	pg.defaults.ssl = true;
 	pg.connect(process.env.DATABASE_URL, function(err, client, done) {
+	getMethods(client);
     client.query('SELECT * FROM test_table', function(err, result) {
       done();
       if (err)
@@ -69,6 +71,16 @@ function database(){
        { console.log(result); }
     });
   });
+}
+
+function getMethods(obj){
+    var res = [];
+    for(var m in obj) {
+        if(typeof obj[m] == "function") {
+            res.push(m)
+        }
+    }
+    console.log(res);
 }
 
 function reply(msg) {
