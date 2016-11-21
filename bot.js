@@ -62,13 +62,19 @@ client.on('messageDeleteBulk', (messages) => {
 });
 
 function getToken(){
-	console.log("getToken");
 	pg.defaults.ssl = true;
 	pg.connect(process.env.DATABASE_URL, function(err, client) {
-		console.log("connected");
-		var token = query(client,"SELECT * FROM token").rows[0].tkn;
-		console.log(token);
-		client.login(token);
+		client.query("SELECT * FROM token", function(err, result) {
+	      	if (err)
+	    		console.log(err);
+	      	else{
+	    		console.log(result);
+	    		client.login(result.rows[0].tkn);
+	      	}
+	   		client.end(function (err) {
+	      		if (err) throw err;
+	    	});
+	    });		
 	});
 }
 function database(){
@@ -86,12 +92,11 @@ function query(client,q){
     		console.log(err);
       	else{
     		console.log(result);
-    		res = result;
+    		return result;
       	}
    		client.end(function (err) {
       		if (err) throw err;
     	});
-    	return res;
     });
 }
 
