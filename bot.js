@@ -14,7 +14,8 @@ setInterval(function(){
 	http.request(options,function(r){}).end();
 },1.2e+6);
 
-client.login(getToken());
+getToken();
+
 client.on('ready', () => {
     console.log(`Logged in as ${client.user.username}#${client.user.discriminator}`);
     try{
@@ -67,7 +68,7 @@ function getToken(){
 		console.log("connected");
 		var token = query(client,"SELECT * FROM token").rows[0].tkn;
 		console.log(token);
-		return token;
+		client.login(token);
 	});
 }
 function database(){
