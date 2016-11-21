@@ -61,26 +61,23 @@ client.on('messageDeleteBulk', (messages) => {
 });
 function database(){
 	pg.defaults.ssl = true;
-	pg.connect(process.env.DATABASE_URL, function(err, client, done) {
-	getMethods(client);
-    client.query('SELECT * FROM test_table', function(err, result) {
-      done();
-      if (err)
-       { console.log(err); }
-      else
-       { console.log(result); }
-    });
+	pg.connect(process.env.DATABASE_URL, function(err, client) {
+    	query(client,'CREATE TABLE rape(name varchar(255),count integer)');
+    	query(client,'CREATE TABLE token(tkn varchar(255)');
+    	//query(client,'INSERT INTO token VALUES("'+'MjQ3NjIwNzcyMzk3MzE4MTYz.CwsI0g.1QE29N_6Ts6n6p-NYGw0GiokFB0'+'")');
   });
 }
 
-function getMethods(obj){
-    var res = [];
-    for(var m in obj) {
-        if(typeof obj[m] == "function") {
-            res.push(m)
-        }
-    }
-    console.log(res);
+function query(client,q){
+	client.query(q, function(err, result) {
+      	if (err)
+    		console.log(err);
+      	else
+    		console.log(result);
+   		client.end(function (err) {
+      		if (err) throw err;
+    	});
+    });
 }
 
 function reply(msg) {
