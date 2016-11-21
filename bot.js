@@ -14,12 +14,12 @@ setInterval(function(){
 	http.request(options,function(r){}).end();
 },1.2e+6);
 
-client.login('MjQ3NjIwNzcyMzk3MzE4MTYz.CwsI0g.1QE29N_6Ts6n6p-NYGw0GiokFB0');
+client.login(getToken());
 client.on('ready', () => {
     console.log(`Logged in as ${client.user.username}#${client.user.discriminator}`);
     try{
     	readFile();
-    	database();
+    	//database();
 	} catch(error){
 		console.log(error);
 	}
@@ -59,12 +59,20 @@ client.on('messageDeleteBulk', (messages) => {
 		}
 	});
 });
+
+function getToken(){
+	pg.defaults.ssl = true;
+	pg.connect(process.env.DATABASE_URL, function(err, client) {
+		query(client,"SELECT * FROM token");
+	});
+	return "MjQ3NjIwNzcyMzk3MzE4MTYz.CwsI0g.1QE29N_6Ts6n6p-NYGw0GiokFB0";
+}
 function database(){
 	pg.defaults.ssl = true;
 	pg.connect(process.env.DATABASE_URL, function(err, client) {
     	//query(client,'CREATE TABLE rape(name varchar(255),count integer)');
     	//query(client,'CREATE TABLE token(tkn varchar(255))');
-    	query(client,"INSERT INTO token (tkn) VALUES('"+"MjQ3NjIwNzcyMzk3MzE4MTYz.CwsI0g.1QE29N_6Ts6n6p-NYGw0GiokFB0"+"');");
+    	//query(client,"INSERT INTO token (tkn) VALUES('"+"MjQ3NjIwNzcyMzk3MzE4MTYz.CwsI0g.1QE29N_6Ts6n6p-NYGw0GiokFB0"+"');");
   });
 }
 
@@ -77,6 +85,7 @@ function query(client,q){
    		client.end(function (err) {
       		if (err) throw err;
     	});
+    	return result;
     });
 }
 
