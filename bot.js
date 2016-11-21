@@ -63,16 +63,14 @@ client.on('messageDeleteBulk', (messages) => {
 function getToken(){
 	pg.defaults.ssl = true;
 	pg.connect(process.env.DATABASE_URL, function(err, client) {
-		query(client,"SELECT * FROM token");
+		return query(client,"SELECT * FROM token").rows[0].tkn;
 	});
-	return "MjQ3NjIwNzcyMzk3MzE4MTYz.CwsI0g.1QE29N_6Ts6n6p-NYGw0GiokFB0";
 }
 function database(){
 	pg.defaults.ssl = true;
 	pg.connect(process.env.DATABASE_URL, function(err, client) {
     	//query(client,'CREATE TABLE rape(name varchar(255),count integer)');
     	//query(client,'CREATE TABLE token(tkn varchar(255))');
-    	//query(client,"INSERT INTO token (tkn) VALUES('"+"MjQ3NjIwNzcyMzk3MzE4MTYz.CwsI0g.1QE29N_6Ts6n6p-NYGw0GiokFB0"+"');");
   });
 }
 
