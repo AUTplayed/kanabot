@@ -1,4 +1,5 @@
 const Discord = require("discord.js");
+var pg = require('pg');
 var http = require("http");
 var fs = require('fs');
 const client = new Discord.Client();
@@ -18,6 +19,7 @@ client.on('ready', () => {
     console.log(`Logged in as ${client.user.username}#${client.user.discriminator}`);
     try{
     	readFile();
+    	database();
 	} catch(error){
 		console.log(error);
 	}
@@ -57,6 +59,17 @@ client.on('messageDeleteBulk', (messages) => {
 		}
 	});
 });
+function database(){
+	pg.connect(process.env.DATABASE_URL, function(err, client, done) {
+    client.query('SELECT * FROM test_table', function(err, result) {
+      done();
+      if (err)
+       { console.error(err); response.send("Error " + err); }
+      else
+       { response.render('pages/db', {results: result.rows} ); }
+    });
+  });
+}
 
 function reply(msg) {
     if (msg.isMentioned(client.user)) {

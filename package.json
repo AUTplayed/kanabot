@@ -16,7 +16,8 @@
     "fs": "0.0.1-security",
     "http": "0.0.0",
     "node-opus": "^0.2.4",
-    "opusscript": "0.0.1"
+    "opusscript": "0.0.1",
+    "pg": "^6.1.0"
   },
   "engines": {
     "node": "6.0.0"
