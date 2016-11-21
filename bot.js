@@ -63,7 +63,9 @@ client.on('messageDeleteBulk', (messages) => {
 function getToken(){
 	pg.defaults.ssl = true;
 	pg.connect(process.env.DATABASE_URL, function(err, client) {
-		return query(client,"SELECT * FROM token").rows[0].tkn;
+		var token =  query(client,"SELECT * FROM token").rows[0].tkn;
+		console.log(token);
+		return token;
 	});
 }
 function database(){
