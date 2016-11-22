@@ -178,10 +178,9 @@ function increment(name){
 		client.query("SELECT * FROM rape WHERE name = '"+name+"';", function(err, result) {
 	      	if (err){
 	      		console.log(err);
-	    		
 	      	}
 	      	else{
-	      		if(result.rows.legth == 0){
+	      		if(result.rows.length == 0){
 	      			client.query("INSERT INTO rape (name,count) VALUES('"+name+"',"+1+");", function(err, result) {
 	    				if (err){
 				    		console.log(err);console.log("INSERT INTO rape (name,count) VALUES('"+name+"',"+1+");");
