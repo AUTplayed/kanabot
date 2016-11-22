@@ -93,7 +93,7 @@ function query(client,q){
 
 function reply(msg) {
     if (msg.isMentioned(client.user)) {
-        var cleanmsg = clearMentions(msg.cleanContent);
+        var cleanmsg = clearMentions(msg);
         if (cleanmsg == 'gheat' || cleanmsg == 'gseng') {
         	if(rape(msg.channel.name,msg.guild.name)==false){
         		msg.reply("nix zum seng");
@@ -138,6 +138,7 @@ function clearDatabase(){
 }
 
 function clearMentions(msg) {
+	console.log(msg);
     var split = msg.split(" ");
     var cleanmsg = "";
     split.forEach(function(element) {
