@@ -54,43 +54,6 @@ client.on('messageDeleteBulk', (messages) => {
 	});
 });
 
-function login(){
-	pg.defaults.ssl = true;
-	pg.connect(process.env.DATABASE_URL, function(err, db) {
-		db.query("SELECT * FROM token", function(err, result) {
-	      	if (err)
-	    		console.log(err);
-	      	else{
-	    		client.login(result.rows[0].tkn);
-	      	}
-	   		db.end(function (err) {
-	      		if (err) console.log(err);
-	    	});
-	    });		
-	});
-}
-
-function database(){
-	pg.defaults.ssl = true;
-	pg.connect(process.env.DATABASE_URL, function(err, client,done) {
-
-  	});
-}
-
-function query(client,q){
-	var res;
-	client.query(q, function(err, result) {
-      	if (err)
-    		console.log(err);
-      	else{
-    		console.log(result);
-      	}
-   		client.end(function (err) {
-      		if (err) console.log(err);
-    	});
-    });
-}
-
 function reply(msg) {
     if (msg.isMentioned(client.user)) {
         var cleanmsg = clearMentions(msg.content);
@@ -128,19 +91,7 @@ function devCommands(msg,cleanmsg){
 		clearDatabase();
 	}
 }
-function clearDatabase(){
-	pg.defaults.ssl = true;
-	pg.connect(process.env.DATABASE_URL, function(err, client,done) {
-		client.query("DELETE from rape;",function(err, result){
-			if(err)
-				console.log(err);
-			else{
-				console.log(result);
-			}
-		});
-		done();
-	});
-}
+
 
 function clearMentions(msg) {
     var tags = msg.match("<@.*?>");
@@ -175,69 +126,70 @@ function rape(channel,guild) {
     return replied;
 }
 
+function login(){
+	connectAndQuery("SELECT * FROM token",function(rows){
+		client.login(rows[0].tkn);
+	});
+}
+
+function clearDatabase(){
+	connectAndQuery("DELETE from rape;",function(rows){
+		console.log("Table deleted");
+	});
+}
+
 function increment(name){
-	pg.defaults.ssl = true;
-	pg.connect(process.env.DATABASE_URL, function(err, client,done) {
-		client.query("SELECT * FROM rape WHERE name = '"+name+"';", function(err, result) {
-	      	if (err){
-	      		console.log(err);
-	      	}
-	      	else{
-	      		if(result.rows.length == 0){
-	      			client.query("INSERT INTO rape (name,count) VALUES('"+name+"',"+1+");", function(err, result) {
-	    				if (err){
-				    		console.log(err);console.log("INSERT INTO rape (name,count) VALUES('"+name+"',"+1+");");
-	    				}
-				      	else{
-				    		console.log(result);
-				      	}
-    				});
-	      		}else{
-	    			client.query("UPDATE rape SET count = count+1 WHERE name = '"+name+"';",function(err, result){
-	    				if(err){
-	    					console.log(err);console.log("UPDATE rape SET count = count+1 WHERE name = '"+name+"';");
-	    				}
-	    				else{
-	    					console.log(result);
-	    				}
-	    			});
-    			}
-	      	}
-	   		done();
-    	});
+  	connectAndQuery("SELECT * FROM rape WHERE name = '"+name+"';",function(rows,client){
+  		if(rows.length == 0){
+  			executeQuery("INSERT INTO rape (name,count) VALUES('"+name+"',"+1+");",client,function(rows){
+  				console.log("Inserted "+name);
+  			});
+  		}
+  		else{
+  			executeQuery("UPDATE rape SET count = count+1 WHERE name = '"+name+"';",client,function(rows){
+  				console.log("Updated "+name);
+  			});
+  		}
   	});
 }
 
 function getCount(usr,msg){
-	pg.defaults.ssl = true;
-	pg.connect(process.env.DATABASE_URL, function(err, client,done) {
-		client.query("SELECT * FROM rape WHERE name = '"+usr+"';",function(err, result){
-			if(err)
-				console.log(err);
-			else{
-				console.log("SELECT * FROM rape WHERE name = '"+usr+"';");
-				console.log(result.rows);
-				msg.reply("RapeCount of "+usr+": "+result.rows[0].count);
-			}
-		});
-		done();
+	connectAndQuery("SELECT * FROM rape WHERE name = '"+usr+"';",function(rows){
+		msg.reply("RapeCount of "+usr+": "+rows[0].count);
 	});
 }
 
 function getRapes(msg){
-	pg.defaults.ssl = true;
-	pg.connect(process.env.DATABASE_URL, function(err, client, done) {
-		client.query("SELECT * FROM rape;",function(err, result){
-			if(err)
-				console.log(err);
-			else{
-				var table = "\nUsername | RapeCount\n";
-				result.rows.forEach(function(element){
-					table+=element.name+" | "+element.count+"\n";
-				});
-				msg.reply(table);
-			}
+	connectAndQuery("SELECT * FROM rape;",function(rows){
+		var table = "\nUsername | RapeCount\n";
+		rows.forEach(function(element){
+			table+=element.name+" | "+element.count+"\n";
 		});
+		msg.reply(table);
+	});
+}
+
+function connectAndQuery(query,followup){
+	pg.defaults.ssl = true;
+	pg.connect(process.env.DATABASE_URL, function(err, client, done){
+		if(err) console.log(err);
+		else{
+			client.query(query,function(err,result){
+				if(err) console.log(err);
+				else{
+					followup(result.rows,client);
+				}
+			});
+		}
 		done();
+	});
+}
+
+function executeQuery(query,client,followup){
+	client.query(query,function(err,result){
+		if(err) console.log(err);
+		else{
+			followup(result.rows);
+		}
 	});
 }
