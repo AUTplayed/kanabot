@@ -161,30 +161,25 @@ function increment(name){
 	pg.defaults.ssl = true;
 	pg.connect(process.env.DATABASE_URL, function(err, client,done) {
 		client.query("SELECT * FROM rape WHERE name="+name, function(err, result) {
-	      	if (err)
-	    		console.log(err);
+	      	if (err){
+	    		client.query("INSERT INTO rape (name,count) VALUES('"+name+"',"+1+");", function(err, result) {
+    				if (err){
+			    		console.log(err);console.log("INSERT INTO rape (name,count) VALUES('"+name+"',"+1+");");
+    				}
+			      	else{
+			    		console.log(result);
+			      	}
+    			});
+	      	}
 	      	else{
-	    		if(result.rows.length==0){
-	    			console.log("empty");
-	    			client.query("INSERT INTO rape (name,count) VALUES('"+name+"',"+1+");", function(err, result) {
-	    				if (err){
-				    		console.log(err);console.log("INSERT INTO rape (name,count) VALUES('"+name+"',"+1+");");
-	    				}
-				      	else{
-				    		console.log(result);
-				      	}
-	    			});
-	    		}
-	    		else{
-	    			client.query("UPDATE rape SET count = count+1 WHERE name = '"+name+"';",function(err, result){
-	    				if(err){
-	    					console.log(err);console.log("UPDATE rape SET count = count+1 WHERE name = '"+name+"';");
-	    				}
-	    				else{
-	    					console.log(result);
-	    				}
-	    			});
-	    		}
+    			client.query("UPDATE rape SET count = count+1 WHERE name = '"+name+"';",function(err, result){
+    				if(err){
+    					console.log(err);console.log("UPDATE rape SET count = count+1 WHERE name = '"+name+"';");
+    				}
+    				else{
+    					console.log(result);
+    				}
+    			});
 	      	}
 	   		done();
     	});
