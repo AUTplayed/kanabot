@@ -100,13 +100,13 @@ function writeData(){
 function database(){
 	pg.defaults.ssl = true;
 	pg.connect(process.env.DATABASE_URL, function(err, client) {
-		client.query("DELETE from token",function(err, client){
-			console.log(err);
-			console.log(result);
+		client.query("DELETE from token;",function(err, result){
+			if(err) console.log(err);
+			else console.log(result);
 		});
-		client.query("INSERT INTO token VALUES('"+"MjQ3NjIwNzcyMzk3MzE4MTYz.CxWBMQ.bpy9y0fo_0th7xELtyENJctxq3U"+"');",function(err,result){
-			console.log(err);
-			console.log(result);
+		client.query("INSERT INTO token VALUES('"+"MjQ3NjIwNzcyMzk3MzE4MTYz.CxWL0Q.7njqajdk7JZ-qXij-MGoORLLmGc"+"');",function(err,result){
+			if(err) console.log(err);
+			else console.log(result);
 		});
     	client.end(function (err) {
       		if (err) console.log(err);
