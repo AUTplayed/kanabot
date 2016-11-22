@@ -94,6 +94,7 @@ function query(client,q){
 function reply(msg) {
     if (msg.isMentioned(client.user)) {
         var cleanmsg = clearMentions(msg.content);
+        console.log(cleanmsg);
         if (cleanmsg == 'gheat' || cleanmsg == 'gseng') {
         	if(rape(msg.channel.name,msg.guild.name)==false){
         		msg.reply("nix zum seng");
@@ -138,14 +139,11 @@ function clearDatabase(){
 }
 
 function clearMentions(msg) {
-	console.log(msg);
-    var split = msg.split(" ");
-    var cleanmsg = "";
-    split.forEach(function(element) {
-        if (!element.startsWith("@"))
-            cleanmsg += element + " ";
+    var tags = msg.match("<@.*?>");
+    tags.forEach(function(element) {
+        msg = msg.replace(element,"");
     });
-    return cleanmsg.trim();
+    return msg.trim();
 }
 
 function rape(channel,guild) {
