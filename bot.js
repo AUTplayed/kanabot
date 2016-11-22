@@ -211,6 +211,8 @@ function getCount(usr,msg){
 			if(err)
 				console.log(err);
 			else{
+				console.log("SELECT * FROM rape WHERE name = '"+usr+"';");
+				console.log(result.rows);
 				msg.reply("RapeCount: "+result.rows[0].count);
 			}
 		});
