@@ -118,7 +118,6 @@ function devCommands(msg,cleanmsg){
 	}
 	else if(cleanmsg == 'trc'){
 		getRapes(msg);
-		msg.reply("Total Sum of Rapes: "+sum);
 	}
 }
 
@@ -207,7 +206,11 @@ function getRapes(msg){
 			if(err)
 				console.log(err);
 			else{
-				msg.reply(result.rows);
+				var table = "\n";
+				result.rows.forEach(function(element){
+					table+=element.name+"|"+element.count+"\n";
+				});
+				msg.reply(table);
 			}
 		});
 		done();
