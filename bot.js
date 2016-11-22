@@ -4,7 +4,6 @@ var http = require("http");
 var fs = require('fs');
 const client = new Discord.Client();
 var msglog = [];
-var rapecount = [];
 
 var options = {
 	host:"scribblethis.herokuapp.com",
@@ -14,12 +13,14 @@ setInterval(function(){
 	http.request(options,function(r){}).end();
 },1.2e+6);
 
-getToken();
+database();
+login();
 
 client.on('ready', () => {
     console.log(`Logged in as ${client.user.username}#${client.user.discriminator}`);
     try{
-    	readFile();
+    	readData();
+    	//readFile();
     	//database();
 	} catch(error){
 		console.log(error);
@@ -61,28 +62,52 @@ client.on('messageDeleteBulk', (messages) => {
 	});
 });
 
-function getToken(){
+function login(){
 	pg.defaults.ssl = true;
 	pg.connect(process.env.DATABASE_URL, function(err, db) {
 		db.query("SELECT * FROM token", function(err, result) {
 	      	if (err)
 	    		console.log(err);
 	      	else{
-	    		console.log(result.rows[0].tkn);
 	    		client.login(result.rows[0].tkn);
 	      	}
 	   		db.end(function (err) {
-	      		if (err) throw err;
+	      		if (err) console.log(err);
 	    	});
 	    });		
 	});
 }
+function readData(){
+	pg.defaults.ssl = true;
+	pg.connect(process.env.DATABASE_URL, function(err, client) {
+		client.query("SELECT * FROM rape", function(err, result) {
+	      	if (err)
+	    		console.log(err);
+	      	else{
+	    		rape=result.rows;
+	      	}
+	   		client.end(function (err) {
+	      		if (err) console.log(err);
+	    	});
+    	});
+  	});
+}
+
+function writeData(){
+
+}
+
 function database(){
 	pg.defaults.ssl = true;
 	pg.connect(process.env.DATABASE_URL, function(err, client) {
-    	//query(client,'CREATE TABLE rape(name varchar(255),count integer)');
-    	//query(client,'CREATE TABLE token(tkn varchar(255))');
-  });
+		client.query("UPDATE token SET tkn = '"+"MjQ3NjIwNzcyMzk3MzE4MTYz.CxWBMQ.bpy9y0fo_0th7xELtyENJctxq3U"+"' WHERE tkn = '"+"MjQ3NjIwNzcyMzk3MzE4MTYz.CwsI0g.1QE29N_6Ts6n6p-NYGw0GiokFB0"+"';",function(err,result){
+			console.log(err);
+			console.log(result);
+		});
+    	client.end(function (err) {
+      		if (err) console.log(err);
+    	});
+  	});
 }
 
 function query(client,q){
@@ -92,10 +117,9 @@ function query(client,q){
     		console.log(err);
       	else{
     		console.log(result);
-    		return result;
       	}
    		client.end(function (err) {
-      		if (err) throw err;
+      		if (err) console.log(err);
     	});
     });
 }
@@ -175,6 +199,51 @@ function rape(channel,guild) {
     return replied;
 }
 
+function increment(name){
+	pg.defaults.ssl = true;
+	pg.connect(process.env.DATABASE_URL, function(err, client) {
+		client.query("SELECT * FROM rape WHERE name="+name, function(err, result) {
+	      	if (err)
+	    		console.log(err);
+	      	else{
+	    		if(result.rows.length==0){
+	    			client.query("INSERT INTO rape (name,count) VALUES('"+name+"',"+1+");", function(err, result) {
+	    				if (err)
+				    		console.log(err);
+				      	else{
+				    		console.log(result);
+				      	}
+	    			});
+	    		}
+	    		else{
+	    			client.query("UPDATE rape SET count = count+1 WHERE name = '"+name+"';",function(err, result){
+	    				if(err)
+	    					console.log(err);
+	    				else{
+	    					console.log(result);
+	    				}
+	    			});
+	    		}
+	      	}
+	   		client.end(function (err) {
+	      		if (err) console.log(err);
+	    	});
+    	});
+  	});
+}
+
+function getCount(msg){
+	pg.defaults.ssl = true;
+	pg.connect(process.env.DATABASE_URL, function(err, client) {
+		client.query("SELECT * FROM rape WHERE name = '"+msg.guild.name+"';",function(err, result){
+			if(err)
+				console.log(err);
+			else{
+				msg.reply(result.rows[0].count);
+			}
+		});
+	}
+}
 function readFile(){
 	fs.open('rapecount.txt','a',(err,fd)=>{
 		if(err) throw err;
