@@ -17,13 +17,6 @@ login();
 
 client.on('ready', () => {
     console.log(`Logged in as ${client.user.username}#${client.user.discriminator}`);
-    try{
-    	readData();
-    	//readFile();
-    	//database();
-	} catch(error){
-		console.log(error);
-	}
 });
 
 client.on('message', message => {
@@ -75,25 +68,6 @@ function login(){
 	    	});
 	    });		
 	});
-}
-function readData(){
-	pg.defaults.ssl = true;
-	pg.connect(process.env.DATABASE_URL, function(err, client) {
-		client.query("SELECT * FROM rape", function(err, result) {
-	      	if (err)
-	    		console.log(err);
-	      	else{
-	    		rape=result.rows;
-	      	}
-	   		client.end(function (err) {
-	      		if (err) console.log(err);
-	    	});
-    	});
-  	});
-}
-
-function writeData(){
-
 }
 
 function database(){
