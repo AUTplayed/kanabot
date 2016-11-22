@@ -178,24 +178,28 @@ function increment(name){
 		client.query("SELECT * FROM rape WHERE name = '"+name+"';", function(err, result) {
 	      	if (err){
 	      		console.log(err);
-	    		client.query("INSERT INTO rape (name,count) VALUES('"+name+"',"+1+");", function(err, result) {
-    				if (err){
-			    		console.log(err);console.log("INSERT INTO rape (name,count) VALUES('"+name+"',"+1+");");
-    				}
-			      	else{
-			    		console.log(result);
-			      	}
-    			});
+	    		
 	      	}
 	      	else{
-    			client.query("UPDATE rape SET count = count+1 WHERE name = '"+name+"';",function(err, result){
-    				if(err){
-    					console.log(err);console.log("UPDATE rape SET count = count+1 WHERE name = '"+name+"';");
-    				}
-    				else{
-    					console.log(result);
-    				}
-    			});
+	      		if(result.rows.legth == 0){
+	      			client.query("INSERT INTO rape (name,count) VALUES('"+name+"',"+1+");", function(err, result) {
+	    				if (err){
+				    		console.log(err);console.log("INSERT INTO rape (name,count) VALUES('"+name+"',"+1+");");
+	    				}
+				      	else{
+				    		console.log(result);
+				      	}
+    				});
+	      		}else{
+	    			client.query("UPDATE rape SET count = count+1 WHERE name = '"+name+"';",function(err, result){
+	    				if(err){
+	    					console.log(err);console.log("UPDATE rape SET count = count+1 WHERE name = '"+name+"';");
+	    				}
+	    				else{
+	    					console.log(result);
+	    				}
+	    			});
+    			}
 	      	}
 	   		done();
     	});
@@ -223,9 +227,9 @@ function getRapes(msg){
 			if(err)
 				console.log(err);
 			else{
-				var table = "\n";
+				var table = "\nUsername | RapeCount\n";
 				result.rows.forEach(function(element){
-					table+=element.name+"|"+element.count+"\n";
+					table+=element.name+" | "+element.count+"\n";
 				});
 				msg.reply(table);
 			}
