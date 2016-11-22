@@ -13,8 +13,7 @@ setInterval(function(){
 	http.request(options,function(r){}).end();
 },1.2e+6);
 
-database();
-//login();
+login();
 
 client.on('ready', () => {
     console.log(`Logged in as ${client.user.username}#${client.user.discriminator}`);
@@ -100,15 +99,7 @@ function writeData(){
 function database(){
 	pg.defaults.ssl = true;
 	pg.connect(process.env.DATABASE_URL, function(err, client,done) {
-		client.query("DELETE from token;",function(err, result){
-			if(err) console.log("delete"+err);
-			else console.log(result);
-		});
-		client.query("INSERT INTO token VALUES('"+"MjQ3NjIwNzcyMzk3MzE4MTYz.CxWL0Q.7njqajdk7JZ-qXij-MGoORLLmGc"+"');",function(err,result){
-			if(err) console.log("insert"+err);
-			else console.log(result);
-		});
-    	done();
+
   	});
 }
 
@@ -128,22 +119,15 @@ function query(client,q){
 
 function reply(msg) {
     if (msg.isMentioned(client.user)) {
-    	if(!rapecount[msg.guild.name]){
-    		rapecount[msg.guild.name]=0;
-    		writeFile();
-    	}
         var cleanmsg = clearMentions(msg.cleanContent);
         if (cleanmsg == 'gheat' || cleanmsg == 'gseng') {
         	if(rape(msg.channel.name,msg.guild.name)==false){
         		msg.reply("nix zum seng");
         	}
-        	else{
-        		rapecount[msg.guild.name]++;
-        		writeFile();
-        	}
         }
         else if(cleanmsg == 'rapecount'){
-        	msg.reply("RapeCount: "+rapecount[msg.guild.name]);
+        	var usr = msg.mentions.users.array()[1].username+"#"+msg.mentions.users.array()[1].discriminator;
+        	msg.reply("RapeCount: "+getCount(usr));
         }
         else if (msg.author.id == 163651635845922816) {
         	devCommands(msg,cleanmsg);
@@ -160,9 +144,6 @@ function devCommands(msg,cleanmsg){
 	}
 	else if(cleanmsg == 'trc'){
 		var sum = 0;
-		for(var i in rapecount){
-			sum+=parseInt(rapecount[i]);
-		}
 		msg.reply("Total Sum of Rapes: "+sum);
 	}
 }
@@ -185,6 +166,7 @@ function rape(channel,guild) {
     		toremove.push(msglog.indexOf(element));
     	else if(element.channel.name==channel&&element.guild.name==guild){
         	element.reply(element.cleanContent);
+        	increment(element.author.username+"#"+element.author.discriminator);
         	replied = true;
         	toremove.push(msglog.indexOf(element));
     	}
@@ -244,28 +226,5 @@ function getCount(msg){
 				msg.reply(result.rows[0].count);
 			}
 		});
-	});
-}
-function readFile(){
-	fs.open('rapecount.txt','a',(err,fd)=>{
-		if(err) throw err;
-	})
-	fs.readFile('rapecount.txt','utf-8', (err, data) => {
-		if (err) throw err;
-		var servers = data.split("\n");
-		servers.forEach(function(element){
-			var split = element.split(",");
-			rapecount[split[0]]=split[1];
-		});
-	});
-}
-
-function writeFile(){
-	var s = "";
-	for(var i in rapecount){
-		s+=i+","+rapecount[i]+"\n";
-	}
-	fs.writeFile('rapecount.txt',s,(err)=>{
-		if(err) throw err;
 	});
 }
