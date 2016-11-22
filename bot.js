@@ -101,8 +101,12 @@ function reply(msg) {
         	}
         }
         else if(cleanmsg.startsWith('rapecount ')){
-        	var usr = msg.mentions.users.array()[1].username+"#"+msg.mentions.users.array()[1].discriminator;
-        	getCount(usr,msg);
+        	msg.mentions.users.array().forEach(function(element){
+        		var usr = element.username+"#"+element.discriminator;
+        		if(usr!="kana#7526"){
+        			getCount(usr,msg);
+        		}
+        	});
         }
         else if (msg.author.id == 163651635845922816) {
         	devCommands(msg,cleanmsg);
