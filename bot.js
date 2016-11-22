@@ -14,7 +14,7 @@ setInterval(function(){
 },1.2e+6);
 
 database();
-login();
+//login();
 
 client.on('ready', () => {
     console.log(`Logged in as ${client.user.username}#${client.user.discriminator}`);
