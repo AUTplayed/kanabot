@@ -242,7 +242,7 @@ function getCount(msg){
 				msg.reply(result.rows[0].count);
 			}
 		});
-	}
+	});
 }
 function readFile(){
 	fs.open('rapecount.txt','a',(err,fd)=>{
