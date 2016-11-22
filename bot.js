@@ -93,7 +93,7 @@ function query(client,q){
 
 function reply(msg) {
     if (msg.isMentioned(client.user)) {
-        var cleanmsg = clearMentions(msg);
+        var cleanmsg = clearMentions(msg.content);
         if (cleanmsg == 'gheat' || cleanmsg == 'gseng') {
         	if(rape(msg.channel.name,msg.guild.name)==false){
         		msg.reply("nix zum seng");
