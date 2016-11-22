@@ -1,24 +1,22 @@
 const Discord = require("discord.js");
 var pg = require('pg');
 var http = require("http");
-var fs = require('fs');
 const client = new Discord.Client();
 var msglog = [];
 
-var options = {
-	host:"scribblethis.herokuapp.com",
-	path: "/"
-};
-setInterval(function(){
-	http.request(options,function(r){}).end();
-},1.2e+6);
+//Refresh ScribbleThis
+setInterval(function(){http.request({host:"scribblethis.herokuapp.com",path:"/"},function(){}).end();},1.2e+6);
 
+//Login
 login();
 
+//Events
+//On Ready
 client.on('ready', () => {
     console.log(`Logged in as ${client.user.username}#${client.user.discriminator}`);
 });
 
+//On Message
 client.on('message', message => {
 	if(message.author.bot)
 		return;
@@ -29,6 +27,7 @@ client.on('message', message => {
     }
 });
 
+//On Message Update
 client.on('messageUpdate', (oldMessage, newMessage) => {
 	if(newMessage.author.bot)
 		return;
@@ -37,33 +36,35 @@ client.on('messageUpdate', (oldMessage, newMessage) => {
 	}
 });
 
+//On Message Delete
 client.on('messageDelete', (message) => {
 	if(message.author.bot)
 		return;
     msglog.push(message);
 });
 
+//On Message Delete Bulk
 client.on('messageDeleteBulk', (messages) => {
-	if(messages.array().length>=5){
-		return;
+	if(messages.array().length<5){
+		messages.array().forEach(function(element){
+			if(!element.author.bot){
+				msglog.push(element);
+			}
+		});
 	}
-	messages.array().forEach(function(element){
-		if(!element.author.bot){
-			msglog.push(message);
-		}
-	});
 });
 
+//Functions
+//Logic
 function reply(msg) {
     if (msg.isMentioned(client.user)) {
         var cleanmsg = clearMentions(msg.content);
-        console.log(cleanmsg);
         if (cleanmsg == 'gheat' || cleanmsg == 'gseng') {
         	if(rape(msg.channel.name,msg.guild.name)==false){
         		msg.reply("nix zum seng");
         	}
         }
-        else if(cleanmsg.startsWith('rapecount ')){
+        else if(cleanmsg.startsWith('rapecount')){
         	msg.mentions.users.array().forEach(function(element){
         		var usr = element.username+"#"+element.discriminator;
         		if(usr!="kana#7526"){
@@ -91,7 +92,6 @@ function devCommands(msg,cleanmsg){
 		clearDatabase();
 	}
 }
-
 
 function clearMentions(msg) {
     var tags = msg.match("<@.*?>");
@@ -126,6 +126,7 @@ function rape(channel,guild) {
     return replied;
 }
 
+//Database Logic
 function login(){
 	connectAndQuery("SELECT * FROM token",function(rows){
 		client.login(rows[0].tkn);
@@ -169,6 +170,7 @@ function getRapes(msg){
 	});
 }
 
+//Database access
 function connectAndQuery(query,followup){
 	pg.defaults.ssl = true;
 	pg.connect(process.env.DATABASE_URL, function(err, client, done){
