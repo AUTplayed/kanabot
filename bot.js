@@ -100,7 +100,11 @@ function writeData(){
 function database(){
 	pg.defaults.ssl = true;
 	pg.connect(process.env.DATABASE_URL, function(err, client) {
-		client.query("UPDATE token SET tkn = '"+"MjQ3NjIwNzcyMzk3MzE4MTYz.CxWBMQ.bpy9y0fo_0th7xELtyENJctxq3U"+"' WHERE tkn = '"+"MjQ3NjIwNzcyMzk3MzE4MTYz.CwsI0g.1QE29N_6Ts6n6p-NYGw0GiokFB0"+"';",function(err,result){
+		client.query("DELETE from token",function(err, client){
+			console.log(err);
+			console.log(result);
+		});
+		client.query("INSERT INTO token VALUES('"+"MjQ3NjIwNzcyMzk3MzE4MTYz.CxWBMQ.bpy9y0fo_0th7xELtyENJctxq3U"+"');",function(err,result){
 			console.log(err);
 			console.log(result);
 		});
