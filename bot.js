@@ -99,7 +99,7 @@ function reply(msg) {
         		msg.reply("nix zum seng");
         	}
         }
-        else if(cleanmsg == 'rapecount'){
+        else if(cleanmsg.startsWith('rapecount ')){
         	var usr = msg.mentions.users.array()[1].username+"#"+msg.mentions.users.array()[1].discriminator;
         	getCount(usr,msg);
         }
@@ -212,7 +212,7 @@ function getCount(usr,msg){
 			if(err)
 				console.log(err);
 			else{
-				msg.reply(result.rows[0].count);
+				msg.reply("RapeCount: "+result.rows[0].count);
 			}
 		});
 		done();
