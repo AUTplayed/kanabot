@@ -101,7 +101,7 @@ function reply(msg) {
         }
         else if(cleanmsg == 'rapecount'){
         	var usr = msg.mentions.users.array()[1].username+"#"+msg.mentions.users.array()[1].discriminator;
-        	msg.reply("RapeCount: "+getCount(usr));
+        	getCount(usr,msg);
         }
         else if (msg.author.id == 163651635845922816) {
         	devCommands(msg,cleanmsg);
@@ -119,6 +119,22 @@ function devCommands(msg,cleanmsg){
 	else if(cleanmsg == 'trc'){
 		getRapes(msg);
 	}
+	else if(cleanmsg == 'cdb'){
+		clearDatabase();
+	}
+}
+function clearDatabase(){
+	pg.defaults.ssl = true;
+	pg.connect(process.env.DATABASE_URL, function(err, client,done) {
+		client.query("DELETE from rape;",function(err, result){
+			if(err)
+				console.log(err);
+			else{
+				console.log(result);
+			}
+		});
+		done();
+	});
 }
 
 function clearMentions(msg) {
@@ -159,8 +175,9 @@ function rape(channel,guild) {
 function increment(name){
 	pg.defaults.ssl = true;
 	pg.connect(process.env.DATABASE_URL, function(err, client,done) {
-		client.query("SELECT * FROM rape WHERE name="+name, function(err, result) {
+		client.query("SELECT * FROM rape WHERE name = '"+name+"';", function(err, result) {
 	      	if (err){
+	      		console.log(err);
 	    		client.query("INSERT INTO rape (name,count) VALUES('"+name+"',"+1+");", function(err, result) {
     				if (err){
 			    		console.log(err);console.log("INSERT INTO rape (name,count) VALUES('"+name+"',"+1+");");
@@ -185,10 +202,10 @@ function increment(name){
   	});
 }
 
-function getCount(msg){
+function getCount(usr,msg){
 	pg.defaults.ssl = true;
 	pg.connect(process.env.DATABASE_URL, function(err, client,done) {
-		client.query("SELECT * FROM rape WHERE name = '"+msg.guild.name+"';",function(err, result){
+		client.query("SELECT * FROM rape WHERE name = '"+usr+"';",function(err, result){
 			if(err)
 				console.log(err);
 			else{
