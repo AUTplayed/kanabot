@@ -143,7 +143,7 @@ function devCommands(msg,cleanmsg){
 		msglog = [];
 	}
 	else if(cleanmsg == 'trc'){
-		var sum = 0;
+		getRapes(msg);
 		msg.reply("Total Sum of Rapes: "+sum);
 	}
 }
@@ -185,7 +185,7 @@ function rape(channel,guild) {
 
 function increment(name){
 	pg.defaults.ssl = true;
-	pg.connect(process.env.DATABASE_URL, function(err, client) {
+	pg.connect(process.env.DATABASE_URL, function(err, client,done) {
 		client.query("SELECT * FROM rape WHERE name="+name, function(err, result) {
 	      	if (err)
 	    		console.log(err);
@@ -209,16 +209,14 @@ function increment(name){
 	    			});
 	    		}
 	      	}
-	   		client.end(function (err) {
-	      		if (err) console.log(err);
-	    	});
+	   		done();
     	});
   	});
 }
 
 function getCount(msg){
 	pg.defaults.ssl = true;
-	pg.connect(process.env.DATABASE_URL, function(err, client) {
+	pg.connect(process.env.DATABASE_URL, function(err, client,done) {
 		client.query("SELECT * FROM rape WHERE name = '"+msg.guild.name+"';",function(err, result){
 			if(err)
 				console.log(err);
@@ -226,5 +224,20 @@ function getCount(msg){
 				msg.reply(result.rows[0].count);
 			}
 		});
+		done();
+	});
+}
+
+function getRapes(msg){
+	pg.defaults.ssl = true;
+	pg.connect(process.env.DATABASE_URL, function(err, client, done) {
+		client.query("SELECT * FROM rape;",function(err, result){
+			if(err)
+				console.log(err);
+			else{
+				msg.reply(result.rows);
+			}
+		});
+		done();
 	});
 }
