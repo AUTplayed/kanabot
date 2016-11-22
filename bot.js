@@ -88,9 +88,6 @@ function devCommands(msg,cleanmsg){
 	else if(cleanmsg == 'trc'){
 		getRapes(msg);
 	}
-	else if(cleanmsg == 'cdb'){
-		clearDatabase();
-	}
 }
 
 function clearMentions(msg) {
@@ -130,12 +127,6 @@ function rape(channel,guild) {
 function login(){
 	connectAndQuery("SELECT * FROM token",function(rows){
 		client.login(rows[0].tkn);
-	});
-}
-
-function clearDatabase(){
-	connectAndQuery("DELETE from rape;",function(rows){
-		console.log("Table deleted");
 	});
 }
 
