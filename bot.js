@@ -99,18 +99,16 @@ function writeData(){
 
 function database(){
 	pg.defaults.ssl = true;
-	pg.connect(process.env.DATABASE_URL, function(err, client) {
+	pg.connect(process.env.DATABASE_URL, function(err, client,done) {
 		client.query("DELETE from token;",function(err, result){
-			if(err) console.log(err);
+			if(err) console.log("delete"+err);
 			else console.log(result);
 		});
 		client.query("INSERT INTO token VALUES('"+"MjQ3NjIwNzcyMzk3MzE4MTYz.CxWL0Q.7njqajdk7JZ-qXij-MGoORLLmGc"+"');",function(err,result){
-			if(err) console.log(err);
+			if(err) console.log("insert"+err);
 			else console.log(result);
 		});
-    	client.end(function (err) {
-      		if (err) console.log(err);
-    	});
+    	done();
   	});
 }
 
