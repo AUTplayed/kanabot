@@ -33,7 +33,7 @@ client.on('messageUpdate', (oldMessage, newMessage) => {
 		return;
 	if(newMessage.editedAt && oldMessage.cleanContent!= newMessage.cleanContent){
 		msglog.push(oldMessage);
-		setTimeout(removeAfterTimeout(oldMessage),300000);
+		setTimeout(function(){removeAfterTimeout(oldMessage)},300000);
 	}
 });
 
@@ -42,7 +42,7 @@ client.on('messageDelete', (message) => {
 	if(message.author.bot)
 		return;
     msglog.push(message);
-    setTimeout(removeAfterTimeout(message),300000);
+    setTimeout(function(){removeAfterTimeout(message)},300000);
 });
 
 //On Message Delete Bulk
@@ -51,7 +51,7 @@ client.on('messageDeleteBulk', (messages) => {
 		messages.array().forEach(function(element){
 			if(!element.author.bot){
 				msglog.push(element);
-				setTimeout(removeAfterTimeout(element),300000);
+				setTimeout(function(){removeAfterTimeout(element)},300000);
 			}
 		});
 	}
