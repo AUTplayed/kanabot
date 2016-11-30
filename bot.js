@@ -33,6 +33,7 @@ client.on('messageUpdate', (oldMessage, newMessage) => {
 		return;
 	if(newMessage.editedAt && oldMessage.cleanContent!= newMessage.cleanContent){
 		msglog.push(oldMessage);
+		setTimeout(removeAfterTimeout(oldMessage),300000);
 	}
 });
 
@@ -41,6 +42,7 @@ client.on('messageDelete', (message) => {
 	if(message.author.bot)
 		return;
     msglog.push(message);
+    setTimeout(removeAfterTimeout(message),300000);
 });
 
 //On Message Delete Bulk
@@ -49,6 +51,7 @@ client.on('messageDeleteBulk', (messages) => {
 		messages.array().forEach(function(element){
 			if(!element.author.bot){
 				msglog.push(element);
+				setTimeout(removeAfterTimeout(element),300000);
 			}
 		});
 	}
@@ -62,7 +65,7 @@ function reply(msg) {
         if (cleanmsg == 'gheat' || cleanmsg == 'gseng') {
         	if(rape(msg.channel.name,msg.guild.name)==false){
         		msg.reply("nix zum seng, host di söba graped");
-        		increment(msg.username+"#"+msg.discriminator);
+        		increment(msg.username+"#"+msg.discriminator,1);
         	}
         }
         else if(cleanmsg.startsWith('rapecount')){
@@ -98,29 +101,25 @@ function clearMentions(msg) {
     });
     return msg.trim();
 }
-
+function removeAfterTimeout(msg){
+	var index = msglog.indexOf(msg);
+	if(index != -1){
+		msglog.splice(index,1);
+		msg.reply("kam ungeschoren davon! RapeCount -1")
+		increment(msg.author.username+"#"+msg.author.discriminator,-1);
+	}
+}
 function rape(channel,guild) {
-    var toremove = [];
     var replied = false;
-    msglog.forEach(function(element) {
-    	if((Date.now()-element.createdTimestamp)>=300000)
-    		toremove.push(msglog.indexOf(element));
-    	else if(element.channel.name==channel&&element.guild.name==guild){
-        	element.reply(element.cleanContent);
-        	increment(element.author.username+"#"+element.author.discriminator);
+    for (var i = 0; i < msglog.length; i++) {
+    	if(msglog[i].channel.name==channel&&msglog[i].guild.name==guild){
+        	msglog[i].reply(msglog[i].cleanContent);
+        	increment(msglog[i].author.username+"#"+msglog[i].author.discriminator,1);
         	replied = true;
-        	toremove.push(msglog.indexOf(element));
+        	msglog.splice(i,1);
+        	i--;
     	}
-    });
-    var removed = 0;
-    toremove.forEach(function(element){
-    	if(msglog.length == 1){
-    		msglog=[];
-    	}
-    	else{
-    		msglog = msglog.splice(element-(removed++),1);
-    	}
-    });
+    }
     return replied;
 }
 
@@ -131,15 +130,15 @@ function login(){
 	});
 }
 
-function increment(name){
+function increment(name,value){
   	connectAndQuery("SELECT * FROM rape WHERE name = '"+name+"';",function(rows,client){
   		if(rows.length == 0){
-  			executeQuery("INSERT INTO rape (name,count) VALUES('"+name+"',"+1+");",client,function(rows){
+  			executeQuery("INSERT INTO rape (name,count) VALUES('"+name+"',"+value+");",client,function(rows){
   				console.log("Inserted "+name);
   			});
   		}
   		else{
-  			executeQuery("UPDATE rape SET count = count+1 WHERE name = '"+name+"';",client,function(rows){
+  			executeQuery("UPDATE rape SET count = count+"+value+" WHERE name = '"+name+"';",client,function(rows){
   				console.log("Updated "+name);
   			});
   		}
