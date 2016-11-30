@@ -61,7 +61,8 @@ function reply(msg) {
         var cleanmsg = clearMentions(msg.content);
         if (cleanmsg == 'gheat' || cleanmsg == 'gseng') {
         	if(rape(msg.channel.name,msg.guild.name)==false){
-        		msg.reply("nix zum seng");
+        		msg.reply("nix zum seng, host di söba graped");
+        		increment(msg.username+"#"+msg.discriminator);
         	}
         }
         else if(cleanmsg.startsWith('rapecount')){
