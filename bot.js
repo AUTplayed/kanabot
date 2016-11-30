@@ -152,7 +152,7 @@ function getCount(usr,msg){
 }
 
 function getRapes(msg){
-	connectAndQuery("SELECT * FROM rape;",function(rows){
+	connectAndQuery("SELECT * FROM rape ORDER BY count;",function(rows){
 		var table = "\nUsername | RapeCount\n";
 		rows.forEach(function(element){
 			table+=element.name+" | "+element.count+"\n";
