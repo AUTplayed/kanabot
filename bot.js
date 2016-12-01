@@ -3,8 +3,8 @@ var pg = require('pg');
 var http = require("http");
 const client = new Discord.Client();
 var msglog = [];
-var timeout = 1 * 60000; //1 minute
-
+var timeoutrape = 1 * 60000; //1 minute
+var timeoutedit = 0.5 * 60000; //30 secs
 //Refresh ScribbleThis
 setInterval(function() { http.request({ host: "scribblethis.herokuapp.com", path: "/" }, function() {}).end(); }, 1.2e+6);
 
@@ -32,7 +32,7 @@ client.on('message', message => {
 client.on('messageUpdate', (oldMessage, newMessage) => {
     if (newMessage.author.bot)
         return;
-    if (newMessage.editedAt && oldMessage.cleanContent != newMessage.cleanContent && oldMessage.createdTimestamp - Date.now() <= timeout) {
+    if (newMessage.editedAt && oldMessage.cleanContent != newMessage.cleanContent && oldMessage.createdTimestamp - Date.now() <= timeoutedit) {
         msglog.push(oldMessage);
         setTimeout(function() {
             if (removeAfterTimeout(oldMessage)) {
@@ -40,25 +40,25 @@ client.on('messageUpdate', (oldMessage, newMessage) => {
                 console.log(oldMessage.cleanContent);
                 increment(oldMessage.author.username + "#" + oldMessage.author.discriminator, -1);
             }
-        }, timeout);
+        }, timeoutrape);
     }
 });
 
 //On Message Delete
 client.on('messageDelete', (message) => {
-    if (message.author.bot || message.createdTimestamp - Date.now() > timeout)
+    if (message.author.bot || message.createdTimestamp - Date.now() > timeoutedit)
         return;
     msglog.push(message);
-    setTimeout(function() { removeAfterTimeout(message) }, timeout);
+    setTimeout(function() { removeAfterTimeout(message) }, timeoutrape);
 });
 
 //On Message Delete Bulk
 client.on('messageDeleteBulk', (messages) => {
     if (messages.array().length < 5) {
         messages.array().forEach(function(element) {
-            if (!element.author.bot && element.createdTimestamp - Date.now() <= timeout) {
+            if (!element.author.bot && element.createdTimestamp - Date.now() <= timeoutedit) {
                 msglog.push(element);
-                setTimeout(function() { removeAfterTimeout(element) }, timeout);
+                setTimeout(function() { removeAfterTimeout(element) }, timeoutrape);
             }
         });
     }
