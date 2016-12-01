@@ -13,6 +13,7 @@
   ],
   "dependencies": {
     "discord.js": "^10.0.1",
+    "express": "^4.14.0",
     "fs": "0.0.1-security",
     "http": "0.0.0",
     "pg": "^6.1.0"

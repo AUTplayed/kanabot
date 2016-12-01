@@ -6,7 +6,7 @@ $(document).ready(function(){
 			$("#table").append("<tr><td>"+element.name+"</td><td>"+element.count+"</td>");
 		});
 	});
-});
+}
 
 function connectAndQuery(query, followup) {
     pg.defaults.ssl = true;
