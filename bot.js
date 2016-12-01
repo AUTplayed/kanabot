@@ -33,7 +33,11 @@ client.on('messageUpdate', (oldMessage, newMessage) => {
 		return;
 	if(newMessage.editedAt && oldMessage.cleanContent!= newMessage.cleanContent && oldMessage.createdTimestamp-Date.now() <= 1,2e+6){
 		msglog.push(oldMessage);
-		setTimeout(function(){removeAfterTimeout(oldMessage)},300000);
+		setTimeout(function(){
+			removeAfterTimeout(oldMessage);
+			oldMessage.reply("kam ungeschoren davon! RapeCount -1")
+			increment(oldMessage.author.username+"#"+oldMessage.author.discriminator,-1);
+		},300000);
 	}
 });
 
@@ -42,7 +46,6 @@ client.on('messageDelete', (message) => {
 	if(message.author.bot || message.createdTimestamp-Date.now() > 1,2e+6)
 		return;
     msglog.push(message);
-
     setTimeout(function(){removeAfterTimeout(message)},300000);
 });
 
@@ -93,6 +96,13 @@ function devCommands(msg,cleanmsg){
 	else if(cleanmsg == 'trc'){
 		getRapes(msg);
 	}
+	else if(cleanmsg.startsWith('db')){
+		var split = cleanmsg.split("?");
+		connectAndQuery(split[1],function(rows){
+			if(rows)
+				msg.reply(rows);
+		});
+	}
 }
 
 function clearMentions(msg) {
@@ -106,8 +116,6 @@ function removeAfterTimeout(msg){
 	var index = msglog.indexOf(msg);
 	if(index != -1){
 		msglog.splice(index,1);
-		msg.reply("kam ungeschoren davon! RapeCount -1")
-		increment(msg.author.username+"#"+msg.author.discriminator,-1);
 	}
 }
 function rape(channel,guild) {
