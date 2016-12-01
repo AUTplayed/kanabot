@@ -31,7 +31,7 @@ client.on('message', message => {
 client.on('messageUpdate', (oldMessage, newMessage) => {
 	if(newMessage.author.bot)
 		return;
-	if(newMessage.editedAt && oldMessage.cleanContent!= newMessage.cleanContent){
+	if(newMessage.editedAt && oldMessage.cleanContent!= newMessage.cleanContent && oldMessage.createdTimestamp-Date.now() <= 1,2e+6){
 		msglog.push(oldMessage);
 		setTimeout(function(){removeAfterTimeout(oldMessage)},300000);
 	}
@@ -39,9 +39,10 @@ client.on('messageUpdate', (oldMessage, newMessage) => {
 
 //On Message Delete
 client.on('messageDelete', (message) => {
-	if(message.author.bot)
+	if(message.author.bot || message.createdTimestamp-Date.now() > 1,2e+6)
 		return;
     msglog.push(message);
+
     setTimeout(function(){removeAfterTimeout(message)},300000);
 });
 
@@ -49,7 +50,7 @@ client.on('messageDelete', (message) => {
 client.on('messageDeleteBulk', (messages) => {
 	if(messages.array().length<5){
 		messages.array().forEach(function(element){
-			if(!element.author.bot){
+			if(!element.author.bot && element.createdTimestamp-Date.now() <= 1,2e+6){
 				msglog.push(element);
 				setTimeout(function(){removeAfterTimeout(element)},300000);
 			}
