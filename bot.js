@@ -99,8 +99,13 @@ function devCommands(msg,cleanmsg){
 	else if(cleanmsg.startsWith('db')){
 		var split = cleanmsg.split("?");
 		connectAndQuery(split[1],function(rows){
-			if(rows)
-				msg.reply(rows);
+			var result = "\n";
+			if(rows){
+				rows.forEach(function(element){
+					result+=rows+"\n";
+				});
+				msg.reply(result);
+			}
 		});
 	}
 }
