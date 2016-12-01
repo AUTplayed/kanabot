@@ -1,12 +1,24 @@
-const Discord = require("discord.js");
+var Discord = require("discord.js");
 var pg = require('pg');
 var http = require("http");
-const client = new Discord.Client();
+var fs = require('fs');
+var client = new Discord.Client();
+
 var msglog = [];
 var timeoutrape = 1 * 60000; //1 minute
 var timeoutedit = 0.5 * 60000; //30 secs
 //Refresh ScribbleThis
-setInterval(function() { http.request({ host: "scribblethis.herokuapp.com", path: "/" }, function() {}).end(); }, 1.2e+6);
+setInterval(function() { http.request({ host: "scribblethis.herokuapp.com", path: "/" }, function() {}).end(); }, 25 * 60000);
+//Refresh kanabot
+setInterval(function() { http.request({ host: "kanabot.herokuapp.com", path: "/" }, function() {}).end(); }, 25 * 60000);
+
+http.createServer(function(req, res){
+    fs.readFile('index.html',function (err, data){
+        res.writeHead(200, {'Content-Type': 'text/html','Content-Length':data.length});
+        res.write(data);
+        res.end();
+    });
+}).listen(process.env.PORT || 8080);
 
 //Login
 login();
