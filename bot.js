@@ -102,9 +102,11 @@ function devCommands(msg,cleanmsg){
 			var result = "\n";
 			if(rows){
 				rows.forEach(function(element){
-					element.forEach(function(key){
-						result+=element[key]+"\n";
-					});
+					for (var key in element) {
+    					if (element.hasOwnProperty(key)) {
+        					result+=element[key]+"\n";
+    					}
+					}
 					result+="\n";
 				});
 				console.log(result);
