@@ -100,16 +100,15 @@ function devCommands(msg,cleanmsg){
 		var split = cleanmsg.split("?");
 		connectAndQuery(split[1],function(rows){
 			var result = "\n";
-			if(rows){
+			if(rows.length > 0){
 				rows.forEach(function(element){
 					for (var key in element) {
     					if (element.hasOwnProperty(key)) {
-        					result+=element[key]+"\n";
+        					result+=key+": "+element[key]+"\n";
     					}
 					}
 					result+="\n";
 				});
-				console.log(result);
 				msg.reply(result);
 			}
 		});
