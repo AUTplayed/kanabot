@@ -102,8 +102,12 @@ function devCommands(msg,cleanmsg){
 			var result = "\n";
 			if(rows){
 				rows.forEach(function(element){
-					result+=rows+"\n";
+					element.forEach(function(key){
+						result+=element[key]+"\n";
+					});
+					result+="\n";
 				});
+				console.log(result);
 				msg.reply(result);
 			}
 		});
