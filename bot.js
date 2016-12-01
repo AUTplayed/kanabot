@@ -31,19 +31,21 @@ client.on('message', message => {
 client.on('messageUpdate', (oldMessage, newMessage) => {
 	if(newMessage.author.bot)
 		return;
-	if(newMessage.editedAt && oldMessage.cleanContent!= newMessage.cleanContent && oldMessage.createdTimestamp-Date.now() <= 1,2e+6){
+	if(newMessage.editedAt && oldMessage.cleanContent!= newMessage.cleanContent && oldMessage.createdTimestamp-Date.now() <= 300000){
 		msglog.push(oldMessage);
 		setTimeout(function(){
-			removeAfterTimeout(oldMessage);
-			oldMessage.reply("kam ungeschoren davon! RapeCount -1")
-			increment(oldMessage.author.username+"#"+oldMessage.author.discriminator,-1);
+			if(removeAfterTimeout(oldMessage)){
+				oldMessage.reply("kam ungeschoren davon! RapeCount -1")
+				console.log(oldMessage.cleanContent);
+				increment(oldMessage.author.username+"#"+oldMessage.author.discriminator,-1);
+			}
 		},300000);
 	}
 });
 
 //On Message Delete
 client.on('messageDelete', (message) => {
-	if(message.author.bot || message.createdTimestamp-Date.now() > 1,2e+6)
+	if(message.author.bot || message.createdTimestamp-Date.now() > 300000)
 		return;
     msglog.push(message);
     setTimeout(function(){removeAfterTimeout(message)},300000);
@@ -53,7 +55,7 @@ client.on('messageDelete', (message) => {
 client.on('messageDeleteBulk', (messages) => {
 	if(messages.array().length<5){
 		messages.array().forEach(function(element){
-			if(!element.author.bot && element.createdTimestamp-Date.now() <= 1,2e+6){
+			if(!element.author.bot && element.createdTimestamp-Date.now() <= 300000){
 				msglog.push(element);
 				setTimeout(function(){removeAfterTimeout(element)},300000);
 			}
@@ -126,7 +128,9 @@ function removeAfterTimeout(msg){
 	var index = msglog.indexOf(msg);
 	if(index != -1){
 		msglog.splice(index,1);
+		return true;
 	}
+	return false;
 }
 function rape(channel,guild) {
     var replied = false;
