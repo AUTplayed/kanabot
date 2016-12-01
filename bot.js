@@ -65,7 +65,7 @@ function reply(msg) {
         if (cleanmsg == 'gheat' || cleanmsg == 'gseng') {
         	if(rape(msg.channel.name,msg.guild.name)==false){
         		msg.reply("nix zum seng, host di söba graped");
-        		increment(msg.username+"#"+msg.discriminator,1);
+        		increment(msg.author.username+"#"+msg.author.discriminator,1);
         	}
         }
         else if(cleanmsg.startsWith('rapecount')){
