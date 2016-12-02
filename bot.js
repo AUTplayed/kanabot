@@ -20,7 +20,7 @@ app.get('/', function(req, res) {
 });
 app.get('/data', function(req, res) {
     connectAndQuery("select * from rape",function(rows){
-    	res.status(200).json(rows);
+    	res.status(200).json(JSON.stringify(rows));
     });
 });
 app.listen(process.env.PORT || 8080);
