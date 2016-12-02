@@ -18,11 +18,15 @@ app.use(express.static(__dirname + '/public'));
 app.get('/', function(req, res) {
     res.sendFile(path.join(__dirname + '/public/index.html'));
 });
-
+app.get('/data', function(req, res) {
+    connectAndQuery("select * from rape",function(rows){
+    	res.status(200).json(rows);
+    });
+});
 app.listen(process.env.PORT || 8080);
 
 //Login
-login();
+//login();
 
 //Events
 //On Ready
