@@ -19,8 +19,8 @@ app.get('/', function(req, res) {
     res.sendFile(path.join(__dirname + '/public/index.html'));
 });
 app.get('/data', function(req, res) {
-    connectAndQuery("select * from rape",function(rows){
-    	res.status(200).json(JSON.stringify(rows));
+    connectAndQuery("SELECT * FROM rape ORDER BY count;",function(rows){
+    	res.status(200).json(JSON.parse(JSON.stringify(rows));
     });
 });
 app.listen(process.env.PORT || 8080);
