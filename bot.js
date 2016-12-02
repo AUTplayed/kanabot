@@ -32,7 +32,7 @@ login();
 //On Ready
 client.on('ready', () => {
     console.log(`Logged in as ${client.user.username}#${client.user.discriminator}`);
-    client.user.setGame("game", "https://www.twitch.tv/admiral_bahroo");
+    client.user.setGame("https://kanabot.herokuapp.com/", "https://kanabot.herokuapp.com/");
 });
 
 //On Message
