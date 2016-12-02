@@ -49,7 +49,7 @@ client.on('message', message => {
 client.on('messageUpdate', (oldMessage, newMessage) => {
     if (newMessage.author.bot)
         return;
-    if (newMessage.editedAt && oldMessage.cleanContent != newMessage.cleanContent && oldMessage.createdTimestamp - Date.now() <= timeoutedit) {
+    if (newMessage.editedAt && oldMessage.cleanContent != newMessage.cleanContent && oldMessage.createdTimestamp - Date.now() <= timeoutedit && oldMessage.channel.type == 'text') {
         msglog.push(oldMessage);
         setTimeout(function() {
             if (removeAfterTimeout(oldMessage)) {
