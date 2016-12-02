@@ -26,7 +26,7 @@ app.get('/data', function(req, res) {
 app.listen(process.env.PORT || 8080);
 
 //Login
-//login();
+login();
 
 //Events
 //On Ready
