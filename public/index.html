@@ -6,11 +6,23 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="jquery-3.1.1.js"></script>
     <script src="script.js"></script>
+    <link rel="stylesheet" href="styles.css">
 </head>
 
 <body>
-    <header>Rapecount List</header>
-    <table id="table"></table>
+    <div class="table-title">
+    	<h3>Rapecount List</h3>
+    </div>
+    <table class="table-fill">
+		<thead>
+			<tr>
+				<th class="text-left">Username</th>
+				<th class="text-left">Rapecount</th>
+			</tr>
+		</thead>
+		<tbody class="table-hover" id="tabledata">
+		</tbody>
+	</table>
 </body>
 
 </html>
