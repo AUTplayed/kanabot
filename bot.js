@@ -7,7 +7,7 @@ var path = require('path');
 var client = new Discord.Client();
 
 var msglog = [];
-var timeoutrape = 1 * 60000; //1 minute
+var timeoutrape = 6 * 60000; //6 minutes
 var timeoutedit = 0.5 * 60000; //30 secs
 //Refresh ScribbleThis
 setInterval(function() { http.request({ host: "scribblethis.herokuapp.com", path: "/" }, function() {}).end(); }, 25 * 60000);
