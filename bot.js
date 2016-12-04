@@ -6,20 +6,21 @@ var app = express();
 var path = require('path');
 var client = new Discord.Client();
 
+const MINUTE = 60000;
 var msglog = [];
-var timeoutrape = 6 * 60000; //6 minutes
-var timeoutedit = 0.5 * 60000; //30 secs
+var timeoutrape = 6 * MINUTE;
+var timeoutedit = 0.5 * MINUTE;
 //Refresh ScribbleThis
-setInterval(function() { http.request({ host: "scribblethis.herokuapp.com", path: "/" }, function() {}).end(); }, 25 * 60000);
+setInterval(function() { http.request({ host: "scribblethis.herokuapp.com", path: "/refresh" }, function() {}).end(); }, 25 * MINUTE);
 //Refresh kanabot
-setInterval(function() { http.request({ host: "kanabot.herokuapp.com", path: "/" }, function() {}).end(); }, 25 * 60000);
+setInterval(function() { http.request({ host: "kanabot.herokuapp.com", path: "/refresh" }, function() {}).end(); }, 25 * MINUTE);
 
 app.use(express.static(__dirname + '/public'));
 app.get('/', function(req, res) {
     res.sendFile(path.join(__dirname + '/public/index.html'));
 });
 app.get('/data', function(req, res) {
-    connectAndQuery("SELECT * FROM rape ORDER BY count;",function(rows){
+    connectAndQuery("SELECT * FROM rape ORDER BY count DESC;",function(rows){
     	res.status(200).json(JSON.stringify(rows));
     });
 });
@@ -31,32 +32,30 @@ login();
 //Events
 //On Ready
 client.on('ready', () => {
-    console.log(`Logged in as ${client.user.username}#${client.user.discriminator}`);
-    client.user.setGame("https://kanabot.herokuapp.com/", "https://www.twitch.tv/admiral_bahroo");
+    console.log(`Logged in as `+getIdentifier(client.user));
+    client.user.setGame("https://kanabot.herokuapp.com/");
 });
 
 //On Message
 client.on('message', message => {
     if (message.author.bot)
         return;
-    try {
+    if (message.isMentioned(client.user)) {
         reply(message);
-    } catch (error) {
-        console.log(error);
     }
 });
 
 //On Message Update
-client.on('messageUpdate', (oldMessage, newMessage) => {
+client.on('messageUpdate', (message, newMessage) => {
     if (newMessage.author.bot)
         return;
-    if (newMessage.editedAt && oldMessage.cleanContent != newMessage.cleanContent && oldMessage.createdTimestamp - Date.now() <= timeoutedit && oldMessage.channel.type == 'text') {
-        msglog.push(oldMessage);
+    if (newMessage.editedAt && message.cleanContent != newMessage.cleanContent && message.createdTimestamp - Date.now() <= timeoutedit && message.channel.type == 'text') {
+        msglog.push(message);
         setTimeout(function() {
-            if (removeAfterTimeout(oldMessage)) {
-                oldMessage.reply("kam ungeschoren davon! RapeCount -1")
-                console.log(oldMessage.cleanContent);
-                increment(oldMessage.author.username + "#" + oldMessage.author.discriminator, -1);
+            if (removeAfterTimeout(message)) {
+                message.reply("kam ungeschoren davon! RapeCount -1")
+                console.log(message.cleanContent);
+                increment(getIdentifier(message.author), -1);
             }
         }, timeoutrape);
     }
@@ -73,10 +72,10 @@ client.on('messageDelete', (message) => {
 //On Message Delete Bulk
 client.on('messageDeleteBulk', (messages) => {
     if (messages.array().length < 5) {
-        messages.array().forEach(function(element) {
-            if (!element.author.bot && element.createdTimestamp - Date.now() <= timeoutedit) {
-                msglog.push(element);
-                setTimeout(function() { removeAfterTimeout(element) }, timeoutrape);
+        messages.array().forEach(function(message) {
+            if (!message.author.bot && message.createdTimestamp - Date.now() <= timeoutedit) {
+                msglog.push(message);
+                setTimeout(function() { removeAfterTimeout(message) }, timeoutrape);
             }
         });
     }
@@ -85,23 +84,24 @@ client.on('messageDeleteBulk', (messages) => {
 //Functions
 //Logic
 function reply(msg) {
-    if (msg.isMentioned(client.user)) {
-        var cleanmsg = clearMentions(msg.content);
-        if (cleanmsg == 'gheat' || cleanmsg == 'gseng') {
-            if (rape(msg.channel.name, msg.guild.name) == false) {
-                msg.reply("nix zum seng, host di söba graped");
-                increment(msg.author.username + "#" + msg.author.discriminator, 1);
-            }
-        } else if (cleanmsg.startsWith('rapecount')) {
-            msg.mentions.users.array().forEach(function(element) {
-                var usr = element.username + "#" + element.discriminator;
-                if (usr != "kana#7526") {
-                    getCount(usr, msg);
+    var cleanmsg = clearMentions(msg.content);
+    if (cleanmsg == 'gheat' || cleanmsg == 'gseng') {
+        if (rape(msg.channel.name, msg.guild.name) == false) {
+            msg.reply("nix zum seng, host di söba graped");
+            increment(getIdentifier(msg.author), 1);
+        }
+    } else if (cleanmsg.startsWith('rapecount')) {
+        if(msg.mentions.users.array().length > 1){
+            msg.mentions.users.array().forEach(function(user) {
+                if (user != client.user) {
+                    getCount(getIdentifier(user), msg);
                 }
             });
-        } else if (msg.author.id == 163651635845922816) {
-            devCommands(msg, cleanmsg);
-        }
+        } else{
+            getCount(getIdentifier(msg.author), msg);
+        }        
+    } else if (msg.author.id == 163651635845922816) {
+        devCommands(msg, cleanmsg);
     }
 }
 
@@ -110,25 +110,14 @@ function devCommands(msg, cleanmsg) {
         msg.reply("Message Log\n" + msglog);
     } else if (cleanmsg == 'cm') {
         msglog = [];
-    } else if (cleanmsg == 'trc') {
-        getRapes(msg);
     } else if (cleanmsg.startsWith('db')) {
         var split = cleanmsg.split("?");
-        connectAndQuery(split[1], function(rows) {
-            var result = "\n";
-            if (rows.length > 0) {
-                rows.forEach(function(element) {
-                    for (var key in element) {
-                        if (element.hasOwnProperty(key)) {
-                            result += key + ": " + element[key] + "\n";
-                        }
-                    }
-                    result += "\n";
-                });
-                msg.reply(result);
-            }
-        });
+        devDatabase(split[1],msg);
     }
+}
+
+function getIdentifier(author){
+    return author.username + "#" + author.discriminator;
 }
 
 function clearMentions(msg) {
@@ -153,8 +142,8 @@ function rape(channel, guild) {
     for (var i = 0; i < msglog.length; i++) {
         if (msglog[i].channel.name == channel && msglog[i].guild.name == guild) {
             msglog[i].reply(msglog[i].cleanContent);
-            increment(msglog[i].author.username + "#" + msglog[i].author.discriminator, 1);
             replied = true;
+            increment(getIdentifier(msglog[i].author), 1);
             msglog.splice(i, 1);
             i--;
         }
@@ -189,14 +178,21 @@ function getCount(usr, msg) {
     });
 }
 
-function getRapes(msg) {
-    connectAndQuery("SELECT * FROM rape ORDER BY count;", function(rows) {
-        var table = "\nUsername | RapeCount\n";
-        rows.forEach(function(element) {
-            table += element.name + " | " + element.count + "\n";
+function devDatabase(query,msg){
+    connectAndQuery(query, function(rows) {
+            var result = "\n";
+            if (rows.length > 0) {
+                rows.forEach(function(element) {
+                    for (var key in element) {
+                        if (element.hasOwnProperty(key)) {
+                            result += key + ": " + element[key] + "\n";
+                        }
+                    }
+                    result += "\n";
+                });
+                msg.reply(result);
+            }
         });
-        msg.reply(table);
-    });
 }
 
 //Database access
