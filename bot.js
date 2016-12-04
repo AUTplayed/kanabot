@@ -51,7 +51,7 @@ client.on('message', message => {
 client.on('messageUpdate', (message, newMessage) => {
     if (newMessage.author.bot)
         return;
-    if (newMessage.editedAt && message.cleanContent != newMessage.cleanContent && message.createdTimestamp - Date.now() <= timeoutedit && message.channel.type == 'text') {
+    if (newMessage.editedAt && message.cleanContent != newMessage.cleanContent && Date.now() - message.createdTimestamp <= timeoutedit && message.channel.type == 'text') {
         msglog.push(message);
         setTimeout(function() {
             if (removeAfterTimeout(message)) {
@@ -65,7 +65,7 @@ client.on('messageUpdate', (message, newMessage) => {
 
 //On Message Delete
 client.on('messageDelete', (message) => {
-    if (message.author.bot || message.createdTimestamp - Date.now() > timeoutedit)
+    if (message.author.bot || Date.now() - message.createdTimestamp  > timeoutedit)
         return;
     msglog.push(message);
     setTimeout(function() { removeAfterTimeout(message) }, timeoutrape);
@@ -75,7 +75,7 @@ client.on('messageDelete', (message) => {
 client.on('messageDeleteBulk', (messages) => {
     if (messages.array().length < 5) {
         messages.array().forEach(function(message) {
-            if (!message.author.bot && message.createdTimestamp - Date.now() <= timeoutedit) {
+            if (!message.author.bot && Date.now() - message.createdTimestamp <= timeoutedit) {
                 msglog.push(message);
                 setTimeout(function() { removeAfterTimeout(message) }, timeoutrape);
             }
