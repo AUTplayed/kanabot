@@ -21,8 +21,8 @@ app.get('/', function(req, res) {
     res.sendFile(path.join(__dirname + '/public/index.html'));
 });
 app.get('/data', function(req, res) {
-    connectAndQuery("SELECT * FROM rape ORDER BY count DESC;",function(rows){
-    	res.status(200).json(JSON.stringify(rows));
+    connectAndQuery("SELECT * FROM rape ORDER BY count DESC;", function(rows) {
+        res.status(200).json(JSON.stringify(rows));
     });
 });
 app.listen(process.env.PORT || 8080);
@@ -33,14 +33,14 @@ login();
 //Events
 //On Ready
 client.on('ready', () => {
-    console.log(`Logged in as `+getIdentifier(client.user));
+    console.log(`Logged in as ` + getIdentifier(client.user));
     client.users.get(dev).sendMessage("I am up and running!");
     client.user.setGame("https://kanabot.herokuapp.com/");
 });
 
 //On Disconnect
-client.on('disconnect' ()=>{
-	client.users.get(dev).sendMessage("Going down...");
+client.on('disconnect', () => {
+    client.users.get(dev).sendMessage("Going down...");
 });
 
 //On Message
@@ -98,15 +98,15 @@ function reply(msg) {
             increment(getIdentifier(msg.author), 1);
         }
     } else if (cleanmsg.startsWith('rapecount')) {
-        if(msg.mentions.users.array().length > 1){
+        if (msg.mentions.users.array().length > 1) {
             msg.mentions.users.array().forEach(function(user) {
                 if (user != client.user) {
                     getCount(getIdentifier(user), msg);
                 }
             });
-        } else{
+        } else {
             getCount(getIdentifier(msg.author), msg);
-        }        
+        }
     } else if (msg.author.id == dev) {
         devCommands(msg, cleanmsg);
     }
@@ -119,11 +119,11 @@ function devCommands(msg, cleanmsg) {
         msglog = [];
     } else if (cleanmsg.startsWith('db')) {
         var split = cleanmsg.split("?");
-        devDatabase(split[1],msg);
+        devDatabase(split[1], msg);
     }
 }
 
-function getIdentifier(author){
+function getIdentifier(author) {
     return author.username + "#" + author.discriminator;
 }
 
@@ -185,21 +185,21 @@ function getCount(usr, msg) {
     });
 }
 
-function devDatabase(query,msg){
+function devDatabase(query, msg) {
     connectAndQuery(query, function(rows) {
-            var result = "\n";
-            if (rows.length > 0) {
-                rows.forEach(function(element) {
-                    for (var key in element) {
-                        if (element.hasOwnProperty(key)) {
-                            result += key + ": " + element[key] + "\n";
-                        }
+        var result = "\n";
+        if (rows.length > 0) {
+            rows.forEach(function(element) {
+                for (var key in element) {
+                    if (element.hasOwnProperty(key)) {
+                        result += key + ": " + element[key] + "\n";
                     }
-                    result += "\n";
-                });
-                msg.reply(result);
-            }
-        });
+                }
+                result += "\n";
+            });
+            msg.reply(result);
+        }
+    });
 }
 
 //Database access
