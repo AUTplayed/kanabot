@@ -34,7 +34,6 @@ login();
 client.on('ready', () => {
     console.log(`Logged in as `+getIdentifier(client.user));
     client.users.get("163651635845922816").sendMessage("I am up and running!");
-    client.users.get("AUTplayed#0719").sendMessage("I am up and running!");
     client.user.setGame("https://kanabot.herokuapp.com/");
 });
 
