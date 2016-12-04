@@ -6,6 +6,7 @@ var app = express();
 var path = require('path');
 var client = new Discord.Client();
 
+const dev = "163651635845922816";
 const MINUTE = 60000;
 var msglog = [];
 var timeoutrape = 6 * MINUTE;
@@ -33,8 +34,13 @@ login();
 //On Ready
 client.on('ready', () => {
     console.log(`Logged in as `+getIdentifier(client.user));
-    client.users.get("163651635845922816").sendMessage("I am up and running!");
+    client.users.get(dev).sendMessage("I am up and running!");
     client.user.setGame("https://kanabot.herokuapp.com/");
+});
+
+//On Disconnect
+client.on('disconnect' ()=>{
+	client.users.get(dev).sendMessage("Going down...");
 });
 
 //On Message
@@ -101,7 +107,7 @@ function reply(msg) {
         } else{
             getCount(getIdentifier(msg.author), msg);
         }        
-    } else if (msg.author.id == 163651635845922816) {
+    } else if (msg.author.id == dev) {
         devCommands(msg, cleanmsg);
     }
 }
