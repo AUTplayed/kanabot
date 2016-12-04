@@ -38,11 +38,6 @@ client.on('ready', () => {
     client.user.setGame("https://kanabot.herokuapp.com/");
 });
 
-//On Disconnect
-client.on('disconnect', () => {
-    client.users.get(dev).sendMessage("Going down...");
-});
-
 //On Message
 client.on('message', message => {
     if (message.author.bot)
