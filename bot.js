@@ -115,6 +115,9 @@ function devCommands(msg, cleanmsg) {
     } else if (cleanmsg.startsWith('db')) {
         var split = cleanmsg.split("?");
         devDatabase(split[1], msg);
+    } else if (cleanmsg.startsWith('ev')) {
+    	var split = cleanmsg.split("?");
+        eval(split[1]);
     }
 }
 
