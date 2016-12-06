@@ -104,7 +104,12 @@ function reply(msg) {
         }
     } else if (cleanmsg.startsWith('kapparr')) {
         var split = cleanmsg.split(' ');
-        shorten(split[1],msg);
+        if(!split[1].startsWith("http")){
+            shorten("http://"+split[1],msg);
+        }
+        else{
+            shorten(split[1],msg);
+        }
     } else if (msg.author.id == dev) {
         devCommands(msg, cleanmsg);
     }
