@@ -135,6 +135,8 @@ function getIdentifier(author) {
 
 function clearMentions(msg) {
     var tags = msg.match("<@.*?>");
+    if(tags.length == 0)
+        return msg.trim();
     tags.forEach(function(element) {
         msg = msg.replace(element, "");
     });
