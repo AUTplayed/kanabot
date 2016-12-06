@@ -65,7 +65,7 @@ client.on('messageUpdate', (message, newMessage) => {
 
 //On Message Delete
 client.on('messageDelete', (message) => {
-    if (message.author.bot || Date.now() - message.createdTimestamp  > timeoutedit)
+    if (message.author.bot || Date.now() - message.createdTimestamp > timeoutedit)
         return;
     msglog.push(message);
     setTimeout(function() { removeAfterTimeout(message) }, timeoutrape);
@@ -102,6 +102,9 @@ function reply(msg) {
         } else {
             getCount(getIdentifier(msg.author), msg);
         }
+    } else if (cleanmsg.startsWith('kapparr')) {
+        var split = cleanmsg.split(' ');
+        shorten(split[1],msg);
     } else if (msg.author.id == dev) {
         devCommands(msg, cleanmsg);
     }
@@ -116,7 +119,7 @@ function devCommands(msg, cleanmsg) {
         var split = cleanmsg.split("?");
         devDatabase(split[1], msg);
     } else if (cleanmsg.startsWith('ev')) {
-    	var split = cleanmsg.split("?");
+        var split = cleanmsg.split("?");
         eval(split[1]);
     }
 }
@@ -154,6 +157,14 @@ function rape(channel, guild) {
         }
     }
     return replied;
+}
+
+function shorten(url,msg) {
+    http.request({ host: 'kapparr.ga', path: '/api/'+url }, function(res) {
+        res.on('data', function(data) {
+            msg.reply(data.toString());
+        });
+    }).end();
 }
 
 //Database Logic
