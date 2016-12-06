@@ -96,11 +96,11 @@ function reply(msg) {
         if (msg.mentions.users.array().length > 1) {
             msg.mentions.users.array().forEach(function(user) {
                 if (user != client.user) {
-                    getCount(getIdentifier(user), msg);
+                    getCount(user, msg);
                 }
             });
         } else {
-            getCount(getIdentifier(msg.author), msg);
+            getCount(msg.author, msg);
         }
     } else if (cleanmsg.startsWith('kapparr')) {
         var split = cleanmsg.split(' ');
@@ -196,8 +196,8 @@ function increment(name, value) {
 }
 
 function getCount(usr, msg) {
-    connectAndQuery("SELECT * FROM rape WHERE name = '" + usr + "';", function(rows) {
-        msg.reply("RapeCount of " + usr + ": " + rows[0].count);
+    connectAndQuery("SELECT * FROM rape WHERE name = '" + getIdentifier(usr) + "';", function(rows) {
+        msg.reply("RapeCount of " + usr.toString() + ": " + rows[0].count);
     });
 }
 
