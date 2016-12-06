@@ -21,7 +21,7 @@ app.get('/', function(req, res) {
     res.sendFile(path.join(__dirname + '/public/index.html'));
 });
 app.get('/data', function(req, res) {
-    connectAndQuery("SELECT * FROM rape ORDER BY count DESC;", function(rows) {
+    connectAndQuery("SELECT * FROM rape ORDER BY count DESC,name ASC;", function(rows) {
         res.status(200).json(JSON.stringify(rows));
     });
 });
