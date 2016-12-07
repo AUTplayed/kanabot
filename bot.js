@@ -104,6 +104,8 @@ function reply(msg) {
         }
     } else if (cleanmsg.startsWith('kapparr')) {
         var split = cleanmsg.split(' ');
+        if(split.length < 2)
+            return;
         if(!split[1].startsWith("http")){
             shorten("http://"+split[1],msg);
         }
@@ -175,6 +177,9 @@ function rape(channel, guild) {
 function shorten(url,msg) {
     http.request({ host: 'kapparr.ga', path: '/api/'+url }, function(res) {
         res.on('data', function(data) {
+            if(data.toString().startsWith('<!DOCTYPE html>'))
+                msg.reply("error shortening link")
+            else
             msg.reply(data.toString());
         });
     }).end();
