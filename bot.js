@@ -51,7 +51,7 @@ client.on('message', message => {
 client.on('messageUpdate', (message, newMessage) => {
     if (newMessage.author.bot)
         return;
-    if (newMessage.editedAt && message.cleanContent != newMessage.cleanContent && Date.now() - message.createdTimestamp <= timeoutedit && message.channel.type == 'text') {
+    if (newMessage.editedAt && !message.editedAt && Date.now() - message.createdTimestamp <= timeoutedit && message.channel.type != 'dm') {
         msglog.push(message);
         setTimeout(function() {
             if (removeAfterTimeout(message)) {
