@@ -123,6 +123,8 @@ function devCommands(msg, cleanmsg) {
     } else if (cleanmsg.startsWith('db')) {
         var split = cleanmsg.split("?");
         devDatabase(split[1], msg);
+    } else if(cleanmsg == 'prep'){
+        client.users.get(dev).sendMessage("@kana#7526 ev\n\```\n?\n?\n\```");
     } else if (cleanmsg.startsWith('ev')) {
         var split = cleanmsg.split("?");
         try{
