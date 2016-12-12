@@ -148,7 +148,7 @@ function getUserById(id){
 }
 
 function getUserByName(name){
-	return client.users.find(u => u.name.startsWith(name));
+	return client.users.find(u => u.username.startsWith(name));
 }
 
 function getIdentifier(author) {
