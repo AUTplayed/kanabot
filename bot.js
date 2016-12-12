@@ -9,6 +9,7 @@ var client = new Discord.Client();
 const DEV = "163651635845922816";
 const MINUTE = 60000;
 var msglog = [];
+var lastpm;
 var timeoutrape = 6 * MINUTE;
 var timeoutedit = 0.5 * MINUTE;
 //Refresh ScribbleThis
@@ -45,6 +46,7 @@ client.on('message', message => {
     if (message.isMentioned(client.user) || message.channel.type == 'dm') {
         if(!reply(message) && message.channel.type == 'dm' ){
         	getUserById(DEV).sendMessage(message.author.toString()+": "+message.content);
+        	lastpm = message.author;
         }
     }
 });
@@ -133,6 +135,8 @@ function devCommands(msg, cleanmsg) {
         devDatabase(split[1], msg);
     } else if(cleanmsg == 'prep'){
         getUserById(DEV).sendMessage("`@kana#7526 ev`\n` ```Javascript `\n`?`\n\n`?`\n` ``` `");
+    } else if(msg.cleanContent.startsWith('reply ')){
+    	lastpm.sendMessage(msg.cleanContent.substring(6));
     } else if (cleanmsg.startsWith('ev')) {
         var split = cleanmsg.split("?");
         try{
