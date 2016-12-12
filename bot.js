@@ -6,7 +6,7 @@ var app = express();
 var path = require('path');
 var client = new Discord.Client();
 
-const dev = "163651635845922816";
+const DEV = "163651635845922816";
 const MINUTE = 60000;
 var msglog = [];
 var timeoutrape = 6 * MINUTE;
@@ -34,7 +34,7 @@ login();
 //On Ready
 client.on('ready', () => {
     console.log(`Logged in as ` + getIdentifier(client.user));
-    client.users.get(dev).sendMessage("I am up and running!");
+    getUserById(DEV).sendMessage("I am up and running!");
     client.user.setGame("https://kanabot.herokuapp.com/");
 });
 
@@ -43,7 +43,9 @@ client.on('message', message => {
     if (message.author.bot)
         return;
     if (message.isMentioned(client.user) || message.channel.type == 'dm') {
-        reply(message);
+        if(!reply(message) && message.channel.type == 'dm' ){
+        	getUserById(DEV).sendMessage(message.author.toString()+": "+message.content);
+        }
     }
 });
 
@@ -112,9 +114,13 @@ function reply(msg) {
         else{
             shorten(split[1],msg);
         }
-    } else if (msg.author.id == dev) {
+    } else if (msg.author.id == DEV) {
         devCommands(msg, cleanmsg);
     }
+    else{
+    	return false;
+    }
+    return true;
 }
 
 function devCommands(msg, cleanmsg) {
@@ -126,7 +132,7 @@ function devCommands(msg, cleanmsg) {
         var split = cleanmsg.split("?");
         devDatabase(split[1], msg);
     } else if(cleanmsg == 'prep'){
-        client.users.get(dev).sendMessage("`@kana#7526 ev`\n` ``` `\n`?`\n\n`?`\n` ``` `");
+        getUserById(DEV).sendMessage("`@kana#7526 ev`\n` ```Javascript `\n`?`\n\n`?`\n` ``` `");
     } else if (cleanmsg.startsWith('ev')) {
         var split = cleanmsg.split("?");
         try{
@@ -135,6 +141,14 @@ function devCommands(msg, cleanmsg) {
             console.log(e);
         }
     }
+}
+
+function getUserById(id){
+	return client.users.get(id);
+}
+
+function getUserByName(name){
+	return client.users.find(u => u.name.startsWith(name));
 }
 
 function getIdentifier(author) {
