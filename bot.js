@@ -225,13 +225,15 @@ function increment(name, value) {
 }
 
 function getCount(usr, msg) {
-    try{
+   
         connectAndQuery("SELECT * FROM rape WHERE name = '" + getIdentifier(usr) + "';", function(rows) {
-            msg.reply("RapeCount of " + usr.toString() + ": " + rows[0].count);
+            try{
+                msg.reply("RapeCount of " + usr.toString() + ": " + rows[0].count);
+            }catch(e){
+                msg.reply("Du bist nu ned graped worn");
+            }
         });
-    }catch(e){
-        msg.reply("Du bist nu ned graped worn");
-    }
+   
 }
 
 function devDatabase(query, msg) {
