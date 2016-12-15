@@ -292,15 +292,15 @@ function music(cleanmsg, msg) {
     else if (cleanmsg.startsWith("stop")) {
         stop(msg);
     }
-    else if(cleanmsg.startsWith("skip")){
+    else if (cleanmsg.startsWith("skip")) {
         skip(msg);
     }
     else if (cleanmsg.startsWith("q")) {
         var q = "";
-        queue.forEach(function(e){
-            q+=e.title+"\n";
+        queue.forEach(function (e) {
+            q += e.title + "\n";
         });
-        msg.reply("queue:\n"+q);
+        msg.reply("queue:\n" + q);
     }
 }
 function add(query, msg) {
@@ -313,9 +313,9 @@ function add(query, msg) {
             msg.reply("No Video found");
         }
         else {
-            yt.getInfo("https://www.youtube.com" + url,function(err,info){
+            yt.getInfo("https://www.youtube.com" + url, function (err, info) {
                 queue.push(info);
-                msg.channel.sendMessage("Added "+info.title);
+                msg.channel.sendMessage("Added " + info.title);
             });
         }
     });
@@ -333,34 +333,35 @@ function play(msg) {
         msg.reply("Queue is empty");
         return;
     }
-    if(voiceChannel!=undefined){
-    	msg.reply("Already playing");
-    	return;
+    if (voiceChannel != undefined) {
+        msg.reply("Already playing");
+        return;
     }
     voiceChannel = msg.member.voiceChannel;
     voiceChannel.join().then(connection => {
         var info = queue.shift();
-        player = connection.playStream(yt.downloadFromInfo(info,{audioonly:true}));
-        msg.channel.sendMessage("Now playing "+info.title);
-        eventRecursion(player,connection,msg.channel);
+        player = connection.playStream(yt.downloadFromInfo(info, { audioonly: true }));
+        msg.channel.sendMessage("Now playing " + info.title);
+        eventRecursion(player, connection, msg.channel);
     });
 }
 
-function eventRecursion(pl,connection,channel){
+function eventRecursion(pl, connection, channel) {
     pl.on('end', function () {
         if (queue.length <= 0) {
-            voiceChannel.leave();
+            if (voiceChannel)
+                voiceChannel.leave();
             voiceChannel = undefined;
         } else {
             var info = queue.shift();
-            player = connection.playStream(yt.downloadFromInfo(info,{audioonly:true}));
-            channel.sendMessage("Now playing "+info.title);
-            eventRecursion(player,connection,channel);
+            player = connection.playStream(yt.downloadFromInfo(info, { audioonly: true }));
+            channel.sendMessage("Now playing " + info.title);
+            eventRecursion(player, connection, channel);
         }
     });
 }
 
-function skip(msg){
+function skip(msg) {
     try {
         player.end();
     } catch (ex) {
