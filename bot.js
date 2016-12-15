@@ -16,7 +16,6 @@ var voiceChannel;
 var voiceconn;
 var player;
 var queue = [];
-var stopped = false;
 
 var timeoutrape = 6 * MINUTE;
 var timeoutedit = 0.5 * MINUTE;
@@ -309,12 +308,11 @@ function add(query, msg) {
         }
         else {
             yt.getInfo("https://www.youtube.com" + url,function(err,info){
-                console.log(info);
+                queue.push(info);
             });
             var stream = yt("https://www.youtube.com" + url, {
                 audioonly: true
             });
-            queue.push(stream);
         }
     });
 }
@@ -338,16 +336,19 @@ function play(msg) {
     voiceChannel = msg.member.voiceChannel;
     voiceChannel.join().then(connnection => {
         voiceconn = connnection;
-        player = connnection.playStream(queue.shift());
+        var info = queue.shift();
+        player = connnection.playStream(yt.downloadFromInfo(info,{audioonly:true}));
+        msg.channel.sendMessage("Now playing "+info.title);
         player.on('end', function () {
-            console.log("ended, "+stopped+queue.length);
-            if (stopped || queue.length <= 0 || !queue) {
+            console.log("ended, "+queue.length);
+            if (queue.length <= 0) {
                 voiceChannel.leave();
                 voiceChannel = undefined;
             } else {
-                connnection.playStream(queue.shift());
+                var info = queue.shift();
+                player = connnection.playStream(yt.downloadFromInfo(info,{audioonly:true}));
+                msg.channel.sendMessage("Now playing "+info.title);
             }
-            stopped = false;
         });
     });
 }
@@ -356,8 +357,6 @@ function stop(msg) {
     try {
         voiceChannel.leave();
         voiceChannel = undefined;
-        player.end();
-        stopped = true;
     } catch (ex) {
         msg.reply("No current playback running");
     }
