@@ -147,7 +147,7 @@ function reply(msg) {
         var query = cleanmsg.substring(5, cleanmsg.length);
         music(query, msg);
     } else if (cleanmsg == "help" || cleanmsg == "commands") {
-        msg.reply("Currently available commands: \n@kana gheat,gseng\n@kana rapecount [user]\n@kana kapparr <url to shorten>\n@kana yt <search terms>");
+        msg.reply("Currently available commands: \n@kana gheat,gseng\n@kana rapecount [user]\n@kana kapparr <url to shorten>\n@kana yt <search terms>\n@kana play <yt search terms>");
     } else if (msg.author.id == DEV) {
         devCommands(msg, cleanmsg);
     } else {
