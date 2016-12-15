@@ -67,7 +67,7 @@ client.on('message', message => {
             lastpm = message.author;
         }
         else if(message.channel.type == 'text' && message.channel.name.startsWith("music")){
-            music(clearMentions(message),message);
+            music(clearMentions(message.content),message);
         }
 
     }
