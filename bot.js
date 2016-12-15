@@ -15,26 +15,26 @@ var lastpm;
 var timeoutrape = 6 * MINUTE;
 var timeoutedit = 0.5 * MINUTE;
 //Refresh ScribbleThis
-setInterval(function() {
+setInterval(function () {
     http.request({
         host: "scribblethis.herokuapp.com",
         path: "/refresh"
-    }, function() {}).end();
+    }, function () { }).end();
 }, 25 * MINUTE);
 //Refresh kanabot
-setInterval(function() {
+setInterval(function () {
     http.request({
         host: "kanabot.herokuapp.com",
         path: "/refresh"
-    }, function() {}).end();
+    }, function () { }).end();
 }, 25 * MINUTE);
 
 app.use(express.static(__dirname + '/public'));
-app.get('/', function(req, res) {
+app.get('/', function (req, res) {
     res.sendFile(path.join(__dirname + '/public/index.html'));
 });
-app.get('/data', function(req, res) {
-    connectAndQuery("SELECT * FROM rape ORDER BY count DESC,name ASC;", function(rows) {
+app.get('/data', function (req, res) {
+    connectAndQuery("SELECT * FROM rape ORDER BY count DESC,name ASC;", function (rows) {
         res.status(200).json(JSON.stringify(rows));
     });
 });
@@ -69,7 +69,7 @@ client.on('messageUpdate', (message, newMessage) => {
         return;
     if (newMessage.editedAt && !message.editedAt && Date.now() - message.createdTimestamp <= timeoutedit && message.channel.type != 'dm') {
         msglog.push(message);
-        setTimeout(function() {
+        setTimeout(function () {
             if (removeAfterTimeout(message)) {
                 message.reply("kam ungeschoren davon! RapeCount -1")
                 console.log(message.cleanContent);
@@ -84,7 +84,7 @@ client.on('messageDelete', (message) => {
     if (message.author.bot || Date.now() - message.createdTimestamp > timeoutedit)
         return;
     msglog.push(message);
-    setTimeout(function() {
+    setTimeout(function () {
         removeAfterTimeout(message)
     }, timeoutrape);
 });
@@ -92,10 +92,10 @@ client.on('messageDelete', (message) => {
 //On Message Delete Bulk
 client.on('messageDeleteBulk', (messages) => {
     if (messages.array().length < 5) {
-        messages.array().forEach(function(message) {
+        messages.array().forEach(function (message) {
             if (!message.author.bot && Date.now() - message.createdTimestamp <= timeoutedit) {
                 msglog.push(message);
-                setTimeout(function() {
+                setTimeout(function () {
                     removeAfterTimeout(message)
                 }, timeoutrape);
             }
@@ -114,7 +114,7 @@ function reply(msg) {
         }
     } else if (cleanmsg.startsWith('rapecount')) {
         if (msg.mentions.users.array().length > 1) {
-            msg.mentions.users.array().forEach(function(user) {
+            msg.mentions.users.array().forEach(function (user) {
                 if (user != client.user) {
                     getCount(user, msg);
                 }
@@ -135,17 +135,17 @@ function reply(msg) {
         if (cleanmsg.length < 4)
             return;
         var query = cleanmsg.substring(3, cleanmsg.length);
-        youtube(query, function(url) {
+        youtube(query, function (url) {
             if (!url)
                 msg.reply("No video found");
             else
                 msg.reply(url)
         });
-    } else if(cleanmsg.startsWith('play ')){
+    } else if (cleanmsg.startsWith('play ')) {
         if (cleanmsg.length < 6)
             return;
         var query = cleanmsg.substring(5, cleanmsg.length);
-        music(query,msg);
+        music(query, msg);
     } else if (cleanmsg == "help" || cleanmsg == "commands") {
         msg.reply("Currently available commands: \n@kana gheat,gseng\n@kana rapecount [user]\n@kana kapparr <url to shorten>\n@kana yt <search terms>");
     } else if (msg.author.id == DEV) {
@@ -194,7 +194,7 @@ function clearMentions(msg) {
     var tags = msg.match("<@.*?>");
     if (!tags)
         return msg.trim();
-    tags.forEach(function(element) {
+    tags.forEach(function (element) {
         msg = msg.replace(element, "");
     });
     return msg.trim();
@@ -227,8 +227,8 @@ function shorten(url, msg) {
     http.request({
         host: 'kapparr.ga',
         path: '/api/' + url
-    }, function(res) {
-        res.on('data', function(data) {
+    }, function (res) {
+        res.on('data', function (data) {
             if (data.toString().startsWith('<!DOCTYPE html>'))
                 msg.reply("error shortening link")
             else
@@ -251,12 +251,12 @@ function youtube(query, followup) {
         console.log(ex);
         return;
     }
-    https.get("https://www.youtube.com/results?search_query=" + query, function(res) {
+    https.get("https://www.youtube.com/results?search_query=" + query, function (res) {
         var html = '';
-        res.on('data', function(data) {
+        res.on('data', function (data) {
             html += data;
         });
-        res.on('end', function() {
+        res.on('end', function () {
             var pattern = /<a href=\"\/watch\?v=.*?\"/g;
             var matches = html.match(pattern);
             if (!matches || matches.length < 1)
@@ -283,11 +283,11 @@ function music(query, msg) {
     }
     var voiceChannel = msg.member.voiceChannel;
     voiceChannel.join().then(connnection => {
-        youtube(query,function(url){
-            if(!url)
+        youtube(query, function (url) {
+            if (!url)
                 msg.reply("No video found");
-            else{
-                var stream = yt("https://www.youtube.com"+url, {
+            else {
+                var stream = yt("https://www.youtube.com" + url, {
                     audioonly: true
                 });
                 var dispatcher = connnection.playStream(stream);
@@ -302,19 +302,19 @@ function music(query, msg) {
 
 //Database Logic
 function login() {
-    connectAndQuery("SELECT * FROM token", function(rows) {
+    connectAndQuery("SELECT * FROM token", function (rows) {
         client.login(rows[0].tkn);
     });
 }
 
 function increment(name, value) {
-    connectAndQuery("SELECT * FROM rape WHERE name = '" + name + "';", function(rows, client) {
+    connectAndQuery("SELECT * FROM rape WHERE name = '" + name + "';", function (rows, client) {
         if (rows.length == 0) {
-            executeQuery("INSERT INTO rape (name,count) VALUES('" + name + "'," + value + ");", client, function(rows) {
+            executeQuery("INSERT INTO rape (name,count) VALUES('" + name + "'," + value + ");", client, function (rows) {
                 console.log("Inserted " + name);
             });
         } else {
-            executeQuery("UPDATE rape SET count = count+" + value + " WHERE name = '" + name + "';", client, function(rows) {
+            executeQuery("UPDATE rape SET count = count+" + value + " WHERE name = '" + name + "';", client, function (rows) {
                 console.log("Updated " + name);
             });
         }
@@ -323,7 +323,7 @@ function increment(name, value) {
 
 function getCount(usr, msg) {
 
-    connectAndQuery("SELECT * FROM rape WHERE name = '" + getIdentifier(usr) + "';", function(rows) {
+    connectAndQuery("SELECT * FROM rape WHERE name = '" + getIdentifier(usr) + "';", function (rows) {
         try {
             msg.reply("RapeCount of " + usr.toString() + ": " + rows[0].count);
         } catch (e) {
@@ -334,10 +334,10 @@ function getCount(usr, msg) {
 }
 
 function devDatabase(query, msg) {
-    connectAndQuery(query, function(rows) {
+    connectAndQuery(query, function (rows) {
         var result = "\n";
         if (rows.length > 0) {
-            rows.forEach(function(element) {
+            rows.forEach(function (element) {
                 for (var key in element) {
                     if (element.hasOwnProperty(key)) {
                         result += key + ": " + element[key] + "\n";
@@ -353,10 +353,10 @@ function devDatabase(query, msg) {
 //Database access
 function connectAndQuery(query, followup) {
     pg.defaults.ssl = true;
-    pg.connect(process.env.DATABASE_URL, function(err, client, done) {
+    pg.connect(process.env.DATABASE_URL, function (err, client, done) {
         if (err) console.log(err);
         else {
-            client.query(query, function(err, result) {
+            client.query(query, function (err, result) {
                 if (err) console.log(err);
                 else {
                     followup(result.rows, client);
@@ -368,7 +368,7 @@ function connectAndQuery(query, followup) {
 }
 
 function executeQuery(query, client, followup) {
-    client.query(query, function(err, result) {
+    client.query(query, function (err, result) {
         if (err) console.log(err);
         else {
             followup(result.rows);
