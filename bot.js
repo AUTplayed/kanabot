@@ -62,12 +62,11 @@ client.on('message', message => {
     if (message.author.bot)
         return;
     if (message.isMentioned(client.user) || message.channel.type == 'dm') {
-        var validcomm = reply(message);
-        if (!validcomm && message.channel.type == 'dm') {
+        if (!reply(message) && message.channel.type == 'dm') {
             getUserById(DEV).sendMessage(message.author.toString() + ": " + message.content);
             lastpm = message.author;
         }
-        else if(message.channel.type == 'text' && !validcomm && message.channel.name.startsWith("music")){
+        else if(message.channel.type == 'text' && message.channel.name.startsWith("music")){
             music(clearMentions(message),message);
         }
 
@@ -285,9 +284,9 @@ function music(cleanmsg, msg){
         play(msg);
     }
     else if(cleanmsg.startsWith("add ")){
-        if (cleanmsg.length < 6)
+        if (cleanmsg.length < 5)
             return;
-        var query = cleanmsg.substring(5, cleanmsg.length);
+        var query = cleanmsg.substring(4, cleanmsg.length);
         add(query,msg);
     }
     else if(cleanmsg.startsWith("stop")){
