@@ -1,9 +1,11 @@
 var Discord = require("discord.js");
 var pg = require('pg');
 var http = require("http");
+var https = require("https");
 var express = require('express');
 var app = express();
 var path = require('path');
+var $ = require('jquery');
 var client = new Discord.Client();
 
 const DEV = "163651635845922816";
@@ -116,6 +118,17 @@ function reply(msg) {
         else{
             shorten(split[1],msg);
         }
+    } else if (cleanmsg.startsWith('yt ')){
+        if(cleanmsg.length < 4)
+            return;
+        var query = cleanmsg.substring(3,cleanmsg.length);
+        youtube(query,function(url){
+            if(!url)
+                msg.reply("No video found");
+            else
+                msg.reply(url)
+        });
+    }
     } else if (msg.author.id == DEV) {
         devCommands(msg, cleanmsg);
     }
@@ -202,6 +215,42 @@ function shorten(url,msg) {
         });
     }).end();
 }
+
+function youtube(query,followup){
+    try{
+        query = query.replace(/%/g,"%25");
+        query = query.replace(/ /g,"+");
+        console.log(query);
+        for(var i in query){
+            if(query[i].charCodeAt() < 48 && query[i] != "+" && query[i] != "%"){
+                query =  query.replace(query[i],"%"+query[i].charCodeAt().toString(16));
+            }
+        }
+    }catch(ex){
+        console.log(ex);
+        return;
+    }
+    https.get("https://www.youtube.com/results?search_query="+query, function(res){
+        var html = '';
+        res.on('data', function (data) {
+            html += data;
+        });
+        res.on('end', function () {
+            var pattern = /<a href=\"\/watch\?v=.*?\"/g;
+            var matches = html.match(pattern);
+            if(!matches || matches.length < 1)
+                followup(undefined);
+            else{
+                matches = matches[0].split("\"");
+                matches = matches[1].split("&");
+                matches = matches[0];
+                followup(matches);
+            }
+        });
+    }).end();
+
+}
+
 
 //Database Logic
 function login() {
