@@ -245,6 +245,7 @@ function shorten(url, msg) {
     }).end();
 }
 
+//Music
 function youtube(query, followup) {
     try {
         query = query.replace(/%/g, "%25");
@@ -307,6 +308,9 @@ function add(query, msg) {
             msg.reply("No Video found");
         }
         else {
+            yt.getInfo("https://www.youtube.com" + url,function(err,info){
+                console.log(info);
+            });
             var stream = yt("https://www.youtube.com" + url, {
                 audioonly: true
             });
@@ -336,6 +340,7 @@ function play(msg) {
         voiceconn = connnection;
         player = connnection.playStream(queue.shift());
         player.on('end', function () {
+            console.log("ended, "+stopped+queue.length);
             if (stopped || queue.length <= 0 || !queue) {
                 voiceChannel.leave();
                 voiceChannel = undefined;
