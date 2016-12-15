@@ -15,16 +15,16 @@ var lastpm;
 var timeoutrape = 6 * MINUTE;
 var timeoutedit = 0.5 * MINUTE;
 //Refresh ScribbleThis
-setInterval(function() { http.request({ host: "scribblethis.herokuapp.com", path: "/refresh" }, function() {}).end(); }, 25 * MINUTE);
+setInterval(function () { http.request({ host: "scribblethis.herokuapp.com", path: "/refresh" }, function () { }).end(); }, 25 * MINUTE);
 //Refresh kanabot
-setInterval(function() { http.request({ host: "kanabot.herokuapp.com", path: "/refresh" }, function() {}).end(); }, 25 * MINUTE);
+setInterval(function () { http.request({ host: "kanabot.herokuapp.com", path: "/refresh" }, function () { }).end(); }, 25 * MINUTE);
 
 app.use(express.static(__dirname + '/public'));
-app.get('/', function(req, res) {
+app.get('/', function (req, res) {
     res.sendFile(path.join(__dirname + '/public/index.html'));
 });
-app.get('/data', function(req, res) {
-    connectAndQuery("SELECT * FROM rape ORDER BY count DESC,name ASC;", function(rows) {
+app.get('/data', function (req, res) {
+    connectAndQuery("SELECT * FROM rape ORDER BY count DESC,name ASC;", function (rows) {
         res.status(200).json(JSON.stringify(rows));
     });
 });
@@ -46,9 +46,9 @@ client.on('message', message => {
     if (message.author.bot)
         return;
     if (message.isMentioned(client.user) || message.channel.type == 'dm') {
-        if(!reply(message) && message.channel.type == 'dm' ){
-        	getUserById(DEV).sendMessage(message.author.toString()+": "+message.content);
-        	lastpm = message.author;
+        if (!reply(message) && message.channel.type == 'dm') {
+            getUserById(DEV).sendMessage(message.author.toString() + ": " + message.content);
+            lastpm = message.author;
         }
     }
 });
@@ -59,7 +59,7 @@ client.on('messageUpdate', (message, newMessage) => {
         return;
     if (newMessage.editedAt && !message.editedAt && Date.now() - message.createdTimestamp <= timeoutedit && message.channel.type != 'dm') {
         msglog.push(message);
-        setTimeout(function() {
+        setTimeout(function () {
             if (removeAfterTimeout(message)) {
                 message.reply("kam ungeschoren davon! RapeCount -1")
                 console.log(message.cleanContent);
@@ -74,16 +74,16 @@ client.on('messageDelete', (message) => {
     if (message.author.bot || Date.now() - message.createdTimestamp > timeoutedit)
         return;
     msglog.push(message);
-    setTimeout(function() { removeAfterTimeout(message) }, timeoutrape);
+    setTimeout(function () { removeAfterTimeout(message) }, timeoutrape);
 });
 
 //On Message Delete Bulk
 client.on('messageDeleteBulk', (messages) => {
     if (messages.array().length < 5) {
-        messages.array().forEach(function(message) {
+        messages.array().forEach(function (message) {
             if (!message.author.bot && Date.now() - message.createdTimestamp <= timeoutedit) {
                 msglog.push(message);
-                setTimeout(function() { removeAfterTimeout(message) }, timeoutrape);
+                setTimeout(function () { removeAfterTimeout(message) }, timeoutrape);
             }
         });
     }
@@ -100,7 +100,7 @@ function reply(msg) {
         }
     } else if (cleanmsg.startsWith('rapecount')) {
         if (msg.mentions.users.array().length > 1) {
-            msg.mentions.users.array().forEach(function(user) {
+            msg.mentions.users.array().forEach(function (user) {
                 if (user != client.user) {
                     getCount(user, msg);
                 }
@@ -110,30 +110,31 @@ function reply(msg) {
         }
     } else if (cleanmsg.startsWith('kapparr')) {
         var split = cleanmsg.split(' ');
-        if(split.length < 2)
+        if (split.length < 2)
             return;
-        if(!split[1].startsWith("http")){
-            shorten("http://"+split[1],msg);
+        if (!split[1].startsWith("http")) {
+            shorten("http://" + split[1], msg);
         }
-        else{
-            shorten(split[1],msg);
+        else {
+            shorten(split[1], msg);
         }
-    } else if (cleanmsg.startsWith('yt ')){
-        if(cleanmsg.length < 4)
+    } else if (cleanmsg.startsWith('yt ')) {
+        if (cleanmsg.length < 4)
             return;
-        var query = cleanmsg.substring(3,cleanmsg.length);
-        youtube(query,function(url){
-            if(!url)
+        var query = cleanmsg.substring(3, cleanmsg.length);
+        youtube(query, function (url) {
+            if (!url)
                 msg.reply("No video found");
             else
                 msg.reply(url)
         });
-    }
+    } else if (cleanmsg == "help" || cleanmsg == "commands") {
+        msg.reply("Currently available commands: \n@kana gheat,gseng\n@kana rapecount [user]\n@kana kapparr <url to shorten>\n@kana yt <search terms>");
     } else if (msg.author.id == DEV) {
         devCommands(msg, cleanmsg);
     }
-    else{
-    	return false;
+    else {
+        return false;
     }
     return true;
 }
@@ -146,26 +147,26 @@ function devCommands(msg, cleanmsg) {
     } else if (cleanmsg.startsWith('db')) {
         var split = cleanmsg.split("?");
         devDatabase(split[1], msg);
-    } else if(cleanmsg == 'prep'){
+    } else if (cleanmsg == 'prep') {
         getUserById(DEV).sendMessage("`@kana#7526 ev`\n` ```Javascript `\n`?`\n\n`?`\n` ``` `");
-    } else if(msg.cleanContent.startsWith('reply ')){
-    	lastpm.sendMessage(msg.cleanContent.substring(6));
+    } else if (msg.cleanContent.startsWith('reply ')) {
+        lastpm.sendMessage(msg.cleanContent.substring(6));
     } else if (cleanmsg.startsWith('ev')) {
         var split = cleanmsg.split("?");
-        try{
+        try {
             eval(split[1]);
-        } catch(e) {
+        } catch (e) {
             console.log(e);
         }
     }
 }
 
-function getUserById(id){
-	return client.users.get(id);
+function getUserById(id) {
+    return client.users.get(id);
 }
 
-function getUserByName(name){
-	return client.users.find(u => u.username.startsWith(name));
+function getUserByName(name) {
+    return client.users.find(u => u.username.startsWith(name));
 }
 
 function getIdentifier(author) {
@@ -174,9 +175,9 @@ function getIdentifier(author) {
 
 function clearMentions(msg) {
     var tags = msg.match("<@.*?>");
-    if(!tags)
+    if (!tags)
         return msg.trim();
-    tags.forEach(function(element) {
+    tags.forEach(function (element) {
         msg = msg.replace(element, "");
     });
     return msg.trim();
@@ -205,32 +206,32 @@ function rape(channel, guild) {
     return replied;
 }
 
-function shorten(url,msg) {
-    http.request({ host: 'kapparr.ga', path: '/api/'+url }, function(res) {
-        res.on('data', function(data) {
-            if(data.toString().startsWith('<!DOCTYPE html>'))
+function shorten(url, msg) {
+    http.request({ host: 'kapparr.ga', path: '/api/' + url }, function (res) {
+        res.on('data', function (data) {
+            if (data.toString().startsWith('<!DOCTYPE html>'))
                 msg.reply("error shortening link")
             else
-            msg.reply(data.toString());
+                msg.reply(data.toString());
         });
     }).end();
 }
 
-function youtube(query,followup){
-    try{
-        query = query.replace(/%/g,"%25");
-        query = query.replace(/ /g,"+");
+function youtube(query, followup) {
+    try {
+        query = query.replace(/%/g, "%25");
+        query = query.replace(/ /g, "+");
         console.log(query);
-        for(var i in query){
-            if(query[i].charCodeAt() < 48 && query[i] != "+" && query[i] != "%"){
-                query =  query.replace(query[i],"%"+query[i].charCodeAt().toString(16));
+        for (var i in query) {
+            if (query[i].charCodeAt() < 48 && query[i] != "+" && query[i] != "%") {
+                query = query.replace(query[i], "%" + query[i].charCodeAt().toString(16));
             }
         }
-    }catch(ex){
+    } catch (ex) {
         console.log(ex);
         return;
     }
-    https.get("https://www.youtube.com/results?search_query="+query, function(res){
+    https.get("https://www.youtube.com/results?search_query=" + query, function (res) {
         var html = '';
         res.on('data', function (data) {
             html += data;
@@ -238,9 +239,9 @@ function youtube(query,followup){
         res.on('end', function () {
             var pattern = /<a href=\"\/watch\?v=.*?\"/g;
             var matches = html.match(pattern);
-            if(!matches || matches.length < 1)
+            if (!matches || matches.length < 1)
                 followup(undefined);
-            else{
+            else {
                 matches = matches[0].split("\"");
                 matches = matches[1].split("&");
                 matches = matches[0];
@@ -254,19 +255,19 @@ function youtube(query,followup){
 
 //Database Logic
 function login() {
-    connectAndQuery("SELECT * FROM token", function(rows) {
+    connectAndQuery("SELECT * FROM token", function (rows) {
         client.login(rows[0].tkn);
     });
 }
 
 function increment(name, value) {
-    connectAndQuery("SELECT * FROM rape WHERE name = '" + name + "';", function(rows, client) {
+    connectAndQuery("SELECT * FROM rape WHERE name = '" + name + "';", function (rows, client) {
         if (rows.length == 0) {
-            executeQuery("INSERT INTO rape (name,count) VALUES('" + name + "'," + value + ");", client, function(rows) {
+            executeQuery("INSERT INTO rape (name,count) VALUES('" + name + "'," + value + ");", client, function (rows) {
                 console.log("Inserted " + name);
             });
         } else {
-            executeQuery("UPDATE rape SET count = count+" + value + " WHERE name = '" + name + "';", client, function(rows) {
+            executeQuery("UPDATE rape SET count = count+" + value + " WHERE name = '" + name + "';", client, function (rows) {
                 console.log("Updated " + name);
             });
         }
@@ -274,22 +275,22 @@ function increment(name, value) {
 }
 
 function getCount(usr, msg) {
-   
-        connectAndQuery("SELECT * FROM rape WHERE name = '" + getIdentifier(usr) + "';", function(rows) {
-            try{
-                msg.reply("RapeCount of " + usr.toString() + ": " + rows[0].count);
-            }catch(e){
-                msg.reply("Du bist nu ned graped worn");
-            }
-        });
-   
+
+    connectAndQuery("SELECT * FROM rape WHERE name = '" + getIdentifier(usr) + "';", function (rows) {
+        try {
+            msg.reply("RapeCount of " + usr.toString() + ": " + rows[0].count);
+        } catch (e) {
+            msg.reply("Du bist nu ned graped worn");
+        }
+    });
+
 }
 
 function devDatabase(query, msg) {
-    connectAndQuery(query, function(rows) {
+    connectAndQuery(query, function (rows) {
         var result = "\n";
         if (rows.length > 0) {
-            rows.forEach(function(element) {
+            rows.forEach(function (element) {
                 for (var key in element) {
                     if (element.hasOwnProperty(key)) {
                         result += key + ": " + element[key] + "\n";
@@ -305,10 +306,10 @@ function devDatabase(query, msg) {
 //Database access
 function connectAndQuery(query, followup) {
     pg.defaults.ssl = true;
-    pg.connect(process.env.DATABASE_URL, function(err, client, done) {
+    pg.connect(process.env.DATABASE_URL, function (err, client, done) {
         if (err) console.log(err);
         else {
-            client.query(query, function(err, result) {
+            client.query(query, function (err, result) {
                 if (err) console.log(err);
                 else {
                     followup(result.rows, client);
@@ -320,7 +321,7 @@ function connectAndQuery(query, followup) {
 }
 
 function executeQuery(query, client, followup) {
-    client.query(query, function(err, result) {
+    client.query(query, function (err, result) {
         if (err) console.log(err);
         else {
             followup(result.rows);
