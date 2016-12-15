@@ -2,6 +2,10 @@
   "name": "kanabot",
   "description": "discord bot for calling people out on their grammar errors",
   "version": "1.0.0",
+  "license": "yes",
+  "repository": {
+    "url": "https://github.com/AUTplayed/kanabot"
+  },
   "scripts": {
     "start": "node bot.js",
     "worker": "node bot.js"
@@ -18,7 +22,11 @@
     "fs": "0.0.1-security",
     "http": "0.0.0",
     "https": "^1.0.0",
-    "pg": "^6.1.0"
+    "node-gyp": "^3.4.0",
+    "node-opus": "^0.2.4",
+    "opusscript": "0.0.1",
+    "pg": "^6.1.0",
+    "ytdl-core": "^0.7.20"
   },
   "engines": {
     "node": "6.0.0"
