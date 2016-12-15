@@ -62,10 +62,15 @@ client.on('message', message => {
     if (message.author.bot)
         return;
     if (message.isMentioned(client.user) || message.channel.type == 'dm') {
-        if (!reply(message) && message.channel.type == 'dm') {
+        var validcomm = reply(message);
+        if (!validcomm && message.channel.type == 'dm') {
             getUserById(DEV).sendMessage(message.author.toString() + ": " + message.content);
             lastpm = message.author;
         }
+        else if(message.channel.type == text && !validcomm && message.channel.name.startsWith("music")){
+            music(clearMentions(message),message);
+        }
+
     }
 });
 
@@ -147,11 +152,11 @@ function reply(msg) {
             else
                 msg.reply(url)
         });
-    } else if (cleanmsg.startsWith('play ')) {
-        
-        music(query, msg);
+    } else if (cleanmsg.startsWith('music ')) {
+        var musicComm = cleanmsg.substring(6,cleanmsg.length);
+        music(musicComm, msg);
     } else if (cleanmsg == "help" || cleanmsg == "commands") {
-        msg.reply("Currently available commands: \n@kana gheat,gseng\n@kana rapecount [user]\n@kana kapparr <url to shorten>\n@kana yt <search terms>\n@kana play <yt search terms>");
+        msg.reply("Currently available commands: \n@kana gheat,gseng\n@kana rapecount [user]\n@kana kapparr <url to shorten>\n@kana yt <search terms>\n@kana music ...too lazy to fill help");
     } else if (msg.author.id == DEV) {
         devCommands(msg, cleanmsg);
     } else {
