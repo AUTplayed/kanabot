@@ -292,8 +292,15 @@ function music(cleanmsg, msg) {
     else if (cleanmsg.startsWith("stop")) {
         stop(msg);
     }
-    else if (cleanmsg.startsWith("queue")) {
-        msg.reply("q length: " + queue.length);
+    else if(cleanmsg.startsWith("skip")){
+        skip(msg);
+    }
+    else if (cleanmsg.startsWith("q")) {
+        var q = "";
+        queue.forEach(function(e){
+            q+=e.title+"\n";
+        });
+        msg.reply("queue:\n"+q);
     }
 }
 function add(query, msg) {
@@ -308,6 +315,7 @@ function add(query, msg) {
         else {
             yt.getInfo("https://www.youtube.com" + url,function(err,info){
                 queue.push(info);
+                msg.channel.sendMessage("Added "+info.title);
             });
         }
     });
