@@ -328,12 +328,17 @@ function play(msg) {
         msg.reply("Queue is empty");
         return;
     }
+    if(voiceChannel){
+    	msg.reply("Already playing");
+    	return;
+    }
     voiceChannel.join().then(connnection => {
         voiceconn = connnection;
         player = connnection.playStream(queue.shift());
         player.on('end', function () {
-            if (stopped || queue.length == 0) {
+            if (stopped || queue.length <= 0 || !queue) {
                 voiceChannel.leave();
+                voiceChannel = undefined;
             } else {
                 connnection.playStream(queue.shift());
             }
@@ -345,6 +350,7 @@ function play(msg) {
 function stop(msg) {
     try {
         voiceChannel.leave();
+        voiceChannel = undefined;
         player.end();
         stopped = true;
     } catch (ex) {
