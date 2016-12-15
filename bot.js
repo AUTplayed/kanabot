@@ -12,6 +12,12 @@ const DEV = "163651635845922816";
 const MINUTE = 60000;
 var msglog = [];
 var lastpm;
+var voiceChannel;
+var voiceconn;
+var player;
+var queue = [];
+var stopped = false;
+
 var timeoutrape = 6 * MINUTE;
 var timeoutedit = 0.5 * MINUTE;
 //Refresh ScribbleThis
@@ -142,9 +148,7 @@ function reply(msg) {
                 msg.reply(url)
         });
     } else if (cleanmsg.startsWith('play ')) {
-        if (cleanmsg.length < 6)
-            return;
-        var query = cleanmsg.substring(5, cleanmsg.length);
+        
         music(query, msg);
     } else if (cleanmsg == "help" || cleanmsg == "commands") {
         msg.reply("Currently available commands: \n@kana gheat,gseng\n@kana rapecount [user]\n@kana kapparr <url to shorten>\n@kana yt <search terms>\n@kana play <yt search terms>");
@@ -271,8 +275,41 @@ function youtube(query, followup) {
     }).end();
 
 }
-
-function music(query, msg) {
+function music(cleanmsg, msg){
+    if(cleanmsg.startsWith("play")){
+        play(msg);
+    }
+    else if(cleanmsg.startsWith("add ")){
+        if (cleanmsg.length < 6)
+            return;
+        var query = cleanmsg.substring(5, cleanmsg.length);
+        add(query,msg);
+    }
+    else if(cleanmsg.startsWith("stop")){
+        stop(msg);
+    }
+    else if(cleanmsg.startsWith("queue")){
+        msg.reply("q length: "+queue.length);
+    }
+}
+function add(query,msg){
+    if (!msg.member) {
+        msg.reply("Sorry, only in guild chat");
+        return;
+    }
+    youtube(query,function(url){
+        if(!url){
+            msg.reply("No Video found");
+        }
+        else{
+            var stream = yt("https://www.youtube.com" + url, {
+                audioonly: true
+            });
+            queue.push(stream);
+        }
+    });
+}
+function play(msg) {
     if (!msg.member) {
         msg.reply("Sorry, only in guild chat");
         return;
@@ -281,24 +318,33 @@ function music(query, msg) {
         msg.reply("You are not in a voice channel");
         return;
     }
-    var voiceChannel = msg.member.voiceChannel;
+    voiceChannel = msg.member.voiceChannel;
+    if(queue.length == 0){
+        msg.reply("Queue is empty");
+        return;
+    }
     voiceChannel.join().then(connnection => {
-        youtube(query, function (url) {
-            if (!url)
-                msg.reply("No video found");
-            else {
-                var stream = yt("https://www.youtube.com" + url, {
-                    audioonly: true
-                });
-                var dispatcher = connnection.playStream(stream);
-                dispatcher.on('end', () => {
-                    voiceChannel.leave();
-                });
-            }
-        });
+        voiceconn = connnection;
+        player = connnection.playStream(queue.shift());
     });
-
 }
+
+function stop(msg){
+    try{
+        voiceChannel.leave();
+        player.end();
+        stopped = true;
+    }catch(ex){
+        msg.reply("No current playback running");
+    }
+}
+
+player.on('end', function(){
+    if(!stopped){
+        connnection.playStream(queue.shift());
+    }
+    stopped = false;
+});
 
 //Database Logic
 function login() {
@@ -322,7 +368,6 @@ function increment(name, value) {
 }
 
 function getCount(usr, msg) {
-
     connectAndQuery("SELECT * FROM rape WHERE name = '" + getIdentifier(usr) + "';", function (rows) {
         try {
             msg.reply("RapeCount of " + usr.toString() + ": " + rows[0].count);
