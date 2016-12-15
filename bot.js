@@ -5,7 +5,6 @@ var https = require("https");
 var express = require('express');
 var app = express();
 var path = require('path');
-var $ = require('jquery');
 var client = new Discord.Client();
 
 const DEV = "163651635845922816";
