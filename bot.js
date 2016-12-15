@@ -66,8 +66,8 @@ client.on('message', message => {
             getUserById(DEV).sendMessage(message.author.toString() + ": " + message.content);
             lastpm = message.author;
         }
-        else if(message.channel.type == 'text' && message.channel.name.startsWith("music")){
-            music(clearMentions(message.content),message);
+        else if (message.channel.type == 'text' && message.channel.name.startsWith("music")) {
+            music(clearMentions(message.content), message);
         }
 
     }
@@ -152,7 +152,7 @@ function reply(msg) {
                 msg.reply(url)
         });
     } else if (cleanmsg.startsWith('music ')) {
-        var musicComm = cleanmsg.substring(6,cleanmsg.length);
+        var musicComm = cleanmsg.substring(6, cleanmsg.length);
         music(musicComm, msg);
     } else if (cleanmsg == "help" || cleanmsg == "commands") {
         msg.reply("Currently available commands: \n@kana gheat,gseng\n@kana rapecount [user]\n@kana kapparr <url to shorten>\n@kana yt <search terms>\n@kana music ...too lazy to fill help");
@@ -249,12 +249,12 @@ function youtube(query, followup) {
     try {
         query = query.replace(/%/g, "%25");
         query = query.replace(/ /g, "+");
-        console.log(query);
         for (var i in query) {
             if (query[i].charCodeAt() < 48 && query[i] != "+" && query[i] != "%") {
                 query = query.replace(query[i], "%" + query[i].charCodeAt().toString(16));
             }
         }
+        console.log(query);
     } catch (ex) {
         console.log(ex);
         return;
@@ -273,39 +273,40 @@ function youtube(query, followup) {
                 matches = matches[0].split("\"");
                 matches = matches[1].split("&");
                 matches = matches[0];
+                console.log(matches);
                 followup(matches);
             }
         });
     }).end();
 
 }
-function music(cleanmsg, msg){
-    if(cleanmsg.startsWith("play")){
+function music(cleanmsg, msg) {
+    if (cleanmsg.startsWith("play")) {
         play(msg);
     }
-    else if(cleanmsg.startsWith("add ")){
+    else if (cleanmsg.startsWith("add ")) {
         if (cleanmsg.length < 5)
             return;
         var query = cleanmsg.substring(4, cleanmsg.length);
-        add(query,msg);
+        add(query, msg);
     }
-    else if(cleanmsg.startsWith("stop")){
+    else if (cleanmsg.startsWith("stop")) {
         stop(msg);
     }
-    else if(cleanmsg.startsWith("queue")){
-        msg.reply("q length: "+queue.length);
+    else if (cleanmsg.startsWith("queue")) {
+        msg.reply("q length: " + queue.length);
     }
 }
-function add(query,msg){
+function add(query, msg) {
     if (!msg.member) {
         msg.reply("Sorry, only in guild chat");
         return;
     }
-    youtube(query,function(url){
-        if(!url){
+    youtube(query, function (url) {
+        if (!url) {
             msg.reply("No Video found");
         }
-        else{
+        else {
             var stream = yt("https://www.youtube.com" + url, {
                 audioonly: true
             });
@@ -323,30 +324,30 @@ function play(msg) {
         return;
     }
     voiceChannel = msg.member.voiceChannel;
-    if(queue.length == 0){
+    if (queue.length == 0) {
         msg.reply("Queue is empty");
         return;
     }
     voiceChannel.join().then(connnection => {
         voiceconn = connnection;
         player = connnection.playStream(queue.shift());
-        player.on('end', function(){
-            if(!stopped){
-                connnection.playStream(queue.shift());
-            } else {
+        player.on('end', function () {
+            if (stopped || queue.length == 0) {
                 voiceChannel.leave();
+            } else {
+                connnection.playStream(queue.shift());
             }
             stopped = false;
         });
     });
 }
 
-function stop(msg){
-    try{
+function stop(msg) {
+    try {
         voiceChannel.leave();
         player.end();
         stopped = true;
-    }catch(ex){
+    } catch (ex) {
         msg.reply("No current playback running");
     }
 }
