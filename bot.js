@@ -333,6 +333,8 @@ function play(msg) {
         player.on('end', function(){
             if(!stopped){
                 connnection.playStream(queue.shift());
+            } else {
+                voiceChannel.leave();
             }
             stopped = false;
         });
