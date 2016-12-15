@@ -13,7 +13,6 @@ const MINUTE = 60000;
 var msglog = [];
 var lastpm;
 var voiceChannel;
-var voiceconn;
 var player;
 var queue = [];
 
@@ -310,9 +309,6 @@ function add(query, msg) {
             yt.getInfo("https://www.youtube.com" + url,function(err,info){
                 queue.push(info);
             });
-            var stream = yt("https://www.youtube.com" + url, {
-                audioonly: true
-            });
         }
     });
 }
@@ -334,23 +330,34 @@ function play(msg) {
     	return;
     }
     voiceChannel = msg.member.voiceChannel;
-    voiceChannel.join().then(connnection => {
-        voiceconn = connnection;
+    voiceChannel.join().then(connection => {
         var info = queue.shift();
-        player = connnection.playStream(yt.downloadFromInfo(info,{audioonly:true}));
+        player = connection.playStream(yt.downloadFromInfo(info,{audioonly:true}));
         msg.channel.sendMessage("Now playing "+info.title);
-        player.on('end', function () {
-            console.log("ended, "+queue.length);
-            if (queue.length <= 0) {
-                voiceChannel.leave();
-                voiceChannel = undefined;
-            } else {
-                var info = queue.shift();
-                player = connnection.playStream(yt.downloadFromInfo(info,{audioonly:true}));
-                msg.channel.sendMessage("Now playing "+info.title);
-            }
-        });
+        eventRecursion(player,connection,msg.channel);
     });
+}
+
+function eventRecursion(pl,connection,channel){
+    pl.on('end', function () {
+        if (queue.length <= 0) {
+            voiceChannel.leave();
+            voiceChannel = undefined;
+        } else {
+            var info = queue.shift();
+            player = connection.playStream(yt.downloadFromInfo(info,{audioonly:true}));
+            channel.sendMessage("Now playing "+info.title);
+            eventRecursion(player,connection,channel);
+        }
+    });
+}
+
+function skip(msg){
+    try {
+        player.end();
+    } catch (ex) {
+        msg.reply("No current playback running");
+    }
 }
 
 function stop(msg) {
