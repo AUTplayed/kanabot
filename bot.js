@@ -326,6 +326,12 @@ function play(msg) {
     voiceChannel.join().then(connnection => {
         voiceconn = connnection;
         player = connnection.playStream(queue.shift());
+        player.on('end', function(){
+            if(!stopped){
+                connnection.playStream(queue.shift());
+            }
+            stopped = false;
+        });
     });
 }
 
@@ -338,13 +344,6 @@ function stop(msg){
         msg.reply("No current playback running");
     }
 }
-
-player.on('end', function(){
-    if(!stopped){
-        connnection.playStream(queue.shift());
-    }
-    stopped = false;
-});
 
 //Database Logic
 function login() {
