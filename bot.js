@@ -323,15 +323,15 @@ function play(msg) {
         msg.reply("You are not in a voice channel");
         return;
     }
-    voiceChannel = msg.member.voiceChannel;
     if (queue.length == 0) {
         msg.reply("Queue is empty");
         return;
     }
-    if(voiceChannel){
+    if(voiceChannel!=undefined){
     	msg.reply("Already playing");
     	return;
     }
+    voiceChannel = msg.member.voiceChannel;
     voiceChannel.join().then(connnection => {
         voiceconn = connnection;
         player = connnection.playStream(queue.shift());
