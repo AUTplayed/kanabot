@@ -7,7 +7,11 @@ var db = require('./db.js');
 const MINUTE = 60000;
 
 module.exports = {
-start: function() {
+	start: function() {
+		start();
+	}
+}
+function start(){
     //Refresh ScribbleThis
     setInterval(function () {
         http.request({
@@ -33,5 +37,4 @@ start: function() {
         });
     });
     app.listen(process.env.PORT || 8080);
-}
 }
