@@ -66,10 +66,10 @@ function commands(cleanmsg, msg) {
     else if (cleanmsg.startsWith("skip")) {
         skip(msg);
     }
-    else if(cleanmsg.startsWith("playing")){
+    else if(cleanmsg.startsWith("current")){
         if(cleanmsg.length > 8)
-            playing(msg,cleanmsg.split(" ")[1]);
-        playing(msg,undefined);
+            current(msg,cleanmsg.split(" ")[1]);
+        current(msg,undefined);
     }
     else if (cleanmsg.startsWith("q")) {
         var q = "";
