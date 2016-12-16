@@ -69,7 +69,8 @@ function commands(cleanmsg, msg) {
     else if(cleanmsg.startsWith("current")){
         if(cleanmsg.length > 8)
             current(msg,cleanmsg.split(" ")[1]);
-        current(msg,undefined);
+        else
+            current(msg,undefined);
     }
     else if (cleanmsg.startsWith("q")) {
         var q = "";
@@ -149,17 +150,17 @@ function skip(msg) {
     }
 }
 function current(msg,property){
-    if(current){
+    if(playing){
         if(property){
             if(property=="proplist"){
-                for(var prop in current){
+                for(var prop in playing){
                     msg.author.sendMessage(prop);
                 }
             }
-            msg.reply(current[property]);
+            msg.reply(playing[property]);
         }
         else
-            msg.reply(current.title);
+            msg.reply(playing.title);
     }else{
         msg.reply("No song playing currently");
     }
