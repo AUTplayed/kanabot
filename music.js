@@ -4,6 +4,7 @@ var yt = require('ytdl-core');
 var voiceChannel;
 var player;
 var queue = [];
+var current;
 
 module.exports = {
     youtube:function(query,followup){
@@ -65,6 +66,11 @@ function commands(cleanmsg, msg) {
     else if (cleanmsg.startsWith("skip")) {
         skip(msg);
     }
+    else if(cleanmsg.startsWith("current")){
+        if(cleanmsg.length > 8)
+            current(msg,cleanmsg.split(" ")[1]);
+        current(msg,undefined);
+    }
     else if (cleanmsg.startsWith("q")) {
         var q = "";
         queue.forEach(function (e) {
@@ -119,12 +125,14 @@ function play(msg) {
 
 function eventRecursion(pl, connection, channel) {
     pl.once('end', function () {
+        current = undefined;
         if (queue.length <= 0) {
             if (voiceChannel)
                 voiceChannel.leave();
             voiceChannel = undefined;
         } else {
             var info = queue.shift();
+            current = info;
             player = connection.playStream(yt.downloadFromInfo(info, { audioonly: true }));
             channel.sendMessage("Now playing " + info.title);
             eventRecursion(player, connection, channel);
@@ -137,6 +145,22 @@ function skip(msg) {
         player.end();
     } catch (ex) {
         msg.reply("No current playback running");
+    }
+}
+function current(msg,property){
+    if(current){
+        if(property){
+            if(property=="proplist"){
+                for(var prop in current){
+                    msg.author.sendMessage(prop);
+                }
+            }
+            msg.reply(current[property]);
+        }
+        else
+            msg.reply(current.title);
+    }else{
+        msg.reply("No song playing currently");
     }
 }
 
