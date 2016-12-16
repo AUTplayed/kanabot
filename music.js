@@ -6,7 +6,14 @@ var player;
 var queue = [];
 
 module.exports = {
-youtube:function(query, followup) {
+    youtube:function(query,followup){
+        youtube(query,followup);
+    },
+    commands:function(cleanmsg,msg){
+        commands(cleanmsg,msg);
+    }
+}
+function youtube(query, followup) {
     try {
         query = query.replace(/%/g, "%25");
         query = query.replace(/ /g, "+");
@@ -40,8 +47,9 @@ youtube:function(query, followup) {
         });
     }).end();
 
-},
-commands:function(cleanmsg, msg) {
+}
+
+function commands(cleanmsg, msg) {
     if (cleanmsg.startsWith("play")) {
         play(msg);
     }
@@ -64,7 +72,6 @@ commands:function(cleanmsg, msg) {
         });
         msg.reply("queue:\n" + q);
     }
-}
 }
 
 function add(query, msg) {

@@ -1,13 +1,25 @@
 var pg = require('pg');
 module.exports = {
-
-login:function(client) {
+    login:function(client){
+        login(client);
+    },
+    increment:function(name,value){
+        increment(name,value);
+    },
+    getCount:function(usr,msg){
+        getCount(usr,msg);
+    },
+    devDatabase(query,msg){
+        devDatabase(query,msg);
+    }
+}
+function login(client) {
     connectAndQuery("SELECT * FROM token", function (rows) {
         client.login(rows[0].tkn);
     });
-},
+}
 
-increment: function(name, value) {
+function increment(name, value) {
     connectAndQuery("SELECT * FROM rape WHERE name = '" + name + "';", function (rows, client) {
         if (rows.length == 0) {
             executeQuery("INSERT INTO rape (name,count) VALUES('" + name + "'," + value + ");", client, function (rows) {
@@ -19,9 +31,9 @@ increment: function(name, value) {
             });
         }
     });
-},
+}
 
-getCount:function(usr, msg) {
+function getCount(usr, msg) {
     connectAndQuery("SELECT * FROM rape WHERE name = '" + getIdentifier(usr) + "';", function (rows) {
         try {
             msg.reply("RapeCount of " + usr.toString() + ": " + rows[0].count);
@@ -30,9 +42,9 @@ getCount:function(usr, msg) {
         }
     });
 
-},
+}
 
-devDatabase:function(query, msg) {
+function devDatabase(query, msg) {
     connectAndQuery(query, function (rows) {
         var result = "\n";
         if (rows.length > 0) {
@@ -48,7 +60,7 @@ devDatabase:function(query, msg) {
         }
     });
 }
-}
+
 //Database access
 function connectAndQuery(query, followup) {
     pg.defaults.ssl = true;
