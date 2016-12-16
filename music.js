@@ -5,6 +5,7 @@ var voiceChannel;
 var player;
 var queue = [];
 var playing;
+var stopped = false;
 
 module.exports = {
     youtube:function(query,followup){
@@ -132,13 +133,14 @@ function eventRecursion(pl, connection, channel) {
             if (voiceChannel)
                 voiceChannel.leave();
             voiceChannel = undefined;
-        } else {
+        } else if(!stopped){
             var info = queue.shift();
             playing = info;
             player = connection.playStream(yt.downloadFromInfo(info, { audioonly: true }));
             channel.sendMessage("Now playing " + info.title);
             eventRecursion(player, connection, channel);
         }
+        stopped=false;
     });
 }
 
@@ -157,7 +159,8 @@ function current(msg,property){
                     msg.author.sendMessage(prop);
                 }
             }
-            msg.reply(playing[property]);
+            else
+                msg.reply(playing[property]);
         }
         else
             msg.reply(playing.title);
@@ -170,6 +173,7 @@ function stop(msg) {
     try {
         voiceChannel.leave();
         voiceChannel = undefined;
+        stopped=true;
     } catch (ex) {
         msg.reply("No current playback running");
     }
