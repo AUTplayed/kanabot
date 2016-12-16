@@ -117,6 +117,7 @@ function play(msg) {
     voiceChannel = msg.member.voiceChannel;
     voiceChannel.join().then(connection => {
         var info = queue.shift();
+        current = info;
         player = connection.playStream(yt.downloadFromInfo(info, { audioonly: true }));
         msg.channel.sendMessage("Now playing " + info.title);
         eventRecursion(player, connection, msg.channel);
