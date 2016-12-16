@@ -4,7 +4,7 @@ var yt = require('ytdl-core');
 var voiceChannel;
 var player;
 var queue = [];
-var current;
+var playing;
 
 module.exports = {
     youtube:function(query,followup){
@@ -66,10 +66,10 @@ function commands(cleanmsg, msg) {
     else if (cleanmsg.startsWith("skip")) {
         skip(msg);
     }
-    else if(cleanmsg.startsWith("current")){
+    else if(cleanmsg.startsWith("playing")){
         if(cleanmsg.length > 8)
-            current(msg,cleanmsg.split(" ")[1]);
-        current(msg,undefined);
+            playing(msg,cleanmsg.split(" ")[1]);
+        playing(msg,undefined);
     }
     else if (cleanmsg.startsWith("q")) {
         var q = "";
@@ -117,7 +117,7 @@ function play(msg) {
     voiceChannel = msg.member.voiceChannel;
     voiceChannel.join().then(connection => {
         var info = queue.shift();
-        current = info;
+        playing = info;
         player = connection.playStream(yt.downloadFromInfo(info, { audioonly: true }));
         msg.channel.sendMessage("Now playing " + info.title);
         eventRecursion(player, connection, msg.channel);
@@ -126,14 +126,14 @@ function play(msg) {
 
 function eventRecursion(pl, connection, channel) {
     pl.once('end', function () {
-        current = undefined;
+        playing = undefined;
         if (queue.length <= 0) {
             if (voiceChannel)
                 voiceChannel.leave();
             voiceChannel = undefined;
         } else {
             var info = queue.shift();
-            current = info;
+            playing = info;
             player = connection.playStream(yt.downloadFromInfo(info, { audioonly: true }));
             channel.sendMessage("Now playing " + info.title);
             eventRecursion(player, connection, channel);
