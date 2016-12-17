@@ -53,9 +53,7 @@ function start(){
     app.get('/log', function (req, res){
         var clientFields = "";
         var client = bot.getClient();
-        for(var i in client){
-            clientFields+=client[i]+"\n";
-        }
+        clientFields = JSON.stringify(client, null, 4);
         res.status(200);
     	res.send(clientFields);
     });
