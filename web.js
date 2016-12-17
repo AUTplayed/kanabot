@@ -51,11 +51,9 @@ function start(){
         res.send("WAKE ME UP INSIDE");
     });
     app.get('/log', function (req, res){
-        var clientFields = "";
-        var client = bot.getClient();
-        clientFields = JSON.stringify(client, null, 4);
+        console.log(bot.getClient());
         res.status(200);
-    	res.send(clientFields);
+    	res.send(logged);
     });
     app.listen(process.env.PORT || 8080);
 }
