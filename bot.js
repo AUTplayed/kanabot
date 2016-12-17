@@ -19,7 +19,7 @@ var timeoutedit = 0.5 * MINUTE;
 
 //Public Getter - I don't know the conventions of nodejs ;-;
 module.exports = {
-    getClient:function(){
+    getClient: function() {
         return client;
     }
 }

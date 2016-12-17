@@ -6,7 +6,6 @@ var path = require('path');
 
 //Internal dependencies
 var db = require('./db.js');
-var bot = require('./bot.js');
 
 //Declarations
 const MINUTE = 60000;
@@ -33,6 +32,9 @@ function start(){
             path: "/data"
         }, function () { }).end();
     }, 25 * MINUTE);
+
+    //Import of bot
+    var bot = require('./bot.js');
 
     app.use(express.static(__dirname + '/public'));
     app.get('/', function (req, res) {
