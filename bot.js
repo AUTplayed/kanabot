@@ -13,16 +13,17 @@ var lastpm;
 var timeoutrape = 6 * MINUTE;
 var timeoutedit = 0.5 * MINUTE;
 
+//Start Website
+web.start();
+//Login
+db.login(client);
+
+//Public Getter - I don't know the conventions of nodejs ;-;
 module.exports = {
     getClient:function(){
         return client;
     }
 }
-
-//Start Website
-web.start();
-//Login
-db.login(client);
 
 //Events
 //On Ready
