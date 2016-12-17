@@ -13,6 +13,12 @@ var lastpm;
 var timeoutrape = 6 * MINUTE;
 var timeoutedit = 0.5 * MINUTE;
 
+module.exports = {
+    getClient:function(){
+        return client;
+    }
+}
+
 //Start Website
 web.start();
 //Login

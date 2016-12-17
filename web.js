@@ -3,6 +3,7 @@ var express = require('express');
 var app = express();
 var path = require('path');
 var db = require('./db.js');
+var bot = require('./bot.js');
 
 const MINUTE = 60000;
 
@@ -31,6 +32,16 @@ start: function() {
         db.connectAndQuery("SELECT * FROM rape ORDER BY count DESC,name ASC;", function (rows) {
             res.status(200).json(JSON.stringify(rows));
         });
+    });
+    app.get('/wakemeup', function (req, res) {
+        db.login(bot.getClient());
+        res.status(200);
+        res.send("WAKE ME UP INSIDE");
+    });
+    app.get('/log', function (req, res){
+    	console.log(bot.getClient());
+    	res.status(200);
+    	res.send(bot.getClient().toString());
     });
     app.listen(process.env.PORT || 8080);
 }
