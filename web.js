@@ -1,17 +1,23 @@
+//External dependencies
 var http = require("http");
 var express = require('express');
 var app = express();
 var path = require('path');
+
+//Internal dependencies
 var db = require('./db.js');
 var bot = require('./bot.js');
 
+//Declarations
 const MINUTE = 60000;
 
+//Module Exports
 module.exports = {
 	start: function() {
 		start();
 	}
 }
+
 function start(){
     //Refresh ScribbleThis
     setInterval(function () {

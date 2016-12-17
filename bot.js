@@ -1,10 +1,14 @@
+//External dependencies
 var Discord = require("discord.js");
 var client = new Discord.Client();
 var http = require("http");
+
+//Internal dependencies
 var db = require('./db.js');
 var music = require('./music.js');
 var web = require('./web.js')
 
+//Declarations
 const DEV = "163651635845922816";
 const MINUTE = 60000;
 var msglog = [];
@@ -13,17 +17,17 @@ var lastpm;
 var timeoutrape = 6 * MINUTE;
 var timeoutedit = 0.5 * MINUTE;
 
-//Start Website
-web.start();
-//Login
-db.login(client);
-
 //Public Getter - I don't know the conventions of nodejs ;-;
 module.exports = {
     getClient:function(){
         return client;
     }
 }
+
+//Start Website
+web.start();
+//Login
+db.login(client);
 
 //Events
 //On Ready

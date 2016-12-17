@@ -1,12 +1,15 @@
+//External dependencies
 var https = require("https");
 var yt = require('ytdl-core');
 
+//Declarations
 var voiceChannel;
 var player;
 var queue = [];
 var playing;
 var stopped = false;
 
+//Module exports
 module.exports = {
     youtube:function(query,followup){
         youtube(query,followup);
@@ -15,6 +18,7 @@ module.exports = {
         commands(cleanmsg,msg);
     }
 }
+
 function youtube(query, followup) {
     try {
         query = query.replace(/%/g, "%25");

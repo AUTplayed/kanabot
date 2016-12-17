@@ -1,4 +1,7 @@
+//External dependencies
 var pg = require('pg');
+
+//Module exports
 module.exports = {
     login:function(client){
         login(client);
@@ -16,6 +19,7 @@ module.exports = {
         connectAndQuery(query,followup);
     }
 }
+
 function login(client) {
     connectAndQuery("SELECT * FROM token", function (rows) {
         client.login(rows[0].tkn);
