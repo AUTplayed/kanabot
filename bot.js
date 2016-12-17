@@ -19,10 +19,17 @@ var timeoutedit = 0.5 * MINUTE;
 
 //Public Getter - I don't know the conventions of nodejs ;-;
 module.exports = {
-    getClient: function() {
+    getClient: function () {
         return client;
     }
 }
+
+//Keep kanabot running forever
+setInterval(function () {
+    if (!client.token) {
+        db.login(client);
+    }
+}, 10 * MINUTE);
 
 //Start Website
 web.start();

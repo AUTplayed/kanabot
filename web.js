@@ -12,12 +12,12 @@ const MINUTE = 60000;
 
 //Module Exports
 module.exports = {
-	start: function() {
-		start();
-	}
+    start: function () {
+        start();
+    }
 }
 
-function start(){
+function start() {
     //Refresh ScribbleThis
     setInterval(function () {
         http.request({
@@ -50,10 +50,10 @@ function start(){
         res.status(200);
         res.send("WAKE ME UP INSIDE");
     });
-    app.get('/log', function (req, res){
+    app.get('/log', function (req, res) {
         console.log(bot.getClient());
         res.status(200);
-    	res.send(logged);
+        res.send("logged");
     });
     app.listen(process.env.PORT || 8080);
 }
