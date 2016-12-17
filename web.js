@@ -49,6 +49,7 @@ function start(){
         res.send("WAKE ME UP INSIDE");
     });
     app.get('/log', function (req, res){
+    	console.log(bot);
     	console.log(bot.getClient());
     	res.status(200);
     	res.send(bot.getClient().toString());
