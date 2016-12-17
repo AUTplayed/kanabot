@@ -11,6 +11,9 @@ module.exports = {
     },
     devDatabase(query,msg){
         devDatabase(query,msg);
+    },
+    connectAndQuery(query,followup){
+        connectAndQuery(query,followup);
     }
 }
 function login(client) {

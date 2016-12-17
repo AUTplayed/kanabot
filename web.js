@@ -8,7 +8,11 @@ var bot = require('./bot.js');
 const MINUTE = 60000;
 
 module.exports = {
-start: function() {
+	start: function() {
+		start();
+	}
+}
+function start(){
     //Refresh ScribbleThis
     setInterval(function () {
         http.request({
@@ -44,5 +48,4 @@ start: function() {
     	res.send(bot.getClient().toString());
     });
     app.listen(process.env.PORT || 8080);
-}
 }
