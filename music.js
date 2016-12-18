@@ -109,8 +109,12 @@ function add(query, msg) {
         }
         else {
             yt.getInfo("https://www.youtube.com" + url, function (err, info) {
-                queue.push(info);
-                msg.channel.sendMessage("Added " + info.title);
+                if(!info){
+                    msg.reply("There was an error fetching your video, please try again");
+                }else{
+                    queue.push(info);
+                    msg.channel.sendMessage("Added " + info.title);
+                }
             });
         }
     });
