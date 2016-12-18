@@ -2,23 +2,11 @@
 var pg = require('pg');
 
 //Module exports
-module.exports = {
-    login:function(client){
-        login(client);
-    },
-    increment:function(name,value){
-        increment(name,value);
-    },
-    getCount:function(usr,msg){
-        getCount(usr,msg);
-    },
-    devDatabase(query,msg){
-        devDatabase(query,msg);
-    },
-    connectAndQuery(query,followup){
-        connectAndQuery(query,followup);
-    }
-}
+module.exports.login=login;
+module.exports.increment=increment;
+module.exports.getCount=getCount;
+module.exports.devDatabase=devDatabase;
+module.exports.connectAndQuery=connectAndQuery;
 
 function login(client) {
     connectAndQuery("SELECT * FROM token", function (rows) {

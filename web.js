@@ -11,11 +11,7 @@ var db = require('./db.js');
 const MINUTE = 60000;
 
 //Module Exports
-module.exports = {
-    start: function () {
-        start();
-    }
-}
+module.exports.start = start;
 
 function start() {
     //Refresh ScribbleThis

@@ -8,16 +8,11 @@ var player;
 var queue = [];
 var playing;
 var stopped = false;
+var volume = 1.0;
 
 //Module exports
-module.exports = {
-    youtube:function(query,followup){
-        youtube(query,followup);
-    },
-    commands:function(cleanmsg,msg){
-        commands(cleanmsg,msg);
-    }
-}
+module.exports.youtube = youtube;
+module.exports.commands = commands;
 
 function youtube(query, followup) {
     try {
@@ -44,15 +39,12 @@ function youtube(query, followup) {
             if (!matches || matches.length < 1)
                 followup(undefined);
             else {
-                matches = matches[0].split("\"");
-                matches = matches[1].split("&");
-                matches = matches[0];
+                matches = matches[0].split("\"")[1];
                 console.log(matches);
                 followup(matches);
             }
         });
     }).end();
-
 }
 
 function commands(cleanmsg, msg) {
@@ -76,6 +68,26 @@ function commands(cleanmsg, msg) {
             current(msg,cleanmsg.split(" ")[1]);
         else
             current(msg,undefined);
+    }
+    else if(cleanmsg.startsWith("volume ")){
+        if(player){
+            var tempvolume = parseFloat(cleanmsg.split(" ")[1]);
+            if(tempvolume){
+                volume = tempvolume;
+            }
+            player.setVolume(volume);
+        }
+        else{
+            msg.reply("Not playing!");
+        }
+    }
+    else if(cleanmsg.startsWith("disconnect")){
+        if(voiceChannel){
+            voiceChannel.leave();
+        }
+        else{
+            msg.reply("Not connected to any voice channel");
+        }
     }
     else if (cleanmsg.startsWith("q")) {
         var q = "";
@@ -125,6 +137,7 @@ function play(msg) {
         var info = queue.shift();
         playing = info;
         player = connection.playStream(yt.downloadFromInfo(info, { audioonly: true }));
+        player.setVolume(volume);
         msg.channel.sendMessage("Now playing " + info.title);
         eventRecursion(player, connection, msg.channel);
     });
@@ -141,6 +154,7 @@ function eventRecursion(pl, connection, channel) {
             var info = queue.shift();
             playing = info;
             player = connection.playStream(yt.downloadFromInfo(info, { audioonly: true }));
+            player.setVolume(volume);
             channel.sendMessage("Now playing " + info.title);
             eventRecursion(player, connection, channel);
         }
@@ -156,20 +170,24 @@ function skip(msg) {
     }
 }
 function current(msg,property){
-    if(playing){
-        if(property){
-            if(property=="proplist"){
-                for(var prop in playing){
-                    msg.author.sendMessage(prop);
+    try{
+        if(playing){
+            if(property){
+                if(property=="proplist"){
+                    for(var prop in playing){
+                        msg.author.sendMessage(prop);
+                    }
                 }
+                else
+                    msg.reply(playing[property]);
             }
             else
-                msg.reply(playing[property]);
+                msg.reply(playing.title);
+        }else{
+            msg.reply("No song playing currently");
         }
-        else
-            msg.reply(playing.title);
-    }else{
-        msg.reply("No song playing currently");
+    } catch (ex) {
+        msg.reply(ex.message);
     }
 }
 

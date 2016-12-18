@@ -18,11 +18,7 @@ var timeoutrape = 6 * MINUTE;
 var timeoutedit = 0.5 * MINUTE;
 
 //Public Getter - I don't know the conventions of nodejs ;-;
-module.exports = {
-    getClient: function () {
-        return client;
-    }
-}
+module.exports.getClient = function(){ return client; };
 
 //Keep kanabot running forever
 setInterval(function () {
