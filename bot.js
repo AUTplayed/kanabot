@@ -82,9 +82,10 @@ client.on('messageDelete', (message) => {
     }, timeoutrape);
 });
 
+/*
 //On Message Delete Bulk
 client.on('messageDeleteBulk', (messages) => {
-    if (messages.array().length < 5) {
+    if (messages.array().length == 1) {
         messages.array().forEach(function (message) {
             if (!message.author.bot && Date.now() - message.createdTimestamp <= timeoutedit) {
                 msglog.push(message);
@@ -95,6 +96,7 @@ client.on('messageDeleteBulk', (messages) => {
         });
     }
 });
+*/
 
 //Functions
 //Logic
