@@ -81,3 +81,7 @@ function executeQuery(query, client, followup) {
         }
     });
 }
+
+function getIdentifier(author) {
+    return author.username + "#" + author.discriminator;
+}
