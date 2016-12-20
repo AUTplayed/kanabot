@@ -13,6 +13,7 @@ const DEV = "163651635845922816";
 const MINUTE = 60000;
 var msglog = [];
 var lastpm;
+var runmsg = "starting from shutdown";
 
 var timeoutrape = 6 * MINUTE;
 var timeoutedit = 0.5 * MINUTE;
@@ -36,7 +37,8 @@ db.login(client);
 //On Ready
 client.on('ready', () => {
     console.log(`Logged in as ` + getIdentifier(client.user));
-    getUserById(DEV).sendMessage("I am up and running!");
+    getUserById(DEV).sendMessage("I am "+runmsg);
+    runmsg="restarting for no reason";
     client.user.setGame("https://kanabot.herokuapp.com/");
 });
 

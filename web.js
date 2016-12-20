@@ -41,11 +41,6 @@ function start() {
             res.status(200).json(JSON.stringify(rows));
         });
     });
-    app.get('/wakemeup', function (req, res) {
-        db.login(bot.getClient());
-        res.status(200);
-        res.send("WAKE ME UP INSIDE");
-    });
     app.get('/log', function (req, res) {
         console.log(bot.getClient());
         res.status(200);
