@@ -61,8 +61,7 @@ function commands(cleanmsg, msg) {
         if (cleanmsg.length < 7)
             return;
         var query = cleanmsg.substring(6, cleanmsg.length);
-        add(query, msg);
-        play(msg);
+        add(query, msg, function(){ play(msg); });
     }
     else if (cleanmsg.startsWith("stop")) {
         stop(msg);
@@ -119,7 +118,7 @@ function commands(cleanmsg, msg) {
     }
 }
 
-function add(query, msg) {
+function add(query, msg, followup) {
     if (!msg.member) {
         msg.reply("Sorry, only in guild chat");
         return;
@@ -135,6 +134,7 @@ function add(query, msg) {
                 }else{
                     queue.push(info);
                     msg.channel.sendMessage("Added " + info.title);
+                    followup();
                 }
             });
         }
