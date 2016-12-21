@@ -29,9 +29,6 @@ function start() {
         }, function () { }).end();
     }, 25 * MINUTE);
 
-    //Import of bot
-    var bot = require('./bot.js');
-
     app.use(express.static(__dirname + '/public'));
     app.get('/', function (req, res) {
         res.sendFile(path.join(__dirname + '/public/index.html'));
@@ -40,11 +37,6 @@ function start() {
         db.connectAndQuery("SELECT * FROM rape ORDER BY count DESC,name ASC;", function (rows) {
             res.status(200).json(JSON.stringify(rows));
         });
-    });
-    app.get('/log', function (req, res) {
-        console.log(bot.getClient());
-        res.status(200);
-        res.send("logged");
     });
     app.listen(process.env.PORT || 8080);
 }
