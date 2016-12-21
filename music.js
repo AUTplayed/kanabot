@@ -104,13 +104,13 @@ function commands(cleanmsg, msg) {
         if(client.voiceConnections){
             client.voiceConnections.forEach(function(e){
                 e.disconnect();
-            }):
+            });
         }
         else{
             msg.reply("Not connected to any voice channel");
         }
     }
-    else if (cleanmsg.=="queue" || cleanmsg == "q") {
+    else if (cleanmsg=="queue" || cleanmsg == "q") {
         var q = "";
         queue.forEach(function (e,i) {
             q += i + ": " + e.title + "\n";
