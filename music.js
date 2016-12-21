@@ -57,10 +57,28 @@ function commands(cleanmsg, msg) {
         var query = cleanmsg.substring(4, cleanmsg.length);
         add(query, msg);
     }
+    else if(cleanmsg.startsWith("pladd ")) {
+        if (cleanmsg.length < 7)
+            return;
+        var query = cleanmsg.substring(6, cleanmsg.length);
+        add(query, msg);
+        play(msg);
+    }
     else if (cleanmsg.startsWith("stop")) {
         stop(msg);
     }
     else if (cleanmsg.startsWith("skip")) {
+        if(cleanmsg.length > 5){
+            var split = cleanmsg.split(" ");
+            if(split[1]){
+                var num = parseInt(split[1]);
+                if(num && queue[num]){
+                    var removed = queue.splice(num,1);
+                    msg.channel.sendMessage("Removed "+removed.title+" from queue");
+                    return;
+                }
+            }
+        }
         skip(msg);
     }
     else if(cleanmsg.startsWith("current")){
@@ -82,17 +100,20 @@ function commands(cleanmsg, msg) {
         }
     }
     else if(cleanmsg.startsWith("disconnect")){
-        if(voiceChannel){
-            voiceChannel.leave();
+        var client = require('./bot.js').getClient();
+        if(client.voiceConnections){
+            client.voiceConnections.forEach(function(e){
+                e.disconnect();
+            }):
         }
         else{
             msg.reply("Not connected to any voice channel");
         }
     }
-    else if (cleanmsg.startsWith("q")) {
+    else if (cleanmsg.=="queue" || cleanmsg == "q") {
         var q = "";
-        queue.forEach(function (e) {
-            q += e.title + "\n";
+        queue.forEach(function (e,i) {
+            q += i + ": " + e.title + "\n";
         });
         msg.reply("queue:\n" + q);
     }
@@ -169,6 +190,7 @@ function eventRecursion(pl, connection, channel) {
 function skip(msg) {
     try {
         player.end();
+        msg.channel.sendMessage("Skipped "+playing.title);
     } catch (ex) {
         msg.reply("No current playback running");
     }
@@ -178,9 +200,11 @@ function current(msg,property){
         if(playing){
             if(property){
                 if(property=="proplist"){
+                    var proplist = "";
                     for(var prop in playing){
-                        msg.author.sendMessage(prop);
+                        proplist+=prop+"\n";
                     }
+                    msg.author.sendMessage(proplist);
                 }
                 else
                     msg.reply(playing[property]);

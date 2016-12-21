@@ -142,7 +142,10 @@ function reply(msg) {
         var musicComm = cleanmsg.substring(6, cleanmsg.length);
         music.commands(musicComm, msg);
     } else if (cleanmsg == "help" || cleanmsg == "commands") {
-        msg.reply("Currently available commands: \n@kana gheat,gseng\n@kana rapecount [user]\n@kana kapparr <url to shorten>\n@kana yt <search terms>\n@kana music ...too lazy to fill help");
+        var helpcmd = "**General commands: **\ngheat,gseng\nrapecount [user]\nkapparr <url to shorten>\nyt <search terms>\n";
+        helpcmd+="\n**Music commands: **\n*@kana music before all commands if you are not in a channel named \"music\"*\n";
+        helpcmd+="play\nadd <search terms>\npladd <search terms>\nstop\nq,queue\nskip [index]\ncurrent [property] *use property proplist*\nvolume <number> *default is 1, 2 for example is double*\ndisconnect\n";
+        msg.reply(helpcmd);
     } else if (msg.author.id == DEV) {
         devCommands(msg, cleanmsg);
     } else {
