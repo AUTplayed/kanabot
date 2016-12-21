@@ -190,10 +190,10 @@ function eventRecursion(pl, connection, channel) {
 }
 
 function skip(msg) {
-    try {
-        player.end();
+    if(player){
         msg.channel.sendMessage("Skipped "+playing.title);
-    } catch (ex) {
+        player.end();
+    } else{
         msg.reply("No current playback running");
     }
 }
