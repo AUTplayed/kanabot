@@ -72,7 +72,7 @@ function commands(cleanmsg, msg) {
             if(split[1]){
                 var num = parseInt(split[1]);
                 if(num && queue[num]){
-                    var removed = queue.splice(num,1);
+                    var removed = queue.splice(num,1)[0];
                     msg.channel.sendMessage("Removed "+removed.title+" from queue");
                     return;
                 }
