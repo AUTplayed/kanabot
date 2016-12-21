@@ -134,7 +134,9 @@ function add(query, msg, followup) {
                 }else{
                     queue.push(info);
                     msg.channel.sendMessage("Added " + info.title);
-                    followup();
+                    if(followup){
+                        followup();
+                    }
                 }
             });
         }
