@@ -71,7 +71,7 @@ function commands(cleanmsg, msg) {
             var split = cleanmsg.split(" ");
             if(split[1]){
                 var num = parseInt(split[1]);
-                if(num && queue[num]){
+                if((num || num == 0)&& queue[num]){
                     var removed = queue.splice(num,1)[0];
                     msg.channel.sendMessage("Removed "+removed.title+" from queue");
                     return;
@@ -87,9 +87,13 @@ function commands(cleanmsg, msg) {
             current(msg,undefined);
     }
     else if(cleanmsg.startsWith("volume ")){
+        if(cleanmsg.length < 8){
+            msg.reply("current volume: "+volume);
+            return;
+        }
         if(player){
             var tempvolume = parseFloat(cleanmsg.split(" ")[1]);
-            if(tempvolume){
+            if(tempvolume || tempvolume == 0){
                 volume = tempvolume;
             }
             player.setVolume(volume);
