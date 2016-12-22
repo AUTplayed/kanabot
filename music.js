@@ -86,7 +86,7 @@ function commands(cleanmsg, msg) {
         else
             current(msg,undefined);
     }
-    else if(cleanmsg.startsWith("volume ")){
+    else if(cleanmsg.startsWith("volume")){
         if(cleanmsg.length < 8){
             msg.reply("current volume: "+volume);
             return;
