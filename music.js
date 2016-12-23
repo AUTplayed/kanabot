@@ -11,6 +11,7 @@ var stopped = false;
 var volume = 1.0;
 var jumpto = 0;
 var prevjump = 0;
+var textplayer;
 
 //Module exports
 module.exports.youtube = youtube;
@@ -143,6 +144,16 @@ function commands(cleanmsg, msg) {
         });
         msg.reply("queue:\n" + q);
     }
+    else if (cleanmsg == "player"){
+        msg.channel.sendMessage("text player").then(message => {
+            textplayer = message;
+            var interval = setInterval(function(){
+                textPlayerUpdate();
+                if(!textplayer)
+                    clearInterval(interval);
+            },1000);
+        });
+    }
 }
 
 function add(query, msg, followup) {
@@ -233,7 +244,7 @@ function jump(time, relative, msg) {
         return;
     }
     prevjump = jumpto;
-    msg.channel.sendMessage("Jumping to "+Math.floor(jumpto/60)+":"+Math.round(jumpto%60));
+    msg.channel.sendMessage("Jumping to "+toTime(jumpto));
     player.end();
 }
 
@@ -271,11 +282,24 @@ function current(msg, property) {
 
 function stop(msg) {
     try {
+        textplayer = undefined;
         voiceChannel.leave();
         voiceChannel = undefined;
         stopped = true;
     } catch (ex) {
         msg.reply("No current playback running");
+    }
+}
+
+function textPlayerUpdate(){
+    if(textplayer){
+        if(player){
+            var curTime = toTime(prevjump+player.time/1000);
+            var maxTime = toTime(playing.length_seconds);
+            textplayer.edit(playing.title+"\n"+curTime+"/"+maxTime);
+        }else{
+            textplayer.edit("No Playback running");
+        }
     }
 }
 
@@ -294,4 +318,10 @@ function toSeconds(input){
         }
     }
     return undefined;
+}
+
+function toTime(input){
+    var minutes = Math.floor(input/60);
+    var seconds = Math.round(input%60);
+    return minutes+":"+seconds;
 }
