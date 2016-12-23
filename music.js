@@ -114,12 +114,10 @@ function commands(cleanmsg, msg) {
         if (cleanmsg.startsWith("jumpto ")) {
             if (cleanmsg.length < 8)
                 return;
-            console.log("jumpto: "+jumptime);
             jump(jumptime, false, msg);
         } else {
             if (cleanmsg.length < 6)
                 return;
-            console.log("jump: "+jumptime);
             jump(jumptime, true, msg);
         }
     }
@@ -197,8 +195,6 @@ function play(msg) {
 function eventRecursion(pl, connection, channel) {
     pl.once('end', function () {
         if(jumpto || jumpto == 0){
-            console.log("in jump");
-            console.log(playing.title);
             player = connection.playStream(yt.downloadFromInfo(playing, { audioonly: true }), { volume: volume, seek: jumpto });
             eventRecursion(player, connection, channel);
         }
@@ -221,21 +217,17 @@ function eventRecursion(pl, connection, channel) {
 }
 
 function jump(time, relative, msg) {
-    time = time * 1000;
-    console.log(time);
-    console.log(player.time);
     if (relative) {
-        time = player.time + time;
+        time = player.time/1000 + time;
         jumpto = time + prevjump;
     }
     else{
         jumpto = time;
     }
-    if (time + prevjump >= playing.length_seconds * 1000) {
+    if (jumpto >= playing.length_seconds) {
         msg.reply("Time outside of video length");
         return;
     }
-    console.log(jumpto);
     prevjump = jumpto;
     player.end();
 }
