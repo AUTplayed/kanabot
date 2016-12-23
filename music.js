@@ -233,7 +233,7 @@ function jump(time, relative, msg) {
         return;
     }
     prevjump = jumpto;
-    msg.channel.sendMessage("Jumping to "+jumpto/60+":"+jumpto%60);
+    msg.channel.sendMessage("Jumping to "+Math.floor(jumpto/60)+":"+jumpto%60);
     player.end();
 }
 
