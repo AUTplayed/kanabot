@@ -59,82 +59,82 @@ function commands(cleanmsg, msg) {
         var query = cleanmsg.substring(4, cleanmsg.length);
         add(query, msg);
     }
-    else if(cleanmsg.startsWith("pladd ")) {
+    else if (cleanmsg.startsWith("pladd ")) {
         if (cleanmsg.length < 7)
             return;
         var query = cleanmsg.substring(6, cleanmsg.length);
-        add(query, msg, function(){ play(msg); });
+        add(query, msg, function () { play(msg); });
     }
     else if (cleanmsg.startsWith("stop")) {
         stop(msg);
     }
     else if (cleanmsg.startsWith("skip")) {
-        if(cleanmsg.length > 5){
+        if (cleanmsg.length > 5) {
             var split = cleanmsg.split(" ");
-            if(split[1]){
+            if (split[1]) {
                 var num = parseInt(split[1]);
-                if((num || num == 0)&& queue[num]){
-                    var removed = queue.splice(num,1)[0];
-                    msg.channel.sendMessage("Removed "+removed.title+" from queue");
+                if ((num || num == 0) && queue[num]) {
+                    var removed = queue.splice(num, 1)[0];
+                    msg.channel.sendMessage("Removed " + removed.title + " from queue");
                     return;
                 }
             }
         }
         skip(msg);
     }
-    else if(cleanmsg.startsWith("current")){
-        if(cleanmsg.length > 8)
-            current(msg,cleanmsg.split(" ")[1]);
+    else if (cleanmsg.startsWith("current")) {
+        if (cleanmsg.length > 8)
+            current(msg, cleanmsg.split(" ")[1]);
         else
-            current(msg,undefined);
+            current(msg, undefined);
     }
-    else if(cleanmsg.startsWith("volume")){
-        if(cleanmsg.length < 8){
-            msg.reply("current volume: "+volume);
+    else if (cleanmsg.startsWith("volume")) {
+        if (cleanmsg.length < 8) {
+            msg.reply("current volume: " + volume);
             return;
         }
-        if(player){
+        if (player) {
             var tempvolume = parseFloat(cleanmsg.split(" ")[1]);
-            if(tempvolume || tempvolume == 0){
+            if (tempvolume || tempvolume == 0) {
                 volume = tempvolume;
             }
             player.setVolume(volume);
         }
-        else{
+        else {
             msg.reply("Not playing!");
         }
     }
-    else if(cleanmsg.startsWith("jump")){
+    else if (cleanmsg.startsWith("jump")) {
         var split = cleanmsg.split(" ");
-        if(!split[1])
+        if (!split[1])
             return;
         var jumptime = parseFloat(split[1]);
-        if(!(jumptime || jumptime == 0))
+        if (!(jumptime || jumptime == 0))
             return;
-        if(cleanmsg.startsWith("jumpto ")){
-            if(cleanmsg.length < 8)
+        if (cleanmsg.startsWith("jumpto ")) {
+            if (cleanmsg.length < 8)
                 return;
-            jump(jumptime,false,msg);
-        }else{
-            if(cleanmsg.length < 6)
+            jump(jumptime, false, msg);
+        } else {
+            if (cleanmsg.length < 6)
                 return;
-            jump(jumptime,true,msg);
+            jump(jumptime, true, msg);
         }
     }
-    else if(cleanmsg.startsWith("disconnect")){
+    else if (cleanmsg.startsWith("disconnect")) {
         var client = require('./bot.js').getClient();
-        if(client.voiceConnections){
-            client.voiceConnections.forEach(function(e){
+        if (client.voiceConnections) {
+            client.voiceConnections.forEach(function (e) {
                 e.disconnect();
             });
         }
-        else{
+        else {
             msg.reply("Not connected to any voice channel");
         }
     }
-    else if (cleanmsg=="queue" || cleanmsg == "q") {
+    else if (cleanmsg == "queue" || cleanmsg == "q") {
         var q = "";
-        queue.forEach(function (e,i) {
+        queue.forEach(function (e, i) {
             q += i + ": " + e.title + "\n";
         });
         msg.reply("queue:\n" + q);
@@ -152,12 +152,12 @@ function add(query, msg, followup) {
         }
         else {
             yt.getInfo("https://www.youtube.com" + url, function (err, info) {
-                if(!info){
+                if (!info) {
                     msg.reply("There was an error fetching your video, please try again");
-                }else{
+                } else {
                     queue.push(info);
                     msg.channel.sendMessage("Added " + info.title);
-                    if(followup){
+                    if (followup) {
                         followup();
                     }
                 }
@@ -186,7 +186,7 @@ function play(msg) {
     voiceChannel.join().then(connection => {
         var info = queue.shift();
         playing = info;
-        player = connection.playStream(yt.downloadFromInfo(info, { audioonly: true }),{volume:volume});
+        player = connection.playStream(yt.downloadFromInfo(info, { audioonly: true }), { volume: volume });
         msg.channel.sendMessage("Now playing " + info.title);
         eventRecursion(player, connection, msg.channel);
     });
@@ -199,50 +199,51 @@ function eventRecursion(pl, connection, channel) {
             if (voiceChannel)
                 voiceChannel.leave();
             voiceChannel = undefined;
-        } else if(jumpto){
-            player = connection.playStream(yt.downloadFromInfo(info, { audioonly: true }),{volume:volume,seek:jumpto});
+        } else if (jumpto) {
+            player = connection.playStream(yt.downloadFromInfo(info, { audioonly: true }), { volume: volume, seek: jumpto });
             eventRecursion(player, connection, channel);
-        } else if(!stopped){
+        } else if (!stopped) {
             var info = queue.shift();
             playing = info;
-            player = connection.playStream(yt.downloadFromInfo(info, { audioonly: true }),{volume:volume});
+            player = connection.playStream(yt.downloadFromInfo(info, { audioonly: true }), { volume: volume });
             channel.sendMessage("Now playing " + info.title);
             eventRecursion(player, connection, channel);
         }
-        stopped=false;
-        jumpto=0;
+        stopped = false;
+        jumpto = 0;
     });
 }
 
-function jump(time,relative,msg){
-    if(relative){
-        time = player.time+time;
+function jump(time, relative, msg) {
+    time = time * 1000;
+    if (relative) {
+        time = player.time + time;
     }
-    if(time+prevjump >= playing.length_seconds){
+    if (time + prevjump >= playing.length_seconds * 1000) {
         msg.reply("Time outside of video length");
         return;
     }
-    jumpto = time+prevjump;
+    jumpto = time + prevjump;
     prevjump = jumpto;
     player.end();
 }
 
 function skip(msg) {
-    if(player){
-        msg.channel.sendMessage("Skipped "+playing.title);
+    if (player) {
+        msg.channel.sendMessage("Skipped " + playing.title);
         player.end();
-    } else{
+    } else {
         msg.reply("No current playback running");
     }
 }
-function current(msg,property){
-    try{
-        if(playing){
-            if(property){
-                if(property=="proplist"){
+function current(msg, property) {
+    try {
+        if (playing) {
+            if (property) {
+                if (property == "proplist") {
                     var proplist = "";
-                    for(var prop in playing){
-                        proplist+=prop+"\n";
+                    for (var prop in playing) {
+                        proplist += prop + "\n";
                     }
                     msg.author.sendMessage(proplist);
                 }
@@ -251,7 +252,7 @@ function current(msg,property){
             }
             else
                 msg.reply(playing.title);
-        }else{
+        } else {
             msg.reply("No song playing currently");
         }
     } catch (ex) {
@@ -263,7 +264,7 @@ function stop(msg) {
     try {
         voiceChannel.leave();
         voiceChannel = undefined;
-        stopped=true;
+        stopped = true;
     } catch (ex) {
         msg.reply("No current playback running");
     }
