@@ -105,11 +105,15 @@ function commands(cleanmsg, msg) {
         }
     }
     else if (cleanmsg.startsWith("jump")) {
+        if(voiceChannel==undefined){
+            msg.reply("No current playback running");
+            return;
+        }
         var split = cleanmsg.split(" ");
         if (!split[1])
             return;
-        var jumptime = parseFloat(split[1]);
-        if (!(jumptime || jumptime == 0))
+        var jumptime = toSeconds(split[1]);
+        if (!jumptime)
             return;
         if (cleanmsg.startsWith("jumpto ")) {
             if (cleanmsg.length < 8)
@@ -224,7 +228,7 @@ function jump(time, relative, msg) {
     else{
         jumpto = time;
     }
-    if (jumpto >= playing.length_seconds) {
+    if (jumpto >= playing.length_seconds || jumpto < 0) {
         msg.reply("Time outside of video length");
         return;
     }
@@ -272,4 +276,21 @@ function stop(msg) {
     } catch (ex) {
         msg.reply("No current playback running");
     }
+}
+
+function toSeconds(input){
+    var split = input.split(":");
+    if(split.length > 1){
+        var minutes = parseFloat(split[0]);
+        var seconds = parseFloat(split[1]);
+        if((minutes || minutes == 0) && (seconds || seconds == 0)){
+            return minutes * 60 + seconds;
+        }
+    }else{
+        var seconds = parseFloat(input);
+        if(seconds || seconds == 0){
+            return seconds;
+        }
+    }
+    return undefined;
 }
