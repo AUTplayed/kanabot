@@ -233,8 +233,8 @@ function jump(time, relative, msg) {
         return;
     }
     prevjump = jumpto;
+    msg.channel.sendMessage("Jumping to "+jumpto/60+":"+jumpto%60);
     player.end();
-    msg.channel.sendMessage("Jumped to "+jumpto/60+":"+jumpto%60);
 }
 
 function skip(msg) {
