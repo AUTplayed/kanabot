@@ -196,7 +196,7 @@ function eventRecursion(pl, connection, channel) {
     pl.once('end', function () {
         playing = undefined;
         if(jumpto){
-            player = connection.playStream(yt.downloadFromInfo(info, { audioonly: true }), { volume: volume, seek: jumpto });
+            player = connection.playStream(yt.downloadFromInfo(info, { audioonly: true }), { volume: volume});
             eventRecursion(player, connection, channel);
         }
         else if (queue.length <= 0) {
