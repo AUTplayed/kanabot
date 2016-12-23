@@ -194,16 +194,17 @@ function play(msg) {
 
 function eventRecursion(pl, connection, channel) {
     pl.once('end', function () {
-        playing = undefined;
         if(jumpto){
             player = connection.playStream(yt.downloadFromInfo(playing, { audioonly: true }), { volume: volume, seek: jumpto });
             eventRecursion(player, connection, channel);
         }
         else if (queue.length <= 0) {
+            playing = undefined;
             if (voiceChannel)
                 voiceChannel.leave();
             voiceChannel = undefined;
         } else if (!stopped) {
+            playing = undefined;
             var info = queue.shift();
             playing = info;
             player = connection.playStream(yt.downloadFromInfo(info, { audioonly: true }), { volume: volume });
