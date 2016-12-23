@@ -51,7 +51,17 @@ function youtube(query, followup) {
 }
 
 function commands(cleanmsg, msg) {
-    if (cleanmsg.startsWith("play")) {
+    if (cleanmsg == "player"){
+        msg.channel.sendMessage("text player").then(message => {
+            textplayer = message;
+            var interval = setInterval(function(){
+                textPlayerUpdate();
+                if(!textplayer)
+                    clearInterval(interval);
+            },1000);
+        });
+    }
+    else if (cleanmsg.startsWith("play")) {
         play(msg);
     }
     else if (cleanmsg.startsWith("add ")) {
@@ -143,16 +153,6 @@ function commands(cleanmsg, msg) {
             q += i + ": " + e.title + "\n";
         });
         msg.reply("queue:\n" + q);
-    }
-    else if (cleanmsg == "player"){
-        msg.channel.sendMessage("text player").then(message => {
-            textplayer = message;
-            var interval = setInterval(function(){
-                textPlayerUpdate();
-                if(!textplayer)
-                    clearInterval(interval);
-            },1000);
-        });
     }
 }
 
