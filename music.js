@@ -114,10 +114,12 @@ function commands(cleanmsg, msg) {
         if (cleanmsg.startsWith("jumpto ")) {
             if (cleanmsg.length < 8)
                 return;
+            console.log("jumpto: "+jumptime);
             jump(jumptime, false, msg);
         } else {
             if (cleanmsg.length < 6)
                 return;
+            console.log("jump: "+jumptime);
             jump(jumptime, true, msg);
         }
     }
@@ -220,14 +222,18 @@ function eventRecursion(pl, connection, channel) {
 
 function jump(time, relative, msg) {
     time = time * 1000;
+    console.log(time);
     if (relative) {
         time = player.time + time;
+        jumpto = time + prevjump;
+    }
+    else{
+        jumpto = time;
     }
     if (time + prevjump >= playing.length_seconds * 1000) {
         msg.reply("Time outside of video length");
         return;
     }
-    jumpto = time + prevjump;
     console.log(jumpto);
     prevjump = jumpto;
     player.end();
