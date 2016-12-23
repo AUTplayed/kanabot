@@ -223,6 +223,7 @@ function eventRecursion(pl, connection, channel) {
 function jump(time, relative, msg) {
     time = time * 1000;
     console.log(time);
+    console.log(player.time);
     if (relative) {
         time = player.time + time;
         jumpto = time + prevjump;
