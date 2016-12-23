@@ -9,6 +9,8 @@ var queue = [];
 var playing;
 var stopped = false;
 var volume = 1.0;
+var jumpto = 0;
+var prevjump = 0;
 
 //Module exports
 module.exports.youtube = youtube;
@@ -102,6 +104,23 @@ function commands(cleanmsg, msg) {
             msg.reply("Not playing!");
         }
     }
+    else if(cleanmsg.startsWith("jump")){
+        var split = cleanmsg.split(" ");
+        if(!split[1])
+            return;
+        var jumptime = parseFloat(split[1]);
+        if(!(jumptime || jumptime == 0))
+            return;
+        if(cleanmsg.startsWith("jumpto ")){
+            if(cleanmsg.length < 8)
+                return;
+            jump(jumptime,false,msg);
+        }else{
+            if(cleanmsg.length < 6)
+                return;
+            jump(jumptime,true,msg);
+        }
+    }
     else if(cleanmsg.startsWith("disconnect")){
         var client = require('./bot.js').getClient();
         if(client.voiceConnections){
@@ -167,8 +186,7 @@ function play(msg) {
     voiceChannel.join().then(connection => {
         var info = queue.shift();
         playing = info;
-        player = connection.playStream(yt.downloadFromInfo(info, { audioonly: true }));
-        player.setVolume(volume);
+        player = connection.playStream(yt.downloadFromInfo(info, { audioonly: true }),{volume:volume});
         msg.channel.sendMessage("Now playing " + info.title);
         eventRecursion(player, connection, msg.channel);
     });
@@ -181,16 +199,32 @@ function eventRecursion(pl, connection, channel) {
             if (voiceChannel)
                 voiceChannel.leave();
             voiceChannel = undefined;
+        } else if(jumpto){
+            player = connection.playStream(yt.downloadFromInfo(info, { audioonly: true }),{volume:volume,seek:jumpto});
+            eventRecursion(player, connection, channel);
         } else if(!stopped){
             var info = queue.shift();
             playing = info;
-            player = connection.playStream(yt.downloadFromInfo(info, { audioonly: true }));
-            player.setVolume(volume);
+            player = connection.playStream(yt.downloadFromInfo(info, { audioonly: true }),{volume:volume});
             channel.sendMessage("Now playing " + info.title);
             eventRecursion(player, connection, channel);
         }
         stopped=false;
+        jumpto=0;
     });
+}
+
+function jump(time,relative,msg){
+    if(relative){
+        time = player.time+time;
+    }
+    if(time+prevjump >= playing.length_seconds){
+        msg.reply("Time outside of video length");
+        return;
+    }
+    jumpto = time+prevjump;
+    prevjump = jumpto;
+    player.end();
 }
 
 function skip(msg) {
