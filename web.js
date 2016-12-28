@@ -38,5 +38,5 @@ function start() {
             res.status(200).json(JSON.stringify(rows));
         });
     });
-    app.listen(process.env.PORT || 8080);
+    app.listen(8080);
 }
