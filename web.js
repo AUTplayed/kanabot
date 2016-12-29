@@ -38,5 +38,9 @@ function start() {
             res.status(200).json(JSON.stringify(rows));
         });
     });
+    app.get('/log', function (req, res){
+        console.log(require('./bot.js').getClient());
+        res.send("logged");
+    });
     app.listen(8080);
 }
