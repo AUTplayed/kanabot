@@ -46,9 +46,9 @@ client.on('ready', () => {
 client.on('message', message => {
     if (message.author.bot)
         return;
-    if (message.isMentioned(client.user) || message.channel.type == 'dm' || message.content.startsWith(":poop:")) {
-        if(message.content.startsWith(":poop:")){
-            message.content = message.content.substring(6, message.content.length);
+    if (message.isMentioned(client.user) || message.channel.type == 'dm' || message.content.startsWith("💩 ")) {
+        if(message.content.startsWith("💩 ")){
+            message.content = message.content.substring(2, message.content.length);
         }
         if (!reply(message) && message.channel.type == 'dm') {
             getUserById(DEV).sendMessage(message.author.toString() + ": " + message.content);
