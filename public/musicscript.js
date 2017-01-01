@@ -2,7 +2,6 @@ $(document).ready(function() {
     setQueue();
     setCurrent();
     setProgress();
-    
 
     setInterval(function(){
         setProgress();
@@ -19,9 +18,10 @@ $(document).ready(function() {
 function setCurrent(){
     $.getJSON("/current", function(data){
         data = JSON.parse(data);
-        $("#current").html("<tr><td class = 'text-left'><a href='"+element.url+"'>"+element.title+"</a></td><td id='progress'></td></tr>");
+        $("#current").html("<tr><td class = 'text-left'><a href='"+data.url+"'>"+data.title+"</a></td><td id='progress'></td></tr>");
     });
 }
+
 function setProgress(){
     $.get("/progress", function(data){
     	$("#progress").text(data);
