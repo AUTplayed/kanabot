@@ -6,6 +6,7 @@ var path = require('path');
 
 //Internal dependencies
 var db = require('./db.js');
+var music = require('./music.js');
 
 //Declarations
 const MINUTE = 60000;
@@ -34,6 +35,14 @@ function start() {
     app.get('/log', function (req, res){
         console.log(require('./bot.js').getClient());
         res.send("logged");
+    });
+
+    //Music player
+    app.get('/music', function (req, res){
+        res.sendFile(path.join(__dirname + '/public/music.html'));
+    });
+    app.get('/queue', function (req, res) {
+        res.status(200).json(JSON.stringify(music.getQueue()));
     });
     app.listen(8080);
 }
