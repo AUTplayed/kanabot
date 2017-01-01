@@ -44,5 +44,11 @@ function start() {
     app.get('/queue', function (req, res) {
         res.status(200).json(JSON.stringify(music.getQueue()));
     });
+    app.get('/current', function (req, res) {
+        res.status(200).json(JSON.stringify(music.getCurrent()));
+    });
+    app.get('/progress', function (req, res) {
+        res.status(200).send(music.progress());
+    });
     app.listen(8080);
 }

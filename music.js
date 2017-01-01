@@ -22,6 +22,7 @@ module.exports.changeVolume = changeVolume;
 module.exports.progress = progress;
 module.exports.getVolume = function () { return volume }
 module.exports.getQueue = getQueue;
+module.exports.getCurrent = getCurrent;
 
 function youtube(query, followup) {
     try {
@@ -86,9 +87,9 @@ function commands(cleanmsg, msg) {
     }
     else if (cleanmsg.startsWith("current")) {
         if (cleanmsg.length > 8)
-            current(msg, function(output){ msg.channel.sendMessage(output); }, cleanmsg.split(" ")[1]);
+            msg.channel.sendMessage(current(msg, cleanmsg.split(" ")[1]));
         else
-            current(msg, function(output){ msg.reply(output); }, undefined);
+            msg.channel.sendMessage(current(msg, undefined));
     }
     else if (cleanmsg.startsWith("volume")) {
         if (cleanmsg.length < 8) {
@@ -260,7 +261,7 @@ function skip(index, output) {
     player.end();
 }
 
-function current(msg, output, property) {
+function current(msg, property) {
     try {
         if (playing) {
             if (property) {
@@ -272,15 +273,15 @@ function current(msg, output, property) {
                     msg.author.sendMessage(proplist);
                 }
                 else
-                    output(playing[property]);
+                    return playing[property];
             }
             else
-                output(playing.title);
+                return playing.title;
         } else {
-            output("No song playing currently");
+            return "No song playing currently";
         }
     } catch (ex) {
-        output(ex.message);
+        return ex.message;
     }
 }
 
@@ -295,7 +296,7 @@ function stop(msg) {
     }
 }
 
-function progress(msg){
+function progress(){
     var curTime = toTime(prevjump+player.time/1000);
     var maxTime = toTime(playing.length_seconds);
     return curTime+"/"+maxTime;
@@ -334,4 +335,12 @@ function getQueue(){
         webq.push(webe);
     });
     return webq;
+}
+
+function getCurrent(){
+    var webc = new Object();
+    webc.title = current(undefined,"title");
+    webc.url = current(undefined,"e.video_id");
+    if(!webc.url.startsWith("No current"))
+        webc.url = "https://youtube.com/watch?v="+webc.url;
 }
