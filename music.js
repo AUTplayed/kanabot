@@ -9,7 +9,7 @@ var queue = [];
 var playing;
 var stopped = false;
 var volume = 1.0;
-var jumpto = 0;
+var jumpto = undefined;
 var prevjump = 0;
 
 //Module exports
@@ -297,6 +297,8 @@ function stop(msg) {
 }
 
 function progress(){
+    if(!player)
+        return "-";
     var curTime = toTime(prevjump+player.time/1000);
     var maxTime = toTime(playing.length_seconds);
     return curTime+"/"+maxTime;

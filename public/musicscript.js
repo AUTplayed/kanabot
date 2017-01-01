@@ -29,6 +29,7 @@ function setProgress(){
 }
 
 function setQueue(){
+	$("#queue").html(" ");
     $.getJSON("/queue", function(data) {
         data = JSON.parse(data);
         data.forEach(function(element){
