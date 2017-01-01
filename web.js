@@ -21,13 +21,6 @@ function start() {
             path: "/refresh"
         }, function () { }).end();
     }, 25 * MINUTE);
-    //Refresh kanabot
-    setInterval(function () {
-        http.request({
-            host: "kanabot.herokuapp.com",
-            path: "/data"
-        }, function () { }).end();
-    }, 25 * MINUTE);
 
     app.use(express.static(__dirname + '/public'));
     app.get('/', function (req, res) {
