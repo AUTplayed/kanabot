@@ -341,7 +341,7 @@ function getCurrent(){
     var webc = new Object();
     webc.title = current(undefined,"title");
     webc.url = current(undefined,"video_id");
-    if(!webc.url.startsWith("No current"))
+    if(!webc.url.startsWith("No song"))
         webc.url = "https://youtube.com/watch?v="+webc.url;
     return webc;
 }
