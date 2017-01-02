@@ -9,8 +9,8 @@ module.exports.devDatabase=devDatabase;
 module.exports.connectAndQuery=connectAndQuery;
 
 function login(client) {
-    connectAndQuery("SELECT * FROM token", function (rows) {
-        client.login(rows[0].tkn);
+    connectAndQuery("SELECT * FROM token WHERE name = 'login'", function (rows) {
+        client.login(rows[0].key);
     });
 }
 

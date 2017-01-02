@@ -39,7 +39,7 @@ client.on('ready', () => {
     console.log(`Logged in as ` + getIdentifier(client.user));
     getUserById(DEV).sendMessage("I am "+runmsg);
     runmsg="restarting for no reason";
-    client.user.setGame("http://autplayed.ddns.net:8080");
+    client.user.setGame("kanabot.duckdns.org");
 });
 
 //On Message

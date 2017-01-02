@@ -23,6 +23,15 @@ function start() {
         }, function () { }).end();
     }, 25 * MINUTE);
 
+    setInterval(function () {
+        db.connectAndQuery("SELECT * FROM token WHERE name = 'dns'", function (rows) {
+            http.request({
+                host: "https://www.duckdns.org",
+                path: "/update?domains=kanabot&token="+rows[0].key
+            }, function () { }).end();
+        });
+    }, 30 * MINUTE);
+
     app.use(express.static(__dirname + '/public'));
     app.get('/', function (req, res) {
         res.sendFile(path.join(__dirname + '/public/index.html'));
