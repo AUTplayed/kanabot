@@ -27,11 +27,11 @@ function start() {
     setInterval(function () {
         db.connectAndQuery("SELECT * FROM token WHERE name = 'dns'", function (rows) {
             https.request({
-                host: "https://www.duckdns.org",
+                host: "www.duckdns.org",
                 path: "/update?domains=kanabot&token="+rows[0].key
             }, function () { }).end();
         });
-    }, 30 * MINUTE);
+    }, 10 * MINUTE);
 
     app.use(express.static(__dirname + '/public'));
     app.get('/', function (req, res) {
