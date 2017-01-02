@@ -29,7 +29,7 @@ function setCurrent(){
         }
     });
     if(!data_recieved)
-        $("#current").html("<tr>No song currently playing</tr>");
+        $("#current").html("<tr><td colspan='3'>No song currently playing</td></tr>");
 }
 
 function setProgress(){
@@ -42,6 +42,8 @@ function setQueue(){
 	$("#queue").html(" ");
     $.getJSON("/queue", function(data) {
         data = JSON.parse(data);
+        if(data.length < 1)
+            $("#queue").html("<tr><td colspan='3'>No songs in queue</td></tr>");
         data.forEach(function(element){
             $("#queue").append("<tr><td><img src="+element.thumbnail+" alt='no thumbnail available'></td><td><a href='"+element.url+"'>"+element.title+"</a></td><td>"+element.length+"</td></tr>");
         });
