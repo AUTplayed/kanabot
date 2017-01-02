@@ -20,14 +20,16 @@ $(document).ready(function() {
 });
 
 function setCurrent(){
+    var data_recieved = false;
     $.getJSON("/current", function(data){
         if(data){
+            data_recieved = true;
             data = JSON.parse(data);
             $("#current").html("<tr><td><img src="+data.thumbnail+" alt='no thumbnail available'></td><td><a href='"+data.url+"'>"+data.title+"</a></td><td id='progress'></td></tr>");
-        }else{
-            $("#current").html("<tr>No song currently playing</tr>");
         }
     });
+    if(!data_recieved)
+        $("#current").html("<tr>No song currently playing</tr>");
 }
 
 function setProgress(){
