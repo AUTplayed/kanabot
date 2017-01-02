@@ -21,7 +21,7 @@ $(document).ready(function() {
 
 function setCurrent(){
     $.getJSON("/current", function(data){
-        if(data!="undefined"){
+        if(data){
             data = JSON.parse(data);
             $("#current").html("<tr><td><img src="+data.thumbnail+" alt='no thumbnail available'></td><td><a href='"+data.url+"'>"+data.title+"</a></td><td id='progress'></td></tr>");
         }else{
@@ -41,7 +41,7 @@ function setQueue(){
     $.getJSON("/queue", function(data) {
         data = JSON.parse(data);
         data.forEach(function(element){
-            $("#queue").append("<tr><td><img src="+data.thumbnail+" alt='no thumbnail available'></td><td><a href='"+element.url+"'>"+element.title+"</a></td><td>"+element.length+"</td></tr>");
+            $("#queue").append("<tr><td><img src="+element.thumbnail+" alt='no thumbnail available'></td><td><a href='"+element.url+"'>"+element.title+"</a></td><td>"+element.length+"</td></tr>");
         });
     });
 }

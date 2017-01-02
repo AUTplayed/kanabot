@@ -297,7 +297,7 @@ function stop(msg) {
 }
 
 function progress(){
-    if(!player)
+    if(!player || !playing)
         return "-";
     var curTime = toTime(prevjump+player.time/1000);
     var maxTime = toTime(playing.length_seconds);
