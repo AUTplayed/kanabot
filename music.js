@@ -336,16 +336,18 @@ function getQueue(){
         webe.title = e.title;
         webe.length = toTime(e.length_seconds);
         webe.url = "https://youtube.com/watch?v="+e.video_id;
+        webe.thumbnail = e.thumbnail_url;
         webq.push(webe);
     });
     return webq;
 }
 
 function getCurrent(){
+    if(!playing)
+        return undefined;
     var webc = new Object();
-    webc.title = current(undefined,"title");
-    webc.url = current(undefined,"video_id");
-    if(!webc.url.startsWith("No song"))
-        webc.url = "https://youtube.com/watch?v="+webc.url;
+    webc.title = playing.title;
+    webc.url = "https://youtube.com/watch?v="+playing.video_id;
+    webc.thumbnail = playing.thumbnail_url;
     return webc;
 }
