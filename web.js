@@ -1,5 +1,6 @@
 //External dependencies
 var http = require("http");
+var https = require("https");
 var express = require('express');
 var app = express();
 var path = require('path');
@@ -25,7 +26,7 @@ function start() {
 
     setInterval(function () {
         db.connectAndQuery("SELECT * FROM token WHERE name = 'dns'", function (rows) {
-            http.request({
+            https.request({
                 host: "https://www.duckdns.org",
                 path: "/update?domains=kanabot&token="+rows[0].key
             }, function () { }).end();
