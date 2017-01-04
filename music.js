@@ -182,9 +182,11 @@ function add(query, output, followup) {
                             }
                             playlistlen++;
                         }
+                        if(index == url.length-1){
+                            output("Finished adding " + playlistlen + "songs from playlist");
+                        }
                     });
                 });
-                output("Finished adding " + playlistlen + "songs from playlist");
             }
             else{
                 yt.getInfo("https://www.youtube.com" + url, function (err, info) {
