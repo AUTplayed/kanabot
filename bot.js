@@ -27,6 +27,10 @@ setInterval(function () {
         db.login(client);
     }
 }, 10 * MINUTE);
+//On websocket close - relog
+client.ws.on("close",function(){
+    db.login(client);
+});
 
 //Start Website
 web.start();
