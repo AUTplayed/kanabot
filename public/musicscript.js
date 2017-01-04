@@ -1,3 +1,5 @@
+var tempScrollTop;
+
 $(document).ready(function() {
     setQueue();
     setCurrent();
@@ -8,14 +10,14 @@ $(document).ready(function() {
         var split = $("#progress").text().split("/");
         if(split[0] == split[1]){
             setTimeout(function(){
-                setCurrent();
                 setQueue();
+                setCurrent();
             },3000);
         }
     },1000);
     setInterval(function(){
-        setCurrent();
         setQueue();
+        setCurrent();
     },10000);
 });
 
@@ -39,6 +41,7 @@ function setProgress(){
 }
 
 function setQueue(){
+    tempScrollTop = $(window).scrollTop();
 	$("#queue").html(" ");
     $.getJSON("/queue", function(data) {
         data = JSON.parse(data);
@@ -48,4 +51,5 @@ function setQueue(){
             $("#queue").append("<tr><td><img src="+element.thumbnail+" alt='no thumbnail available'></td><td><a href='"+element.url+"'>"+element.title+"</a></td><td>"+element.length+"</td></tr>");
         });
     });
+    $(window).scrollTop(tempScrollTop);
 }
