@@ -33,7 +33,6 @@ function youtube(query, followup) {
                 query = query.replace(query[i], "%" + query[i].charCodeAt().toString(16));
             }
         }
-        console.log(query);
     } catch (ex) {
         console.log(ex);
         return;
@@ -50,8 +49,32 @@ function youtube(query, followup) {
                 followup(undefined);
             else {
                 matches = matches[0].split("\"")[1];
-                console.log(matches);
-                followup(matches);
+                if (!matches.includes(";list="))
+                    followup(matches);
+                else {
+                    var split = matches.split(";");
+                    https.get("https://www.youtube.com/playlist?" + split[1], function (res) {
+                        html = '';
+                        res.on('data', function (data2) {
+                            html += data2;
+                        });
+                        res.once('end', function () {
+                            pattern = /<a.*href=\"\/watch\?v=.*?;index=.*?"/g;
+                            matches = html.match(pattern);
+                            if (!matches || matches.length < 1)
+                                followup(undefined);
+                            else {
+                                var list = [];
+                                matches.forEach(function (e) {
+                                    e = e.split("href=\"")[1];
+                                    e = e.split(";")[0];
+                                    list.push(e);
+                                });
+                                followup(list);
+                            }
+                        });
+                    }).end();
+                }
             }
         });
     }).end();
@@ -65,13 +88,13 @@ function commands(cleanmsg, msg) {
         if (cleanmsg.length < 5)
             return;
         var query = cleanmsg.substring(4, cleanmsg.length);
-        add(query, function(output){ msg.channel.sendMessage(output); }, undefined);
+        add(query, function (output) { msg.channel.sendMessage(output); }, undefined);
     }
     else if (cleanmsg.startsWith("pladd ")) {
         if (cleanmsg.length < 7)
             return;
         var query = cleanmsg.substring(6, cleanmsg.length);
-        add(query, function(output){ msg.channel.sendMessage(output); }, function () { play(msg); });
+        add(query, function (output) { msg.channel.sendMessage(output); }, function () { play(msg); });
     }
     else if (cleanmsg.startsWith("stop")) {
         stop(msg);
@@ -80,10 +103,10 @@ function commands(cleanmsg, msg) {
         if (cleanmsg.length > 5) {
             var split = cleanmsg.split(" ");
             if (split[1]) {
-                skip(split[1],function(output){ msg.channel.sendMessage(output); });
+                skip(split[1], function (output) { msg.channel.sendMessage(output); });
             }
         }
-        skip(-1,function(output){ msg.channel.sendMessage(output); });
+        skip(-1, function (output) { msg.channel.sendMessage(output); });
     }
     else if (cleanmsg.startsWith("current")) {
         if (cleanmsg.length > 8)
@@ -110,11 +133,11 @@ function commands(cleanmsg, msg) {
         if (cleanmsg.startsWith("jumpto ")) {
             if (cleanmsg.length < 8)
                 return;
-            jump(split[1], false, function(output){ msg.channel.sendMessage(output); });
+            jump(split[1], false, function (output) { msg.channel.sendMessage(output); });
         } else {
             if (cleanmsg.length < 6)
                 return;
-            jump(split[1], true, function(output){ msg.channel.sendMessage(output); });
+            jump(split[1], true, function (output) { msg.channel.sendMessage(output); });
         }
     }
     else if (cleanmsg.startsWith("disconnect")) {
@@ -146,17 +169,36 @@ function add(query, output, followup) {
             output("No Video found");
         }
         else {
-            yt.getInfo("https://www.youtube.com" + url, function (err, info) {
-                if (!info) {
-                    output("There was an error fetching your video, please try again");
-                } else {
-                    queue.push(info);
-                    output("Added " + info.title);
-                    if (followup) {
-                        followup();
+            if (url.constructor === Array) {
+                var playlistlen = 0;
+                url.forEach(function (e,index) {
+                    yt.getInfo("https://www.youtube.com" + e, function (err, info) {
+                        if (!info) {
+                            output("There was an error fetching your video, please try again");
+                        } else {
+                            queue.push(info);
+                            if (followup && index == 0) {
+                                followup();
+                            }
+                            playlistlen++;
+                        }
+                    });
+                });
+                output("Finished adding " + playlistlen + "songs from playlist");
+            }
+            else{
+                yt.getInfo("https://www.youtube.com" + url, function (err, info) {
+                    if (!info) {
+                        output("There was an error fetching your video, please try again");
+                    } else {
+                        queue.push(info);
+                        output("Added " + info.title);
+                        if (followup) {
+                            followup();
+                        }
                     }
-                }
-            });
+                });
+            }
         }
     });
 }
@@ -212,7 +254,7 @@ function eventRecursion(pl, connection, channel) {
     });
 }
 
-function changeVolume(vol){
+function changeVolume(vol) {
     var tempvolume = parseFloat(vol);
     if (tempvolume || tempvolume == 0) {
         volume = tempvolume;
@@ -245,7 +287,7 @@ function jump(time, relative, output) {
 }
 
 function skip(index, output) {
-    if(index >= 0){
+    if (index >= 0) {
         var num = parseInt(index);
         if ((num || num == 0) && queue[num]) {
             var removed = queue.splice(num, 1)[0];
@@ -253,7 +295,7 @@ function skip(index, output) {
             return;
         }
     }
-    if(!player){
+    if (!player) {
         output("No current playback running");
         return;
     }
@@ -296,12 +338,12 @@ function stop(msg) {
     }
 }
 
-function progress(){
-    if(!player || !playing)
+function progress() {
+    if (!player || !playing)
         return "-";
-    var curTime = toTime(prevjump+player.time/1000);
+    var curTime = toTime(prevjump + player.time / 1000);
     var maxTime = toTime(playing.length_seconds);
-    return curTime+"/"+maxTime;
+    return curTime + "/" + maxTime;
 }
 
 function toSeconds(input) {
@@ -324,30 +366,30 @@ function toSeconds(input) {
 function toTime(input) {
     var minutes = Math.floor(input / 60);
     var seconds = Math.round(input % 60);
-    if(seconds < 10)
+    if (seconds < 10)
         return minutes + ":0" + seconds;
     return minutes + ":" + seconds;
 }
 
-function getQueue(){
+function getQueue() {
     var webq = [];
-    queue.forEach(function(e){
+    queue.forEach(function (e) {
         var webe = new Object();
         webe.title = e.title;
         webe.length = toTime(e.length_seconds);
-        webe.url = "https://youtube.com/watch?v="+e.video_id;
+        webe.url = "https://youtube.com/watch?v=" + e.video_id;
         webe.thumbnail = e.thumbnail_url;
         webq.push(webe);
     });
     return webq;
 }
 
-function getCurrent(){
-    if(!playing)
+function getCurrent() {
+    if (!playing)
         return undefined;
     var webc = new Object();
     webc.title = playing.title;
-    webc.url = "https://youtube.com/watch?v="+playing.video_id;
+    webc.url = "https://youtube.com/watch?v=" + playing.video_id;
     webc.thumbnail = playing.thumbnail_url;
     return webc;
 }
