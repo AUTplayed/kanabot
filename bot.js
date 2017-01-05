@@ -137,21 +137,11 @@ function reply(msg) {
         } else {
             shorten(split[1], msg);
         }
-    } else if (cleanmsg.startsWith('yt ')) {
-        if (cleanmsg.length < 4)
-            return;
-        var query = cleanmsg.substring(3, cleanmsg.length);
-        music.youtube(query, function (url) {
-            if (!url)
-                msg.reply("No video found");
-            else
-                msg.reply(url)
-        });
     } else if (cleanmsg.startsWith('music ')) {
         var musicComm = cleanmsg.substring(6, cleanmsg.length);
         music.commands(musicComm, msg);
     } else if (cleanmsg == "help" || cleanmsg == "commands") {
-        var helpcmd = "\n**General commands: **\ngheat,gseng\nrapecount [user]\nkapparr <url to shorten>\nyt <search terms>\n";
+        var helpcmd = "\n**General commands: **\ngheat,gseng\nrapecount [user]\nkapparr <url to shorten>\n";
         helpcmd+="\n**Music commands: **\n*@kana music before all commands if you are not in a channel named \"music\"*\n";
         helpcmd+="play\nadd <search terms>\npladd <search terms>\nstop\nq,queue\nskip [index]\ncurrent [property] *use property proplist*\nprogress\njump | jumpto <seconds | minutes:seconds>\nvolume [number] *default is 1, 2 for example is double*\ndisconnect\n";
         msg.reply(helpcmd);

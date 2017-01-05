@@ -1,6 +1,5 @@
 //External dependencies
-var https = require("https");
-var yt = require('ytdl-core');
+var yt = require('./yt.js');
 
 //Declarations
 var voiceChannel;
@@ -23,62 +22,6 @@ module.exports.progress = progress;
 module.exports.getVolume = function () { return volume }
 module.exports.getQueue = getQueue;
 module.exports.getCurrent = getCurrent;
-
-function youtube(query, followup) {
-    try {
-        query = query.replace(/%/g, "%25");
-        query = query.replace(/ /g, "+");
-        for (var i in query) {
-            if (query[i].charCodeAt() < 48 && query[i] != "+" && query[i] != "%") {
-                query = query.replace(query[i], "%" + query[i].charCodeAt().toString(16));
-            }
-        }
-    } catch (ex) {
-        console.log(ex);
-        return;
-    }
-    https.get("https://www.youtube.com/results?search_query=" + query, function (res) {
-        var html = '';
-        res.on('data', function (data) {
-            html += data;
-        });
-        res.once('end', function () {
-            var pattern = /<a href=\"\/watch\?v=.*?\"/g;
-            var matches = html.match(pattern);
-            if (!matches || matches.length < 1)
-                followup(undefined);
-            else {
-                matches = matches[0].split("\"")[1];
-                if (!matches.includes(";list="))
-                    followup(matches);
-                else {
-                    var split = matches.split(";");
-                    https.get("https://www.youtube.com/playlist?" + split[1], function (res) {
-                        html = '';
-                        res.on('data', function (data2) {
-                            html += data2;
-                        });
-                        res.once('end', function () {
-                            pattern = /<a.*href=\"\/watch\?v=.*?;index=.*?"/g;
-                            matches = html.match(pattern);
-                            if (!matches || matches.length < 1)
-                                followup(undefined);
-                            else {
-                                var list = [];
-                                matches.forEach(function (e) {
-                                    e = e.split("href=\"")[1];
-                                    e = e.split(";")[0];
-                                    list.push(e);
-                                });
-                                followup(list);
-                            }
-                        });
-                    }).end();
-                }
-            }
-        });
-    }).end();
-}
 
 function commands(cleanmsg, msg) {
     if (cleanmsg.startsWith("play")) {
@@ -164,43 +107,20 @@ function commands(cleanmsg, msg) {
 }
 
 function add(query, output, followup) {
-    youtube(query, function (url) {
-        if (!url) {
-            output("No Video found");
+    yt.get(query, function(infos){
+        queue = queue.concat(infos);
+        if(infos.length <= 10){
+            var titles = "";
+            infos.forEach(function(e){
+                titles+="Added "+e.title+"\n";
+            });
+            output(titles);
         }
-        else {
-            if (url.constructor === Array) {
-                var playlistlen = 0;
-                url.forEach(function (e,index) {
-                    yt.getInfo("https://www.youtube.com" + e, function (err, info) {
-                        if (!info) {
-                            output("There was an error fetching your video, please try again");
-                        } else {
-                            queue.push(info);
-                            if (followup && index == 0) {
-                                followup();
-                            }
-                            playlistlen++;
-                        }
-                        if(index == url.length-1){
-                            output("Finished adding " + playlistlen + " songs from playlist");
-                        }
-                    });
-                });
-            }
-            else{
-                yt.getInfo("https://www.youtube.com" + url, function (err, info) {
-                    if (!info) {
-                        output("There was an error fetching your video, please try again");
-                    } else {
-                        queue.push(info);
-                        output("Added " + info.title);
-                        if (followup) {
-                            followup();
-                        }
-                    }
-                });
-            }
+        else{
+            output("Added "+infos.length+" songs from playlist");
+        }
+        if(followup){
+            followup();
         }
     });
 }
