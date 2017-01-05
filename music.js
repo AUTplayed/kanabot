@@ -297,12 +297,13 @@ function toTime(input) {
 
 function getQueue() {
     var webq = [];
-    queue.forEach(function (e) {
+    queue.forEach(function (e, i) {
         var webe = new Object();
         webe.title = e.title;
         webe.length = toTime(e.length_seconds);
         webe.url = "https://youtube.com/watch?v=" + e.video_id;
         webe.thumbnail = e.thumbnail_url;
+        webe.index = i;
         webq.push(webe);
     });
     return webq;

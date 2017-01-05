@@ -48,7 +48,7 @@ function setQueue(){
         if(data.length < 1)
             $("#queue").html("<tr><td colspan='3'>No songs in queue</td></tr>");
         data.forEach(function(element){
-            $("#queue").append("<tr><td><img src="+element.thumbnail+" alt='no thumbnail available'></td><td><a href='"+element.url+"'>"+element.title+"</a></td><td>"+element.length+"</td></tr>");
+            $("#queue").append("<tr><td>"+element.index+"</td><td><img src="+element.thumbnail+" alt='no thumbnail available'></td><td><a href='"+element.url+"'>"+element.title+"</a></td><td>"+element.length+"</td></tr>");
         });
         $(window).scrollTop(tempScrollTop);
     });
