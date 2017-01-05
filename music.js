@@ -106,17 +106,13 @@ function commands(cleanmsg, msg) {
 }
 
 function add(query, output, followup) {
-    yt.get(query, function(infos){
-        queue = queue.concat(infos);
-        if(infos.length <= 10){
-            var titles = "";
-            infos.forEach(function(e){
-                titles+="Added "+e.title+"\n";
-            });
-            output(titles);
+    yt.get(query, function(info){
+        if(info){
+            queue.push(info);
+            output("Added "+infos.length+" songs from playlist");
         }
         else{
-            output("Added "+infos.length+" songs from playlist");
+            output("Failed to add song");
         }
         if(followup){
             followup();

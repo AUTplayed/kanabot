@@ -9,8 +9,9 @@ function get(urlOrQuery, followup) {
     var url = [];
     if (urlOrQuery.startsWith("https://www.youtube.com")) {
         url.push(urlOrQuery);
-        downloadInfos(url, function (infos) {
-            followup(infos);
+        downloadInfo(url,0,function(info){
+            followup(info);
+            
         });
     } else {
         getHtml(getSearchUrl(urlOrQuery), function (html) {
@@ -22,8 +23,8 @@ function get(urlOrQuery, followup) {
                 matches = matches[0].split("\"")[1];
                 if (!matches.includes(";list=")) {
                     url.push(matches);
-                    downloadInfos(url, function (infos) {
-                        followup(infos);
+                    downloadInfo(url, function (info) {
+                        followup(info);
                     });
                 }
                 else {
@@ -40,8 +41,8 @@ function get(urlOrQuery, followup) {
                                 if (!url.includes(e))
                                     url.push(e);
                             });
-                            downloadInfos(url, function (infos) {
-                                followup(infos);
+                            downloadInfos(url, function (info) {
+                                followup(info);
                             });
                         }
                     });
@@ -49,9 +50,6 @@ function get(urlOrQuery, followup) {
             }
         });
     }
-
-
-
 }
 
 function getSearchUrl(query) {
@@ -93,13 +91,10 @@ function downloadInfo(url, failcount, followup) {
 }
 
 function downloadInfos(url, followup) {
-    var infos = [];
+    var progress = 0;
     url.forEach(function (video, index) {
         downloadInfo(video, 0, function (info) {
-            infos.push(info);
-            if (infos.length == url.length) {
-                followup(infos);
-            }
+            followup(info);
         });
     });
 }
