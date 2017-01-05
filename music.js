@@ -106,15 +106,22 @@ function commands(cleanmsg, msg) {
 }
 
 function add(query, output, followup) {
-    yt.get(query, function(info){
-        if(info){
+    var count = 0;
+    yt.get(query, function (info) {
+        count++;
+        if (info) {
             queue.push(info);
-            output("Added "+infos.length+" songs from playlist");
+            if (count <= 10) {
+                var out = "Added " + info.title;
+                if (count == 10)
+                    out+="\nusw...";
+                output(out);
+            }
         }
-        else{
+        else {
             output("Failed to add song");
         }
-        if(followup){
+        if (followup) {
             followup();
         }
     });
