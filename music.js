@@ -12,7 +12,6 @@ var jumpto = undefined;
 var prevjump = 0;
 
 //Module exports
-module.exports.youtube = youtube;
 module.exports.commands = commands;
 module.exports.add = add;
 module.exports.skip = skip;
