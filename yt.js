@@ -6,10 +6,8 @@ var ytdl = require('ytdl-core');
 module.exports.get = get;
 
 function get(urlOrQuery, followup) {
-    var url = [];
     if (urlOrQuery.startsWith("https://www.youtube.com")) {
-        url.push(urlOrQuery);
-        downloadInfo(url,0,function(info){
+        downloadInfo(urlOrQuery,0,function(info){
             followup(info);
             
         });
@@ -22,8 +20,7 @@ function get(urlOrQuery, followup) {
             else {
                 matches = matches[0].split("\"")[1];
                 if (!matches.includes(";list=")) {
-                    url.push(matches);
-                    downloadInfo(url, function (info) {
+                    downloadInfo(matches, function (info) {
                         followup(info);
                     });
                 }
@@ -35,6 +32,7 @@ function get(urlOrQuery, followup) {
                         if (!matches || matches.length < 1)
                             followup(undefined);
                         else {
+                            var url = [];
                             matches.forEach(function (e) {
                                 e = e.split("href=\"")[1];
                                 e = e.split(";")[0];
