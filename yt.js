@@ -7,9 +7,9 @@ module.exports.get = get;
 
 function get(urlOrQuery, followup) {
     if (urlOrQuery.startsWith("https://www.youtube.com")) {
-        downloadInfo(urlOrQuery,0,function(info){
+        downloadInfo(urlOrQuery, 0, function (info) {
             followup(info);
-            
+
         });
     } else {
         getHtml(getSearchUrl(urlOrQuery), function (html) {
@@ -20,7 +20,7 @@ function get(urlOrQuery, followup) {
             else {
                 matches = matches[0].split("\"")[1];
                 if (!matches.includes(";list=")) {
-                    downloadInfo(matches, function (info) {
+                    downloadInfo(matches, 0, function (info) {
                         followup(info);
                     });
                 }
