@@ -258,10 +258,10 @@ function current(msg, property) {
 
 function stop(msg) {
     try {
+        stopped = true;
         player.end();
         voiceChannel.leave();
         voiceChannel = undefined;
-        stopped = true;
     } catch (ex) {
         msg.reply("No current playback running");
     }
