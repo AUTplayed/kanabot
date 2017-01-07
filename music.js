@@ -1,5 +1,6 @@
 //External dependencies
 var yt = require('./yt.js');
+var ytdl = require('ytdl-core');
 
 //Declarations
 var voiceChannel;
@@ -148,7 +149,7 @@ function play(msg) {
     voiceChannel.join().then(connection => {
         var info = queue.shift();
         playing = info;
-        player = connection.playStream(yt.downloadFromInfo(info, { audioonly: true }), { volume: volume });
+        player = connection.playStream(ytdl.downloadFromInfo(info, { audioonly: true }), { volume: volume });
         msg.channel.sendMessage("Now playing " + info.title);
         eventRecursion(player, connection, msg.channel);
     });
@@ -157,7 +158,7 @@ function play(msg) {
 function eventRecursion(pl, connection, channel) {
     pl.once('end', function () {
         if (jumpto || jumpto == 0) {
-            player = connection.playStream(yt.downloadFromInfo(playing, { audioonly: true }), { volume: volume, seek: jumpto });
+            player = connection.playStream(ytdl.downloadFromInfo(playing, { audioonly: true }), { volume: volume, seek: jumpto });
             eventRecursion(player, connection, channel);
         }
         else if (queue.length <= 0) {
@@ -169,7 +170,7 @@ function eventRecursion(pl, connection, channel) {
             playing = undefined;
             var info = queue.shift();
             playing = info;
-            player = connection.playStream(yt.downloadFromInfo(info, { audioonly: true }), { volume: volume });
+            player = connection.playStream(ytdl.downloadFromInfo(info, { audioonly: true }), { volume: volume });
             channel.sendMessage("Now playing " + info.title);
             eventRecursion(player, connection, channel);
         }
