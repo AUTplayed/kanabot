@@ -110,19 +110,22 @@ function add(query, output, followup) {
     var count = 0;
     yt.get(query, function (info) {
         count++;
-        if (info) {
+        if(!info){
+            output("Failed to add song");
+        }
+        else if(!info.title){
+            output("Failed to add song with url: "+info);
+        }
+        else if (info) {
             queue.push(info);
-            if (count <= 10) {
+            if (count <= 5) {
                 var out = "Added " + info.title;
                 if (count == 10)
                     out+="\nusw...";
                 output(out);
             }
         }
-        else {
-            output("Failed to add song");
-        }
-        if (followup) {
+        if (followup && count == 1) {
             followup();
         }
     });

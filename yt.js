@@ -79,7 +79,7 @@ function downloadInfo(url, failcount, followup) {
             console.log(err);
             failcount++;
             if (failcount > 3)
-                followup(undefined);
+                followup(url);
             else
                 downloadInfo(url, failcount, function () { followup(); });
         } else {
