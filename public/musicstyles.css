@@ -8,14 +8,21 @@ body {
   text-rendering: optimizeLegibility;
 }
 
-div.table-title {
-   display: block;
+div.table-title h3{
+  display: block;
   margin: auto;
   padding:5px;
   width: 60%;
 }
 
-.table-title h3 {
+div.table-title input{
+  margin-left: 20%;
+  margin-bottom: 10px;
+  padding:5px;
+  width: 15%;
+}
+
+.table-title {
    color: #fafafa;
    font-size: 30px;
    font-weight: 400;

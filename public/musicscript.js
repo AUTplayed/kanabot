@@ -15,10 +15,10 @@ $(document).ready(function() {
             },3000);
         }
     },1000);
-    setInterval(function(){
+    $("#refresh").click(function() {
         setQueue();
         setCurrent();
-    },10000);
+    });
 });
 
 function setCurrent(){
@@ -46,7 +46,7 @@ function setQueue(){
     $.getJSON("/queue", function(data) {
         data = JSON.parse(data);
         if(data.length < 1)
-            $("#queue").html("<tr><td colspan='3'>No songs in queue</td></tr>");
+            $("#queue").html("<tr><td colspan='4'>No songs in queue</td></tr>");
         data.forEach(function(element){
             $("#queue").append("<tr><td>"+element.index+"</td><td><img src="+element.thumbnail+" alt='no thumbnail available'></td><td><a href='"+element.url+"'>"+element.title+"</a></td><td>"+element.length+"</td></tr>");
         });
