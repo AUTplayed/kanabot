@@ -23,16 +23,11 @@ module.exports.getClient = function(){ return client; };
 
 //Keep kanabot running forever
 setInterval(function () {
-    if (!client.token) {
+    if (!client.token || client.ws.ws._closeReceived) {
         client.destroy();
         db.login(client);
     }
-}, 10 * MINUTE);
-//On websocket close - relog
-client.ws.on("close",function(){
-    client.destroy();
-    db.login(client);
-});
+}, 1 * MINUTE);
 
 //Start Website
 web.start();
