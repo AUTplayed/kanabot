@@ -171,6 +171,7 @@ function eventRecursion(pl, connection, channel) {
             voiceChannel = undefined;
         } else if (!stopped) {
             playing = undefined;
+            prevjump = 0;
             var info = queue.shift();
             playing = info;
             player = connection.playStream(ytdl.downloadFromInfo(info, { audioonly: true }), { volume: volume });
