@@ -12,7 +12,7 @@ $(document).ready(function() {
             setTimeout(function(){
                 setQueue();
                 setCurrent();
-            },3000);
+            },2000);
         }
     },1000);
     $("#refresh").click(function() {
@@ -42,11 +42,12 @@ function setProgress(){
 
 function setQueue(){
     tempScrollTop = $(window).scrollTop();
-	$("#queue").html(" ");
     $.getJSON("/queue", function(data) {
         data = JSON.parse(data);
         if(data.length < 1)
             $("#queue").html("<tr><td colspan='4'>No songs in queue</td></tr>");
+        else
+            $("#queue").html(" ");
         data.forEach(function(element){
             $("#queue").append("<tr><td>"+element.index+"</td><td><img src="+element.thumbnail+" alt='no thumbnail available'></td><td><a href='"+element.url+"'>"+element.title+"</a></td><td>"+element.length+"</td></tr>");
         });
