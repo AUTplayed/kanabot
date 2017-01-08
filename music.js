@@ -11,6 +11,7 @@ var stopped = false;
 var volume = 1.0;
 var jumpto = undefined;
 var prevjump = 0;
+var paused = false;
 
 //Module exports
 module.exports.commands = commands;
@@ -22,6 +23,7 @@ module.exports.progress = progress;
 module.exports.getVolume = function () { return volume }
 module.exports.getQueue = getQueue;
 module.exports.getCurrent = getCurrent;
+module.exports.pauseUnpause = pauseUnpause;
 
 function commands(cleanmsg, msg) {
     if (cleanmsg.startsWith("play")) {
@@ -97,6 +99,9 @@ function commands(cleanmsg, msg) {
     else if (cleanmsg.startsWith("progress")) {
         msg.reply(progress());
     }
+    else if (cleanmsg.startsWith("pause")) {
+        pauseUnpause();
+    }
     else if (cleanmsg == "queue" || cleanmsg == "q") {
         var q = "";
         queue.forEach(function (e, i) {
@@ -110,18 +115,18 @@ function add(query, output, followup) {
     var count = 0;
     yt.get(query, function (info) {
         count++;
-        if(!info){
+        if (!info) {
             output("Failed to add song");
         }
-        else if(!info.title){
-            output("Failed to add song with url: "+info);
+        else if (!info.title) {
+            output("Failed to add song with url: " + info);
         }
         else if (info) {
             queue.push(info);
             if (count <= 5) {
                 var out = "Added " + info.title;
                 if (count == 10)
-                    out+="\nusw...";
+                    out += "\nusw...";
                 output(out);
             }
         }
@@ -179,6 +184,7 @@ function eventRecursion(pl, connection, channel) {
             eventRecursion(player, connection, channel);
         }
         stopped = false;
+        paused = false;
         jumpto = undefined;
     });
 }
@@ -189,6 +195,20 @@ function changeVolume(vol) {
         volume = tempvolume;
     }
     player.setVolume(volume);
+}
+
+function pauseUnpause(pause) {
+    if (pause == undefined) {
+        paused = !paused;
+    }
+    else {
+        paused = pause;
+    }
+    if (paused) {
+        player.pause();
+    } else {
+        player.resume();
+    }
 }
 
 function jump(time, relative, output) {
