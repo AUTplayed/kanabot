@@ -61,14 +61,16 @@ function setQueue() {
 //Copy-Pasted Stuff
 //Deal with it
 
-var clicked;
+
 
 // Trigger action when the contexmenu is about to be shown
 $(document).bind("contextmenu", function (event) {
-
+    var clicked;
     // Avoid the real one
     event.preventDefault();
-    clicked = document.elementFromPoint(event.pageX, event.pageY).parentElement;
+    clicked = document.elementFromPoint(event.pageX-window.pageXOffset, event.pageY-window.pageYOffset);
+    if(clicked)
+        clicked = clicked.parentElement;
     if (clicked) {
         if (clicked.nodeName == "TR") {
             $(".custom-menu").html('<li data-action="skip">Skip</li>');
@@ -80,7 +82,7 @@ $(document).bind("contextmenu", function (event) {
                 switch ($(this).attr("data-action")) {
                     // A case for each action. Your actions here
                     case "skip":
-                        if (clicked.querySelector('#index').length) {
+                        if (clicked.querySelector('#index')) {
                             $.get("/skip/" + clicked.querySelector('#index').innerHTML, function (data) {
                                 console.log(data);
                                 setQueue();
@@ -107,8 +109,8 @@ $(document).bind("contextmenu", function (event) {
 
             // In the right position (the mouse)
             css({
-                top: event.pageY + "px",
-                left: event.pageX + "px"
+                top: event.pageY-window.pageYOffset + "px",
+                left: event.pageX-window.pageXOffset + "px"
             });
     }
 });
