@@ -15,11 +15,11 @@ div.table-title h3{
   width: 60%;
 }
 
-div.table-title input{
-  margin-left: 20%;
-  margin-bottom: 10px;
-  padding:5px;
-  width: 15%;
+#refresh{
+  bottom: 30px;
+  right: 30px;
+  width: 5%;
+  position: fixed;
 }
 
 .table-title {

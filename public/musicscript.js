@@ -8,11 +8,11 @@ $(document).ready(function() {
     setInterval(function(){
         setProgress();
         var split = $("#progress").text().split("/");
-        if(split[0] == split[1]){
+        if(split[0] == split[1] || split[0] == "0:00"){
             setTimeout(function(){
                 setQueue();
                 setCurrent();
-            },2000);
+            },2500);
         }
     },1000);
     $("#refresh").click(function() {
@@ -35,17 +35,20 @@ function setCurrent(){
 }
 
 function setProgress(){
-    $.get("/progress", function(data){
-    	$("#progress").text(data);
-    });
+    if($('#progress').length){
+        $.get("/progress", function(data){
+            $("#progress").text(data);
+        });
+    }
 }
 
 function setQueue(){
     tempScrollTop = $(window).scrollTop();
+    var data_recieved = false;
     $.getJSON("/queue", function(data) {
         data = JSON.parse(data);
-        if(data.length < 1)
-            $("#queue").html("<tr><td colspan='4'>No songs in queue</td></tr>");
+        if(data.length > 0)
+            data_recieved = true;
         else
             $("#queue").html(" ");
         data.forEach(function(element){
@@ -53,5 +56,7 @@ function setQueue(){
         });
         $(window).scrollTop(tempScrollTop);
     });
+    if(!data_recieved)
+        $("#queue").html("<tr><td colspan='4'>No songs in queue</td></tr>");
     
 }
