@@ -72,7 +72,7 @@ $(document).bind("contextmenu", function (event) {
     if (clicked) {
         if (clicked.nodeName == "TR") {
             $(".custom-menu").html('<li data-action="skip">Skip</li>');
-            
+
             // If the menu element is clicked
             $(".custom-menu li").click(function () {
 
@@ -80,9 +80,11 @@ $(document).bind("contextmenu", function (event) {
                 switch ($(this).attr("data-action")) {
                     // A case for each action. Your actions here
                     case "skip":
-                        if (clicked.find('#index').length) {
-                            $.get("/skip/" + clicked.find('#index').html(), function (data) {
+                        if (clicked.querySelector('#index').length) {
+                            $.get("/skip/" + clicked.querySelector('#index').innerHTML, function (data) {
                                 console.log(data);
+                                setQueue();
+                                setCurrent();
                             });
                         }
                         else {
