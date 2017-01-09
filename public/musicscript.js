@@ -44,11 +44,10 @@ function setProgress(){
 
 function setQueue(){
     tempScrollTop = $(window).scrollTop();
-    var data_recieved = false;
     $.getJSON("/queue", function(data) {
         data = JSON.parse(data);
         if(data.length > 0)
-            data_recieved = true;
+            $("#queue").html("<tr><td colspan='4'>No songs in queue</td></tr>");
         else
             $("#queue").html(" ");
         data.forEach(function(element){
@@ -56,8 +55,6 @@ function setQueue(){
         });
         $(window).scrollTop(tempScrollTop);
     });
-    if(!data_recieved)
-        $("#queue").html("<tr><td colspan='4'>No songs in queue</td></tr>");
     
 }
 
@@ -71,7 +68,7 @@ $(document).bind("contextmenu", function (event) {
     
     // Avoid the real one
     event.preventDefault();
-    clicked = document.elementFromPoint(event.pageX,event.pageY);
+    clicked = document.elementFromPoint(event.pageX,event.pageY).parentElement;
 
     if(clicked.nodeName == "TR"){
         $(".custom-menu").html('<li data-action="skip">Skip</li>');
