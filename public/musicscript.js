@@ -52,7 +52,7 @@ function setQueue(){
         else
             $("#queue").html(" ");
         data.forEach(function(element){
-            $("#queue").append("<tr><td>"+element.index+"</td><td><img src="+element.thumbnail+" alt='no thumbnail available'></td><td><a href='"+element.url+"'>"+element.title+"</a></td><td>"+element.length+"</td></tr>");
+            $("#queue").append("<tr><td id='index'>"+element.index+"</td><td><img src="+element.thumbnail+" alt='no thumbnail available'></td><td><a href='"+element.url+"'>"+element.title+"</a></td><td>"+element.length+"</td></tr>");
         });
         $(window).scrollTop(tempScrollTop);
     });
@@ -60,3 +60,69 @@ function setQueue(){
         $("#queue").html("<tr><td colspan='4'>No songs in queue</td></tr>");
     
 }
+
+//Copy-Pasted Stuff
+//Deal with it
+
+var clicked;
+
+// Trigger action when the contexmenu is about to be shown
+$(document).bind("contextmenu", function (event) {
+    
+    // Avoid the real one
+    event.preventDefault();
+    clicked = document.elementFromPoint(event.pageX,event.pageY);
+
+    if(clicked.nodeName == "TR"){
+        $(".custom-menu").html('<li data-action="skip">Skip</li>');
+    }
+    else{
+        $(".custom-menu").html("");
+    }
+    // Show contextmenu
+    $(".custom-menu").finish().toggle(100).
+    
+    // In the right position (the mouse)
+    css({
+        top: event.pageY + "px",
+        left: event.pageX + "px"
+    });
+    
+});
+
+
+// If the document is clicked somewhere
+$(document).bind("mousedown", function (e) {
+    
+    // If the clicked element is not the menu
+    if (!$(e.target).parents(".custom-menu").length > 0) {
+        
+        // Hide it
+        $(".custom-menu").hide(100);
+    }
+});
+
+
+// If the menu element is clicked
+$(".custom-menu li").click(function(){
+    
+    // This is the triggered action name
+    switch($(this).attr("data-action")) {
+        // A case for each action. Your actions here
+        case "skip":  
+            if(clicked.find('#index').length){
+                $.get("/skip/"+clicked.find('#index').html(), function(data){
+                    console.log(data);
+                });
+            }
+            else{
+                 $.get("/skip/-1", function(data){
+                    console.log(data);
+                });
+            }
+        break;
+    }
+    
+    // Hide it AFTER the action was triggered
+    $(".custom-menu").hide(100);
+});

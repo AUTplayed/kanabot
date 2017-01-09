@@ -60,5 +60,8 @@ function start() {
     app.get('/progress', function (req, res) {
         res.status(200).send(music.progress());
     });
+    app.get('/skip/:index', function(req, res){
+        music.skip(req.params.index,function(output){res.send(output)});
+    });
     app.listen(8080);
 }
