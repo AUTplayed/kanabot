@@ -117,10 +117,11 @@ function add(query, output, followup) {
     yt.get(query, function (info) {
         count++;
         if (!info) {
+            console.log(info);
             output("Failed to add song");
         }
         else if (!info.title) {
-            output("Failed to add song with url: " + info);
+            output(info);
         }
         else if (info) {
             queue.push(info);
