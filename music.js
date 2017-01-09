@@ -50,8 +50,9 @@ function commands(cleanmsg, msg) {
             if (split[1]) {
                 skip(split[1], function (output) { msg.channel.sendMessage(output); });
             }
+        }else{
+            skip(-1, function (output) { msg.channel.sendMessage(output); });
         }
-        skip(-1, function (output) { msg.channel.sendMessage(output); });
     }
     else if (cleanmsg.startsWith("current")) {
         if (cleanmsg.length > 8)
@@ -182,6 +183,10 @@ function eventRecursion(pl, connection, channel) {
             player = connection.playStream(ytdl.downloadFromInfo(info, { audioonly: true }), { volume: volume });
             channel.sendMessage("Now playing " + info.title);
             eventRecursion(player, connection, channel);
+        }
+        if(stopped){
+            playing = undefined;
+            prevjump = 0;
         }
         stopped = false;
         paused = false;
