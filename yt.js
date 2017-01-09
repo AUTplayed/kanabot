@@ -81,7 +81,7 @@ function downloadInfo(url, failcount, followup) {
             if (failcount > 3)
                 followup("Failed to download: "+url+"\nReason: "+err.message);
             else
-                downloadInfo(url, failcount, function () { followup(); });
+                downloadInfo(url, failcount, followup);
         } else {
             followup(info);
         }
