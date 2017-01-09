@@ -1,9 +1,7 @@
 var tempScrollTop;
 
 $(document).ready(function () {
-    setQueue();
-    setCurrent();
-    setProgress();
+    setAll()
 
     setInterval(function () {
         setProgress();
@@ -16,10 +14,14 @@ $(document).ready(function () {
         }
     }, 1000);
     $("#refresh").click(function () {
-        setQueue();
-        setCurrent();
+        setAll()
     });
 });
+function setAll(){
+    setQueue();
+    setCurrent();
+    setProgress();
+}
 
 function setCurrent() {
     var data_recieved = false;
@@ -30,8 +32,11 @@ function setCurrent() {
             $("#current").html("<tr><td><img src=" + data.thumbnail + " alt='no thumbnail available'></td><td><a href='" + data.url + "'>" + data.title + "</a></td><td id='progress'></td></tr>");
         }
     });
-    if (!data_recieved)
-        $("#current").html("<tr><td colspan='3'>No song currently playing</td></tr>");
+    setTimeout(function(){
+        if (!data_recieved)
+            $("#current").html("<tr><td colspan='3'>No song currently playing</td></tr>");
+    },1000);
+    
 }
 
 function setProgress() {
@@ -58,10 +63,7 @@ function setQueue() {
 
 }
 
-//Copy-Pasted Stuff
-//Deal with it
-
-
+//Rmb Menu stuff
 
 // Trigger action when the contexmenu is about to be shown
 $(document).bind("contextmenu", function (event) {
@@ -85,8 +87,7 @@ $(document).bind("contextmenu", function (event) {
                         if (clicked.querySelector('#index')) {
                             $.get("/skip/" + clicked.querySelector('#index').innerHTML, function (data) {
                                 console.log(data);
-                                setQueue();
-                                setCurrent();
+                                setAll()
                             });
                         }
                         else {
