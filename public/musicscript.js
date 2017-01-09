@@ -109,8 +109,8 @@ $(document).bind("contextmenu", function (event) {
 
             // In the right position (the mouse)
             css({
-                top: event.pageY-window.pageYOffset + "px",
-                left: event.pageX-window.pageXOffset + "px"
+                top: event.pageY + "px",
+                left: event.pageX + "px"
             });
     }
 });
