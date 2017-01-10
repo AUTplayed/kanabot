@@ -38,9 +38,9 @@ function setAll(){
 function setPause(){
     $.get("/paused", function (data) {
         if(data)
-            $("#pause").html("pause");
-        else
             $("#pause").html("play_arrow");
+        else
+            $("#pause").html("pause");
     });
 }
 
