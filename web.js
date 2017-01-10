@@ -28,7 +28,7 @@ function start() {
         db.connectAndQuery("SELECT * FROM token WHERE name = 'dns'", function (rows) {
             https.request({
                 host: "www.duckdns.org",
-                path: "/update?domains=kanabot&token="+rows[0].key
+                path: "/update?domains=kanabot&token=" + rows[0].key
             }, function () { }).end();
         });
     }, 10 * MINUTE);
@@ -42,13 +42,13 @@ function start() {
             res.status(200).json(JSON.stringify(rows));
         });
     });
-    app.get('/log', function (req, res){
+    app.get('/log', function (req, res) {
         console.log(require('./bot.js').getClient());
         res.send("logged");
     });
 
     //Music player
-    app.get('/music', function (req, res){
+    app.get('/music', function (req, res) {
         res.sendFile(path.join(__dirname + '/public/music.html'));
     });
     app.get('/queue', function (req, res) {
@@ -60,15 +60,15 @@ function start() {
     app.get('/progress', function (req, res) {
         res.status(200).send(music.progress());
     });
-    app.get('/skip/:index', function(req, res){
-        music.skip(req.params.index,function(output){res.send(output)});
+    app.get('/skip/:index', function (req, res) {
+        music.skip(req.params.index, function (output) { res.send(output) });
     });
-    app.get('/pause', function(req, res){
+    app.get('/pause', function (req, res) {
         music.pauseUnpause();
         res.send("pauseUnpause");
     });
-    app.get('/paused', function(req, res){
-        res.send(music.paused);
+    app.get('/paused', function (req, res) {
+        res.send(music.paused());
     });
     app.listen(8080);
 }
