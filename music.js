@@ -24,6 +24,7 @@ module.exports.getVolume = function () { return volume }
 module.exports.getQueue = getQueue;
 module.exports.getCurrent = getCurrent;
 module.exports.pauseUnpause = pauseUnpause;
+module.exports.paused = paused;
 
 function commands(cleanmsg, msg) {
     if (cleanmsg.startsWith("play")) {

@@ -13,14 +13,22 @@ $(document).ready(function () {
             }, 2500);
         }
     }, 1000);
-    $("#refresh").click(function () {
-        setAll()
-    });
+    
 });
 function setAll(){
     setQueue();
     setCurrent();
     setProgress();
+    setPause();
+}
+
+function setPause(){
+    $.get("/paused", function (data) {
+        if(data)
+            $("#pause").html("pause");
+        else
+            $("#pause").html("play_arrow");
+    });
 }
 
 function setCurrent() {
@@ -62,6 +70,19 @@ function setQueue() {
     });
 
 }
+
+$("#refresh").click(function () {
+    setAll()
+});
+$("#pause").click(function(){
+    $.get("/pause", function (data) {
+        console.log(data);
+        setPause();
+    });
+});
+$("#scrolltop").click(function(){
+    $(window).scrollTop(0);
+});
 
 //Rmb Menu stuff
 

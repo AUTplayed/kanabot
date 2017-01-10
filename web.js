@@ -63,5 +63,12 @@ function start() {
     app.get('/skip/:index', function(req, res){
         music.skip(req.params.index,function(output){res.send(output)});
     });
+    app.get('/pause', function(req, res){
+        music.pauseUnpause();
+        res.send("pauseUnpause");
+    });
+    app.get('/paused', function(req, res){
+        res.send(music.paused);
+    });
     app.listen(8080);
 }
