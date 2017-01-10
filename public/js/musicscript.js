@@ -14,6 +14,19 @@ $(document).ready(function () {
         }
     }, 1000);
     
+
+    $("#refresh").click(function () {
+        setAll()
+    });
+    $("#pause").click(function(){
+        $.get("/pause", function (data) {
+            console.log(data);
+            setPause();
+        });
+    });
+    $("#scrolltop").click(function(){
+        $(window).scrollTop(0);
+    });
 });
 function setAll(){
     setQueue();
@@ -71,18 +84,7 @@ function setQueue() {
 
 }
 
-$("#refresh").click(function () {
-    setAll()
-});
-$("#pause").click(function(){
-    $.get("/pause", function (data) {
-        console.log(data);
-        setPause();
-    });
-});
-$("#scrolltop").click(function(){
-    $(window).scrollTop(0);
-});
+
 
 //Rmb Menu stuff
 
