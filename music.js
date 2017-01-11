@@ -249,7 +249,7 @@ function skip(index, output) {
             return;
         }
     }
-    if (!player) {
+    if (!player || !playing) {
         output("No current playback running");
         return;
     }
