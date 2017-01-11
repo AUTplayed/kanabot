@@ -4,15 +4,29 @@
     <title>Kanabot Music player</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script src="jquery-3.1.1.js"></script>
-    <script src="musicscript.js"></script>
-    <link rel="stylesheet" href="musicstyles.css">
+    <script src="js/jquery-3.1.1.js"></script>
+    <script src="js/musicscript.js"></script>
+    <script type="text/javascript" src="js/materialize.min.js"></script>
+    <!--Import Google Icon Font-->
+    <link href="http://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <!--Import materialize.css-->
+    <link type="text/css" rel="stylesheet" href="css/materialize.min.css"  media="screen,projection"/>
+    <link rel="stylesheet" href="css/musicstyles.css">
     <meta name="keywords" content="kana,bot,discord,rape">
     <meta name="description" content="Music Player of Kanabot">
 </head>
 
 <body>
-    <img src="refresh.png" id="refresh">
+    <div class="fixed-action-btn click-to-toggle">
+    <a class="btn-floating btn-large red">
+      <i class="material-icons">menu</i>
+    </a>
+    <ul>
+      <li><a class="btn-floating yellow darken-1"><i id="pause" class="material-icons">play_arrow</i></a></li>
+      <li><a class="btn-floating green"><i id="scrolltop" class="material-icons">publish</i></a></li>
+      <li><a class="btn-floating blue"><i id="refresh" class="material-icons">refresh</i></a></li>
+    </ul>
+  </div>
     <div class="table-title">
         <h3>Currently Playing</h3>
     </div>

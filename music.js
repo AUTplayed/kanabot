@@ -24,6 +24,7 @@ module.exports.getVolume = function () { return volume }
 module.exports.getQueue = getQueue;
 module.exports.getCurrent = getCurrent;
 module.exports.pauseUnpause = pauseUnpause;
+module.exports.paused = function () { return paused };
 
 function commands(cleanmsg, msg) {
     if (cleanmsg.startsWith("play")) {
@@ -50,7 +51,7 @@ function commands(cleanmsg, msg) {
             if (split[1]) {
                 skip(split[1], function (output) { msg.channel.sendMessage(output); });
             }
-        }else{
+        } else {
             skip(-1, function (output) { msg.channel.sendMessage(output); });
         }
     }
@@ -184,7 +185,7 @@ function eventRecursion(pl, connection, channel) {
             channel.sendMessage("Now playing " + info.title);
             eventRecursion(player, connection, channel);
         }
-        if(stopped){
+        if (stopped) {
             playing = undefined;
             prevjump = 0;
         }

@@ -13,14 +13,35 @@ $(document).ready(function () {
             }, 2500);
         }
     }, 1000);
+    
+
     $("#refresh").click(function () {
         setAll()
+    });
+    $("#pause").click(function(){
+        $.get("/pause", function (data) {
+            console.log(data);
+            setPause();
+        });
+    });
+    $("#scrolltop").click(function(){
+        $(window).scrollTop(0);
     });
 });
 function setAll(){
     setQueue();
     setCurrent();
     setProgress();
+    setPause();
+}
+
+function setPause(){
+    $.get("/paused", function (data) {
+        if(data)
+            $("#pause").html("play_arrow");
+        else
+            $("#pause").html("pause");
+    });
 }
 
 function setCurrent() {
@@ -62,6 +83,8 @@ function setQueue() {
     });
 
 }
+
+
 
 //Rmb Menu stuff
 

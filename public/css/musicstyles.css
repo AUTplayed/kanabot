@@ -15,12 +15,6 @@ div.table-title h3{
   width: 60%;
 }
 
-#refresh{
-  bottom: 30px;
-  right: 30px;
-  width: 5%;
-  position: fixed;
-}
 
 .table-title {
    color: #fafafa;
