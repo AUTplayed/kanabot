@@ -104,6 +104,9 @@ function commands(cleanmsg, msg) {
     else if (cleanmsg.startsWith("pause")) {
         pauseUnpause();
     }
+    else if (cleanmsg.startsWith("cleanq")) {
+        queue = [];
+    }
     else if (cleanmsg == "queue" || cleanmsg == "q") {
         var q = "";
         queue.forEach(function (e, i) {
