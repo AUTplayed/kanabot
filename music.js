@@ -88,8 +88,8 @@ function commands(cleanmsg, msg) {
         }
     }
     else if (cleanmsg.startsWith("disconnect")) {
-        msg.member.voiceChannel.join().then(() => msg.member.voiceChannel.leave());
-
+        if(msg.member.voiceChannel)
+            msg.member.voiceChannel.join().then(() => msg.member.voiceChannel.leave());
     }
     else if (cleanmsg.startsWith("progress")) {
         msg.reply(progress());
