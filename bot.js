@@ -19,7 +19,7 @@ var timeoutrape = 6 * MINUTE;
 var timeoutedit = 0.5 * MINUTE;
 
 //Public Getter - I don't know the conventions of nodejs ;-;
-module.exports.getClient = function(){ return client; };
+module.exports.getClient = function () { return client; };
 
 //Keep kanabot running forever
 setInterval(function () {
@@ -38,8 +38,8 @@ db.login(client);
 //On Ready
 client.on('ready', () => {
     console.log(`Logged in as ` + getIdentifier(client.user));
-    getUserById(DEV).sendMessage("I am "+runmsg);
-    runmsg="restarting for no reason";
+    getUserById(DEV).sendMessage("I am " + runmsg);
+    runmsg = "restarting for no reason";
     client.user.setGame("kanabot.duckdns.org");
 });
 
@@ -48,7 +48,7 @@ client.on('message', message => {
     if (message.author.bot)
         return;
     if (message.isMentioned(client.user) || message.channel.type == 'dm' || message.content.startsWith("💩 ")) {
-        if(message.content.startsWith("💩 ")){
+        if (message.content.startsWith("💩 ")) {
             message.content = message.content.substring(2, message.content.length);
         }
         if (!reply(message) && message.channel.type == 'dm') {
@@ -123,7 +123,7 @@ function reply(msg) {
         } else {
             db.getCount(msg.author, msg);
         }
-    } else if (cleanmsg.startsWith('kapparr')) {
+    } else if (cleanmsg.startsWith('kapparr ')) {
         var split = cleanmsg.split(' ');
         if (split.length < 2)
             return;
@@ -132,13 +132,19 @@ function reply(msg) {
         } else {
             shorten(split[1], msg);
         }
+    } else if (cleanmsg.startsWith('med ')) {
+        if (cleanmsg.length <= 4) {
+            return false;
+        }
+        msg.channel.sendMessage(med(cleanmsg.substring(4, cleanmsg.length)));
+
     } else if (cleanmsg.startsWith('music ')) {
         var musicComm = cleanmsg.substring(6, cleanmsg.length);
         music.commands(musicComm, msg);
     } else if (cleanmsg == "help" || cleanmsg == "commands") {
-        var helpcmd = "\n**General commands: **\ngheat,gseng\nrapecount [user]\nkapparr <url to shorten>\n";
-        helpcmd+="\n**Music commands: **\n*@kana music before all commands if you are not in a channel named \"music\"*\n";
-        helpcmd+="play\nadd <search terms>\npladd <search terms>\nstop\npause\nq,queue\nskip [index]\ncurrent [property] *use property proplist*\ncleanq\nprogress\njump | jumpto <seconds | minutes:seconds>\nvolume [number] *default is 1, 2 for example is double*\ndisconnect\n";
+        var helpcmd = "\n**General commands: **\ngheat,gseng\nrapecount [user]\nkapparr <url to shorten>\nmed <message>\n";
+        helpcmd += "\n**Music commands: **\n*@kana music before all commands if you are not in a channel named \"music\"*\n";
+        helpcmd += "play\nadd <search terms>\npladd <search terms>\nstop\npause\nq,queue\nskip [index]\ncurrent [property] *use property proplist*\ncleanq\nprogress\njump | jumpto <seconds | minutes:seconds>\nvolume [number] *default is 1, 2 for example is double*\ndisconnect\n";
         msg.reply(helpcmd);
     } else if (msg.author.id == DEV) {
         devCommands(msg, cleanmsg);
@@ -227,4 +233,12 @@ function shorten(url, msg) {
                 msg.reply(data.toString());
         });
     }).end();
+}
+
+function med(nomed) {
+    var med = "";
+    for (var i = 0; i < nomed.length; i++) {
+        med += nomed[i] + " ";
+    }
+    return med;
 }
