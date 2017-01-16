@@ -10,9 +10,9 @@ gheat,gseng
 
 rapecount [user]
 
-kapparr <url to shorten>
+kapparr \<url to shorten>
 
-med <message>
+med \<message>
 
 
 ###Music commands: 
@@ -21,9 +21,9 @@ med <message>
 
 play
 
-add <search terms>
+add \<search terms>
 
-pladd <search terms>
+pladd \<search terms>
 
 stop
 
@@ -39,7 +39,7 @@ cleanq | clearq
 
 progress
 
-jump | jumpto <seconds | minutes:seconds>
+jump | jumpto \<seconds | minutes:seconds>
 
 volume [number] default is 1, 2 for example is double
 
