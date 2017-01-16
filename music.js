@@ -87,7 +87,7 @@ function commands(cleanmsg, msg) {
             jump(split[1], true, function (output) { msg.channel.sendMessage(output); });
         }
     }
-    else if (cleanmsg.startsWith("disconnect")) {
+    else if (cleanmsg.startsWith("aeg")) {
         if(msg.member.voiceChannel)
             msg.member.voiceChannel.join().then(() => msg.member.voiceChannel.leave());
     }
