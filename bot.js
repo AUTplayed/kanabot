@@ -238,7 +238,7 @@ function shorten(url, msg) {
 function med(nomed) {
     var med = "";
     for (var i = 0; i < nomed.length; i++) {
-        med += nomed[i] + " ";
+        med += nomed[i].toUpperCase() + " ";
     }
     return med;
 }
