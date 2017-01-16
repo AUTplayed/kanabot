@@ -88,15 +88,8 @@ function commands(cleanmsg, msg) {
         }
     }
     else if (cleanmsg.startsWith("disconnect")) {
-        var client = require('./bot.js').getClient();
-        if (client.voiceConnections) {
-            client.voiceConnections.forEach(function (e) {
-                e.disconnect();
-            });
-        }
-        else {
-            msg.reply("Not connected to any voice channel");
-        }
+        msg.member.voiceChannel.join().then(() => msg.member.voiceChannel.leave());
+
     }
     else if (cleanmsg.startsWith("progress")) {
         msg.reply(progress());
