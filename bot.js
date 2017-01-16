@@ -88,22 +88,6 @@ client.on('messageDelete', (message) => {
     }, timeoutrape);
 });
 
-/*
-//On Message Delete Bulk
-client.on('messageDeleteBulk', (messages) => {
-    if (messages.array().length == 1) {
-        messages.array().forEach(function (message) {
-            if (!message.author.bot && Date.now() - message.createdTimestamp <= timeoutedit) {
-                msglog.push(message);
-                setTimeout(function () {
-                    removeAfterTimeout(message)
-                }, timeoutrape);
-            }
-        });
-    }
-});
-*/
-
 //Functions
 //Logic
 function reply(msg) {
@@ -136,7 +120,8 @@ function reply(msg) {
         if (cleanmsg.length <= 4) {
             return false;
         }
-        msg.channel.sendMessage(med(cleanmsg.substring(4, cleanmsg.length)));
+        msg.channel.sendMessage("*.....*").then(message=>msg.channel.bulkDelete([msg,message]));
+        msg.channel.sendMessage(med(cleanmsg.substring(4, cleanmsg.length))+"\n-"+msg.author.toString());
 
     } else if (cleanmsg.startsWith('music ')) {
         var musicComm = cleanmsg.substring(6, cleanmsg.length);
@@ -164,16 +149,13 @@ function devCommands(msg, cleanmsg) {
     } else if (cleanmsg.startsWith('db')) {
         var split = cleanmsg.split("?");
         db.devDatabase(split[1], msg);
-    } else if (cleanmsg == 'prep') {
-        getUserById(DEV).sendMessage("`@kana#7526 ev`\n` ```Javascript `\n`?`\n\n`?`\n` ``` `");
     } else if (msg.cleanContent.startsWith('reply ')) {
         lastpm.sendMessage(msg.cleanContent.substring(6));
     } else if (cleanmsg.startsWith('ev')) {
-        var split = cleanmsg.split("?");
         try {
-            eval(split[1]);
+            eval(cleanmsg.substring(3,cleanmsg.length));
         } catch (e) {
-            console.log(e);
+            getUserById(DEV).sendMessage(e.message);
         }
     }
 }
