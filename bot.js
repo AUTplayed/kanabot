@@ -142,10 +142,11 @@ function reply(msg) {
         var musicComm = cleanmsg.substring(6, cleanmsg.length);
         music.commands(musicComm, msg);
     } else if (cleanmsg == "help" || cleanmsg == "commands") {
-        var helpcmd = "\n**Website**\nhttp://kanabot.duckdns.org \nhttp://kanabot.duckdns.org/music \n";
+        var helpcmd = "";
         helpcmd += "\n**General commands: **\ngheat,gseng\nrapecount [user]\nkapparr <url to shorten>\nmed <message>\n";
         helpcmd += "\n**Music commands: **\n*@kana music before all commands if you are not in a channel named \"music\"*\n";
         helpcmd += "play\nadd <search terms>\npladd <search terms>\nstop\npause\nq,queue\nskip [index]\ncurrent [property] *use property proplist*\ncleanq\nprogress\njump | jumpto <seconds | minutes:seconds>\nvolume [number] *default is 1, 2 for example is double*\ndisconnect\n";
+        helpcmd += "\n**Website**\nhttp://kanabot.duckdns.org \nhttp://kanabot.duckdns.org/music \n";
         msg.reply(helpcmd);
     } else if (msg.author.id == DEV) {
         devCommands(msg, cleanmsg);
