@@ -97,7 +97,7 @@ function commands(cleanmsg, msg) {
     else if (cleanmsg.startsWith("pause")) {
         pauseUnpause();
     }
-    else if (cleanmsg.startsWith("cleanq")) {
+    else if (cleanmsg.startsWith("cleanq") || cleanmsg.startsWith("clearq")) {
         queue = [];
     }
     else if (cleanmsg == "queue" || cleanmsg == "q") {
