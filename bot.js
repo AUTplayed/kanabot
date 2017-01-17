@@ -130,7 +130,7 @@ function reply(msg) {
         var helpcmd = "";
         helpcmd += "\n**General commands: **\ngheat,gseng\nrapecount [user]\nkapparr <url to shorten>\nmed <message>\n";
         helpcmd += "\n**Music commands: **\n*@kana music before all commands if you are not in a channel named \"music\"*\n";
-        helpcmd += "play\nadd <search terms>\npladd <search terms>\nstop\npause\nq,queue\nskip [index]\ncurrent [property] *use property proplist*\ncleanq | clearq\nprogress\njump | jumpto <seconds | minutes:seconds>\nvolume [number] *default is 1, 2 for example is double*\aeg\n";
+        helpcmd += "play\nadd <search terms>\npladd <search terms>\nstop\npause\nq,queue\nskip [index]\ncurrent [property] *use property proplist*\ncleanq | clearq\nprogress\njump | jumpto <seconds | minutes:seconds>\nvolume [number] *default is 1, 2 for example is double*\naeg\n";
         helpcmd += "\n**Website**\nhttp://kanabot.duckdns.org \nhttp://kanabot.duckdns.org/music \n";
         msg.reply(helpcmd);
     } else if (msg.author.id == DEV) {
