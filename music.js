@@ -200,6 +200,9 @@ function changeVolume(vol) {
 }
 
 function pauseUnpause(pause) {
+    if(!player){
+        return;
+    }
     if (pause == undefined) {
         paused = !paused;
     }
