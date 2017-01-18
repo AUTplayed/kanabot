@@ -70,5 +70,9 @@ function start() {
     app.get('/paused', function (req, res) {
         res.send(music.paused());
     });
+    app.get('/add/:query', function (req, res) {
+        var query = req.params.query.split("%20").join(" ");
+        music.add(query, function (output) { res.send(output) });
+    });
     app.listen(8080);
 }
