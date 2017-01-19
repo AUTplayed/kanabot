@@ -71,8 +71,11 @@ function start() {
         res.send(music.paused());
     });
     app.get('/add/:query', function (req, res) {
-        var query = req.params.query.split("%20").join(" ");
-        music.add(query, function (output) { res.send(output) });
+        try {
+            var query = req.params.query.split("%20").join(" ");
+            music.add(query, function (output) { res.write(output) });
+            setTimeout(function () { res.end() }, 0.5 * MINUTE);
+        } catch (e) { }
     });
     app.listen(8080);
 }
