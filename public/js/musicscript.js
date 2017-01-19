@@ -40,7 +40,7 @@ $(document).ready(function () {
     });
     $('#addinput').on('keydown', function (e) {
         if (e.which == 13) {
-            $.get("/api/" + $('#addinput').val(), function (data) {
+            $.get("/add/" + $('#addinput').val(), function (data) {
                 console.log(data);
                 setAll();
             });
