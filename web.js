@@ -71,11 +71,9 @@ function start() {
         res.send(music.paused());
     });
     app.get('/add/:query', function (req, res) {
-        try {
-            var query = req.params.query.split("%20").join(" ");
-            music.add(query, function (output) { res.write(output) });
-            setTimeout(function () { res.end() }, 0.5 * MINUTE);
-        } catch (e) { }
+        var oncepls = false;
+        var query = req.params.query.split("%20").join(" ");
+        music.add(query, function (output) { if (!oncepls) { res.send(output); oncepls = true; } });
     });
     app.listen(8080);
 }
