@@ -43,8 +43,8 @@ $(document).ready(function () {
             $.get("/add/" + $('#addinput').val(), function (data) {
                 console.log(data);
                 setAll();
-                setTimeout(function(){setAll()},3000);
-                setTimeout(function(){setAll()},6000);
+                setTimeout(function(){setAll()},10000);
+                setTimeout(function(){setAll()},20000);
             });
             $('#addinput').val("");
         }
