@@ -1,8 +1,9 @@
 var tempScrollTop;
+var addhidden = true;
 
 $(document).ready(function () {
     setAll()
-
+    $("#addinput").hide();
     setInterval(function () {
         setProgress();
         var split = $("#progress").text().split("/");
@@ -13,31 +14,50 @@ $(document).ready(function () {
             }, 2500);
         }
     }, 1000);
-    
+
 
     $("#refresh").click(function () {
         setAll()
     });
-    $("#pause").click(function(){
+    $("#pause").click(function () {
         $.get("/pause", function (data) {
             console.log(data);
             setPause();
         });
     });
-    $("#scrolltop").click(function(){
+    $("#scrolltop").click(function () {
         $(window).scrollTop(0);
     });
+    $('#add').click(function () {
+        if (addhidden) {
+            $('#addinput').show();
+            addhidden = false;
+        }
+        else {
+            $('#addinput').hide();
+            addhidden = true;
+        }
+    });
+    $('#addinput').on('keydown', function (e) {
+        if (e.which == 13) {
+            $.get("/api/" + $('#addinput').val(), function (data) {
+                console.log(data);
+                setAll();
+            });
+            $('#addinput').val("");
+        }
+    });
 });
-function setAll(){
+function setAll() {
     setQueue();
     setCurrent();
     setProgress();
     setPause();
 }
 
-function setPause(){
+function setPause() {
     $.get("/paused", function (data) {
-        if(data)
+        if (data)
             $("#pause").html("play_arrow");
         else
             $("#pause").html("pause");
@@ -53,11 +73,11 @@ function setCurrent() {
             $("#current").html("<tr><td><img src=" + data.thumbnail + " alt='no thumbnail available'></td><td><a href='" + data.url + "'>" + data.title + "</a></td><td id='progress'></td></tr>");
         }
     });
-    setTimeout(function(){
+    setTimeout(function () {
         if (!data_recieved)
             $("#current").html("<tr><td colspan='3'>No song currently playing</td></tr>");
-    },1000);
-    
+    }, 1000);
+
 }
 
 function setProgress() {
@@ -93,8 +113,8 @@ $(document).bind("contextmenu", function (event) {
     var clicked;
     // Avoid the real one
     event.preventDefault();
-    clicked = document.elementFromPoint(event.pageX-window.pageXOffset, event.pageY-window.pageYOffset);
-    if(clicked)
+    clicked = document.elementFromPoint(event.pageX - window.pageXOffset, event.pageY - window.pageYOffset);
+    if (clicked)
         clicked = clicked.parentElement;
     if (clicked) {
         if (clicked.nodeName == "TR") {
