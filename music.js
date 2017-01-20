@@ -34,7 +34,7 @@ function commands(cleanmsg, msg) {
         if (cleanmsg.length < 5)
             return;
         var query = cleanmsg.substring(4, cleanmsg.length);
-        add(query, function (output) { msg.channel.sendMessage(output); }, undefined);
+        add(query, function (output) { msg.channel.sendMessage(output); });
     }
     else if (cleanmsg.startsWith("pladd ")) {
         if (cleanmsg.length < 7)
@@ -88,7 +88,7 @@ function commands(cleanmsg, msg) {
         }
     }
     else if (cleanmsg.startsWith("aeg")) {
-        if(msg.member.voiceChannel)
+        if (msg.member.voiceChannel)
             msg.member.voiceChannel.join().then(() => msg.member.voiceChannel.leave());
     }
     else if (cleanmsg.startsWith("progress")) {
@@ -109,7 +109,7 @@ function commands(cleanmsg, msg) {
     }
 }
 
-function add(query, output, followup) {
+function add(query, output, followup, finished) {
     var count = 0;
     yt.get(query, function (info) {
         count++;
@@ -130,6 +130,15 @@ function add(query, output, followup) {
         }
         if (followup && count == 1) {
             followup();
+        }
+    }, function (sum,suc) {
+        if(finished){
+            finished(sum,suc);
+        }
+        else{
+            if(sum != 1){
+                output("Finished adding "+suc+" songs out of "+sum+" total");
+            }
         }
     });
 }
@@ -200,7 +209,7 @@ function changeVolume(vol) {
 }
 
 function pauseUnpause(pause) {
-    if(!player){
+    if (!player) {
         return;
     }
     if (pause == undefined) {

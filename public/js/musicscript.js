@@ -40,11 +40,10 @@ $(document).ready(function () {
     });
     $('#addinput').on('keydown', function (e) {
         if (e.which == 13) {
+            setTimeout(function () { setAll() }, 10000);
             $.get("/add/" + $('#addinput').val(), function (data) {
                 console.log(data);
                 setAll();
-                setTimeout(function(){setAll()},10000);
-                setTimeout(function(){setAll()},20000);
             });
             $('#addinput').val("");
         }
@@ -132,12 +131,13 @@ $(document).bind("contextmenu", function (event) {
                         if (clicked.querySelector('#index')) {
                             $.get("/skip/" + clicked.querySelector('#index').innerHTML, function (data) {
                                 console.log(data);
-                                setAll()
+                                setAll();
                             });
                         }
                         else {
                             $.get("/skip/-1", function (data) {
                                 console.log(data);
+                                setAll();
                             });
                         }
                         break;

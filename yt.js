@@ -5,11 +5,12 @@ var ytdl = require('ytdl-core');
 //Module exports
 module.exports.get = get;
 
-function get(urlOrQuery, followup) {
+function get(urlOrQuery, followup, finished) {
     if (urlOrQuery.startsWith("https://www.youtube.com")) {
         downloadInfo(urlOrQuery, 0, function (info) {
             followup(info);
-
+            if(finished)
+        		finished(1,1);
         });
     } else {
         getHtml(getSearchUrl(urlOrQuery), function (html) {
@@ -22,6 +23,8 @@ function get(urlOrQuery, followup) {
                 if (!matches.includes(";list=")) {
                     downloadInfo(matches, 0, function (info) {
                         followup(info);
+                        if(finished)
+		            		finished(1,1);
                     });
                 }
                 else {
@@ -41,7 +44,7 @@ function get(urlOrQuery, followup) {
                             });
                             downloadInfos(url, function (info) {
                                 followup(info);
-                            });
+                            },finished);
                         }
                     });
                 }
@@ -88,11 +91,19 @@ function downloadInfo(url, failcount, followup) {
     });
 }
 
-function downloadInfos(url, followup) {
+function downloadInfos(url, followup, finished) {
     var progress = 0;
-    url.forEach(function (video, index) {
+    var success = 0;
+    var length = url.length;
+    url.forEach(function (video) {
         downloadInfo(video, 0, function (info) {
+        	progress++;
             followup(info);
+            if(info.title) success++;
+            if(progress==length){
+            	if(finished)
+            		finished(length,success);
+            }
         });
     });
 }

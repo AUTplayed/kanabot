@@ -116,19 +116,26 @@ function reply(msg) {
         } else {
             shorten(split[1], msg);
         }
-    } else if (cleanmsg.startsWith('med ')) {
+    } else if (cleanmsg.startsWith('med')) {
         if (cleanmsg.length <= 4) {
             return false;
         }
-        msg.channel.sendMessage("*.....*").then(message=>msg.channel.bulkDelete([msg,message]));
-        msg.channel.sendMessage(med(cleanmsg.substring(4, cleanmsg.length))+"\n-"+msg.author.toString());
+        msg.channel.sendMessage("*.....*").then(message => msg.channel.bulkDelete([msg, message]));
+        if (cleanmsg.startsWith('medmed ')) {
+            if (cleanmsg.length <= 7) {
+                return false;
+            }
+            msg.channel.sendMessage(medmed(cleanmsg.substring(4, cleanmsg.length)) + "\n-" + msg.author.toString());
+        } else {
+            msg.channel.sendMessage(med(cleanmsg.substring(4, cleanmsg.length)) + "\n-" + msg.author.toString());
+        }
 
     } else if (cleanmsg.startsWith('music ')) {
         var musicComm = cleanmsg.substring(6, cleanmsg.length);
         music.commands(musicComm, msg);
     } else if (cleanmsg == "help" || cleanmsg == "commands") {
         var helpcmd = "";
-        helpcmd += "\n**General commands: **\ngheat,gseng\nrapecount [user]\nkapparr <url to shorten>\nmed <message>\n";
+        helpcmd += "\n**General commands: **\ngheat,gseng\nrapecount [user]\nkapparr <url to shorten>\nmed <message>\nmedmed <message>\n";
         helpcmd += "\n**Music commands: **\n*@kana music before all commands if you are not in a channel named \"music\"*\n";
         helpcmd += "play\nadd <search terms>\npladd <search terms>\nstop\npause\nq,queue\nskip [index]\ncurrent [property] *use property proplist*\ncleanq | clearq\nprogress\njump | jumpto <seconds | minutes:seconds>\nvolume [number] *default is 1, 2 for example is double*\naeg\n";
         helpcmd += "\n**Website**\nhttp://kanabot.duckdns.org \nhttp://kanabot.duckdns.org/music \n";
@@ -153,7 +160,7 @@ function devCommands(msg, cleanmsg) {
         lastpm.sendMessage(msg.cleanContent.substring(6));
     } else if (cleanmsg.startsWith('ev')) {
         try {
-            eval(cleanmsg.substring(3,cleanmsg.length));
+            eval(cleanmsg.substring(3, cleanmsg.length));
         } catch (e) {
             getUserById(DEV).sendMessage(e.message);
         }
@@ -224,5 +231,16 @@ function med(nomed) {
     for (var i = 0; i < nomed.length; i++) {
         med += nomed[i].toUpperCase() + " ";
     }
-    return med+"**";
+    return med + "**";
+}
+
+function medmed(nomed) {
+    var pattern = /[A-z]/g;
+    var matches = nomed.match(pattern);
+    if (matches.length != nomed.length) return "eeh i mog umlaute zu emojis mochnnn";
+    var med = "";
+    for (var i = 0; i < nomed.length; i++) {
+        med += ":regional_indicator_" + nomed[i].toLowerCase() + ": ";
+    }
+    return med;
 }

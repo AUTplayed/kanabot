@@ -73,7 +73,9 @@ function start() {
     app.get('/add/:query', function (req, res) {
         var oncepls = false;
         var query = req.params.query.split("%20").join(" ");
-        music.add(query, function (output) { if (!oncepls) { res.send(output); oncepls = true; } });
+        music.add(query, function () { }, undefined, function (sum, suc) {
+            res.send("Finished adding " + suc + " songs out of " + sum + " total");
+        });
     });
     app.listen(8080);
 }
