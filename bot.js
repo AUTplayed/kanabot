@@ -235,12 +235,14 @@ function med(nomed) {
 }
 
 function medmed(nomed) {
-    var pattern = /[A-z]/g;
-    var matches = nomed.match(pattern);
-    if (matches.length != nomed.length) return "eeh i mog umlaute zu emojis mochnnn";
     var med = "";
-    for (var i = 0; i < nomed.length; i++) {
-        med += ":regional_indicator_" + nomed[i].toLowerCase() + ": ";
-    }
+    nomed.split(" ").forEach(function (e) {
+        var pattern = /[A-z]/g;
+        var matches = e.match(pattern);
+        if (matches.length != e.length) return "eeh i mog umlaute zu emojis mochnnn";
+        for (var i = 0; i < e.length; i++) {
+            med += ":regional_indicator_" + e[i].toLowerCase() + ": ";
+        }
+    });
     return med;
 }
