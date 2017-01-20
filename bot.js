@@ -243,6 +243,7 @@ function medmed(nomed) {
         for (var i = 0; i < e.length; i++) {
             med += ":regional_indicator_" + e[i].toLowerCase() + ": ";
         }
+        med+=" ";
     });
     return med;
 }
