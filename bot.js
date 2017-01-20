@@ -125,7 +125,7 @@ function reply(msg) {
             if (cleanmsg.length <= 7) {
                 return false;
             }
-            msg.channel.sendMessage(medmed(cleanmsg.substring(4, cleanmsg.length)) + "\n-" + msg.author.toString());
+            msg.channel.sendMessage(medmed(cleanmsg.substring(7, cleanmsg.length)) + "\n-" + msg.author.toString());
         } else {
             msg.channel.sendMessage(med(cleanmsg.substring(4, cleanmsg.length)) + "\n-" + msg.author.toString());
         }
