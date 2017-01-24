@@ -6,7 +6,7 @@ var ytdl = require('ytdl-core');
 module.exports.get = get;
 
 function get(urlOrQuery, followup, finished) {
-    if (urlOrQuery.startsWith("https://www.youtube.com")) {
+    if (urlOrQuery.startsWith("https://www.youtube.com/watch?v=")) {
         downloadInfo(urlOrQuery, 0, function (info) {
             followup(info);
             if(finished)
