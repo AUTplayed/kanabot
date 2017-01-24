@@ -70,12 +70,13 @@ function start() {
     app.get('/paused', function (req, res) {
         res.send(music.paused());
     });
-    app.get('/add/:query', function (req, res) {
-        var oncepls = false;
-        var query = req.params.query.split("%20").join(" ");
-        music.add(query, function () { }, undefined, function (sum, suc) {
-            res.send("Finished adding " + suc + " songs out of " + sum + " total");
-        });
+    app.get('/add', function (req, res) {
+        if(req.query.q){
+            var query = req.query.q.split("%20").join(" ");
+            music.add(query, function () { }, undefined, function (sum, suc) {
+                res.send("Finished adding " + suc + " songs out of " + sum + " total");
+            });
+        }
     });
     app.listen(8080);
 }
