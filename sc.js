@@ -22,7 +22,7 @@ function get(url, followup, finished) {
                     finished(1, 0);
                 }
                 else {
-                    getStream(location, function (stream) {
+                    getStream(info.stream_url, function (stream) {
                         info.stream = stream;
                         followup(info);
                         finished(1, 1);
@@ -34,7 +34,7 @@ function get(url, followup, finished) {
                 var succ = 0;
                 info.tracks.forEach(function (track) {
                     if(track.streamable){
-                        getStream(location, function (stream) {
+                        getStream(track.stream_url, function (stream) {
                             succ++;
                             info.stream = stream;
                             followup(track);
@@ -78,7 +78,6 @@ function resolve(url, followup) {
 
 function getStream(url, followup) {
     redirect(url, function (location) {
-        console.log(location);
         http.get(location, function (res) {
             followup(res);
         }).end();
