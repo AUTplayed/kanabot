@@ -214,6 +214,7 @@ function playStreamArgs(connection,info){
         options.seek=jumpto;
     }
     if(info.streamable != undefined){
+        console.log(info.stream);
         return connection.playStream(info.stream, options);
     }else{
         return connection.playStream(ytdl.downloadFromInfo(info, { audioonly: true }),options);
@@ -321,6 +322,7 @@ function stop(msg) {
         voiceChannel = undefined;
     } catch (ex) {
         msg.reply("No current playback running");
+        console.log(ex.message);
     }
 }
 
