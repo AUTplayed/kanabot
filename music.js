@@ -377,7 +377,7 @@ function getQueue() {
         var webe = new Object();
         webe.title = e.title;
         if(e.streamable!=undefined){
-            webe.length = e.duration/1000;
+            webe.length = toTime(e.duration/1000);
             webe.url = e.permalink_url;
             webe.thumbnail = e.artwork_url;
         }else{
