@@ -15,10 +15,10 @@ db.connectAndQuery("SELECT * FROM token WHERE name = 'sc'", function (rows) {
 });
 
 function get(url, followup, finished) {
-    redirect(url, function (location) {
-        if (location.contains("/tracks/")) {
+    resolve(url, function (location) {
+        if (location.includes("/tracks/")) {
             getInfo(location, function (info) {
-                if (info.streamable) {
+                if (!info.streamable) {
                     finished(1, 0);
                 }
                 else {
@@ -29,18 +29,16 @@ function get(url, followup, finished) {
                     });
                 }
             });
-        } else if (location.contains("/playlists/")) {
+        } else if (location.includes("/playlists/")) {
             getInfo(location, function (info) {
-                var count = 0;
                 var succ = 0;
                 info.tracks.forEach(function (track) {
-                    count++;
                     if(track.streamable){
                         getStream(location, function (stream) {
                             succ++;
                             info.stream = stream;
-                            followup(info);
-                            if (count == info.tracks.length) {
+                            followup(track);
+                            if (succ == info.tracks.length) {
                                 finished(succ, info.tracks.length);
                             }
                         });
@@ -52,18 +50,19 @@ function get(url, followup, finished) {
 }
 
 function getInfo(url, followup) {
-    http.get(url + "?" + token, function (res) {
+    http.get(url, function (res) {
         var body = '';
         res.on('data', function (data) {
             body += data;
         });
         res.once('end', function () {
-            followup(JSON.parse(html));
+            followup(JSON.parse(body));
         })
     });
 }
 
 function resolve(url, followup) {
+    url = url.replace("https","http");
     if (!url.startsWith("http://api")) {
         http.get("http://api.soundcloud.com/resolve?url=" + url + "&" + token, function (res) {
             var location = res.headers['location'];
