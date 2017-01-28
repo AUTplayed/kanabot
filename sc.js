@@ -3,6 +3,7 @@ var http = require("http");
 
 //Module exports
 module.exports.get = get;
+module.exports.downloadFromInfo = downloadFromInfo;
 
 //Internal dependencies
 var db = require('./db.js');
@@ -22,26 +23,21 @@ function get(url, followup, finished) {
                     finished(1, 0);
                 }
                 else {
-                    getStream(info.stream_url, function (stream) {
-                        info.stream = stream;
-                        followup(info);
-                        finished(1, 1);
-                    });
+                    followup(info);
+                    finished(1, 1);
                 }
             });
         } else if (location.includes("/playlists/")) {
             getInfo(location, function (info) {
                 var succ = 0;
+                var count = 0;
                 info.tracks.forEach(function (track) {
-                    if(track.streamable){
-                        getStream(track.stream_url, function (stream) {
-                            succ++;
-                            track.stream = stream;
-                            followup(track);
-                            if (succ == info.tracks.length) {
-                                finished(succ, info.tracks.length);
-                            }
-                        });
+                    if (track.streamable) {
+                        succ++;
+                        followup(track);
+                    }
+                    if (++count == info.tracks.length) {
+                        finished(succ, count);
                     }
                 });
             });
@@ -49,8 +45,14 @@ function get(url, followup, finished) {
     });
 }
 
+function downloadFromInfo(info, followup) {
+    getStream(info.stream_url, function (stream) {
+        followup(stream);
+    });
+}
+
 function getInfo(url, followup) {
-    url = url.replace("https","http");
+    url = url.replace("https", "http");
     http.get(url, function (res) {
         var body = '';
         res.on('data', function (data) {
@@ -63,7 +65,7 @@ function getInfo(url, followup) {
 }
 
 function resolve(url, followup) {
-    url = url.replace("https","http");
+    url = url.replace("https", "http");
     if (!url.startsWith("http://api")) {
         http.get("http://api.soundcloud.com/resolve?url=" + url + "&" + token, function (res) {
             var location = res.headers['location'];
@@ -86,7 +88,7 @@ function getStream(url, followup) {
 }
 
 function redirect(url, followup) {
-    url = url.replace("https","http");
+    url = url.replace("https", "http");
     http.get(url + "?" + token, function (res) {
         var location = res.headers['location'];
         if (location)

@@ -172,17 +172,21 @@ function play(msg) {
     voiceChannel.join().then(connection => {
         var info = queue.shift();
         playing = info;
-        player = playStreamArgs(connection,info);
-        msg.channel.sendMessage("Now playing " + info.title);
-        eventRecursion(player, connection, msg.channel);
+        playStreamArgs(connection,info,function(plyer){
+            player = plyer;
+            msg.channel.sendMessage("Now playing " + info.title);
+            eventRecursion(player, connection, msg.channel);
+        });
     });
 }
 
 function eventRecursion(pl, connection, channel) {
     pl.once('end', function () {
         if (jumpto || jumpto == 0) {
-            player = playStreamArgs(connection,playing)
-            eventRecursion(player, connection, channel);
+            playStreamArgs(connection,playing,function(plyer){
+                player = plyer;
+                eventRecursion(player, connection, channel);
+            });
         }
         else if (queue.length <= 0) {
             playing = undefined;
@@ -194,13 +198,18 @@ function eventRecursion(pl, connection, channel) {
             prevjump = 0;
             var info = queue.shift();
             playing = info;
-            player = playStreamArgs(connection,info);
-            channel.sendMessage("Now playing " + info.title);
-            eventRecursion(player, connection, channel);
+            playStreamArgs(connection,info,function(plyer){
+                player = plyer;
+                msg.channel.sendMessage("Now playing " + info.title);
+                eventRecursion(player, connection, msg.channel);
+            });
         }
         if (stopped) {
             playing = undefined;
             prevjump = 0;
+            if (voiceChannel)
+                voiceChannel.leave();
+            voiceChannel = undefined;
         }
         stopped = false;
         paused = false;
@@ -208,15 +217,17 @@ function eventRecursion(pl, connection, channel) {
     });
 }
 
-function playStreamArgs(connection,info){
+function playStreamArgs(connection,info, followup){
     var options = {volume: volume};
     if(jumpto || jumpto == 0){
         options.seek=jumpto;
     }
     if(info.streamable != undefined){
-        return connection.playStream(info.stream, options);
+        sc.downloadFromInfo(info,function(stream){
+            followup(connection.playStream(stream,options));
+        });
     }else{
-        return connection.playStream(ytdl.downloadFromInfo(info, { audioonly: true }),options);
+        followup(connection.playStream(ytdl.downloadFromInfo(info, { audioonly: true }),options));
     }
 }
 function changeVolume(vol) {
@@ -318,8 +329,6 @@ function stop(msg) {
     try {
         stopped = true;
         player.end();
-        voiceChannel.leave();
-        voiceChannel = undefined;
     } catch (ex) {
         msg.reply("No current playback running");
         console.log(ex.message);
