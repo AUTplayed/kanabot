@@ -249,10 +249,6 @@ function jump(time, relative, output) {
         output("No current playback running");
         return;
     }
-    if(playing.streamable!=undefined){
-        output("Unable to jump in a soundclound stream");
-        return;
-    }
     var time = toSeconds(time);
     if (!time)
         return;
@@ -263,7 +259,12 @@ function jump(time, relative, output) {
     else {
         jumpto = time;
     }
-    if (jumpto >= playing.length_seconds || jumpto < 0) {
+    var curmaxtime;
+    if(playing.streamable != undefined)
+        curmaxtime = playing.duration/1000;
+    else
+        curmaxtime = playing.length_seconds;
+    if (jumpto >= curmaxtime || jumpto < 0) {
         output("Time outside of video length");
         return;
     }
@@ -326,10 +327,13 @@ function stop(msg) {
 }
 
 function progress() {
-    if (!player || !playing || playing.streamable)
+    if (!player || !playing)
         return "-";
     var curTime = toTime(prevjump + player.time / 1000);
-    var maxTime = toTime(playing.length_seconds);
+    if(playing.streamable != undefined)
+        var maxTime = toTime(playing.duration/1000);
+    else
+        var maxTime = toTime(playing.length_seconds);
     return curTime + "/" + maxTime;
 }
 
