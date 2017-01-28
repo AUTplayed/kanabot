@@ -1,6 +1,7 @@
 //External dependencies
 var yt = require('./yt.js');
 var ytdl = require('ytdl-core');
+var sc = require('./sc.js');
 
 //Declarations
 var voiceChannel;
@@ -110,8 +111,7 @@ function commands(cleanmsg, msg) {
 }
 
 function add(query, output, followup, finished) {
-    var count = 0;
-    yt.get(query, function (info) {
+    function cb_followup(info) {
         count++;
         if (!info) {
             output("Failed to add song");
@@ -131,17 +131,25 @@ function add(query, output, followup, finished) {
         if (followup && count == 1) {
             followup();
         }
-    }, function (sum,suc) {
-        if(finished){
-            finished(sum,suc);
+    }
+    function cb_finished(sum, suc) {
+        if (finished) {
+            finished(sum, suc);
         }
-        else{
-            if(sum != 1){
-                output("Finished adding "+suc+" songs out of "+sum+" total");
+        else {
+            if (sum != 1) {
+                output("Finished adding " + suc + " songs out of " + sum + " total");
             }
         }
-    });
+    }
+    var count = 0;
+    if (query.contains("soundcloud.com/")) {
+        sc.get(query, cb_followup, cb_finished)
+    } else {
+        yt.get(query, cb_followup, cb_finished);
+    }
 }
+
 
 function play(msg) {
     if (!msg.member) {
@@ -164,7 +172,7 @@ function play(msg) {
     voiceChannel.join().then(connection => {
         var info = queue.shift();
         playing = info;
-        player = connection.playStream(ytdl.downloadFromInfo(info, { audioonly: true }), { volume: volume });
+        player = playStreamArgs(connection,info);
         msg.channel.sendMessage("Now playing " + info.title);
         eventRecursion(player, connection, msg.channel);
     });
@@ -173,7 +181,7 @@ function play(msg) {
 function eventRecursion(pl, connection, channel) {
     pl.once('end', function () {
         if (jumpto || jumpto == 0) {
-            player = connection.playStream(ytdl.downloadFromInfo(playing, { audioonly: true }), { volume: volume, seek: jumpto });
+            player = playStreamArgs(connection,playing)
             eventRecursion(player, connection, channel);
         }
         else if (queue.length <= 0) {
@@ -186,7 +194,7 @@ function eventRecursion(pl, connection, channel) {
             prevjump = 0;
             var info = queue.shift();
             playing = info;
-            player = connection.playStream(ytdl.downloadFromInfo(info, { audioonly: true }), { volume: volume });
+            player = playStreamArgs(connection,info);
             channel.sendMessage("Now playing " + info.title);
             eventRecursion(player, connection, channel);
         }
@@ -200,6 +208,17 @@ function eventRecursion(pl, connection, channel) {
     });
 }
 
+function playStreamArgs(connection,info){
+    var options = {volume: volume};
+    if(jumpto || jumpto == 0){
+        options.seek=jumpto;
+    }
+    if(info.streamable != undefined){
+        return connection.playStream(info.stream, options);
+    }else{
+        return connection.playStream(ytdl.downloadFromInfo(info, { audioonly: true }),options);
+    }
+}
 function changeVolume(vol) {
     var tempvolume = parseFloat(vol);
     if (tempvolume || tempvolume == 0) {
@@ -228,6 +247,10 @@ function pauseUnpause(pause) {
 function jump(time, relative, output) {
     if (voiceChannel == undefined) {
         output("No current playback running");
+        return;
+    }
+    if(playing.streamable!=undefined){
+        output("Unable to jump in a soundclound stream");
         return;
     }
     var time = toSeconds(time);
@@ -302,7 +325,7 @@ function stop(msg) {
 }
 
 function progress() {
-    if (!player || !playing)
+    if (!player || !playing || playing.streamable)
         return "-";
     var curTime = toTime(prevjump + player.time / 1000);
     var maxTime = toTime(playing.length_seconds);
@@ -339,9 +362,15 @@ function getQueue() {
     queue.forEach(function (e, i) {
         var webe = new Object();
         webe.title = e.title;
-        webe.length = toTime(e.length_seconds);
-        webe.url = "https://youtube.com/watch?v=" + e.video_id;
-        webe.thumbnail = e.thumbnail_url;
+        if(e.streamable!=undefined){
+            webe.length = "-";
+            webe.url = e.permalink_url;
+            webe.thumbnail = e.artwork_url;
+        }else{
+            webe.length = toTime(e.length_seconds);
+            webe.url = "https://youtube.com/watch?v=" + e.video_id;
+            webe.thumbnail = e.thumbnail_url;
+        }
         webe.index = i;
         webq.push(webe);
     });
@@ -352,8 +381,14 @@ function getCurrent() {
     if (!playing)
         return undefined;
     var webc = new Object();
+    if(playing.streamable!=undefined){
+        webc.url = playing.permalink_url;
+        webc.thumbnail = playing.artwork_url;
+    }else{
+        webc.url = "https://youtube.com/watch?v=" + playing.video_id;
+        webc.thumbnail = playing.thumbnail_url;
+    }
     webc.title = playing.title;
-    webc.url = "https://youtube.com/watch?v=" + playing.video_id;
-    webc.thumbnail = playing.thumbnail_url;
     return webc;
-}
+}   
+
