@@ -143,7 +143,7 @@ function add(query, output, followup, finished) {
         }
     }
     var count = 0;
-    if (query.contains("soundcloud.com/")) {
+    if (query.includes("soundcloud.com/")) {
         sc.get(query, cb_followup, cb_finished)
     } else {
         yt.get(query, cb_followup, cb_finished);
