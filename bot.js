@@ -13,7 +13,7 @@ const DEV = "163651635845922816";
 const MINUTE = 60000;
 var msglog = [];
 var lastpm;
-var runmsg = "starting from shutdown";
+var shutdown = true;
 
 var timeoutrape = 6 * MINUTE;
 var timeoutedit = 0.5 * MINUTE;
@@ -38,8 +38,13 @@ db.login(client);
 //On Ready
 client.on('ready', () => {
     console.log(`Logged in as ` + getIdentifier(client.user));
-    getUserById(DEV).sendMessage("I am " + runmsg);
-    runmsg = "restarting for no reason";
+    if(shutdown){
+        getUserById(DEV).sendMessage("restart from shutdown");
+    }else{
+        if(getUserById(DEV).presence.status=="online")
+            getUserById(DEV).sendMessage("why");
+    }
+    shutdown = false;
     client.user.setGame("kanabot.duckdns.org");
 });
 
