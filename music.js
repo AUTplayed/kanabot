@@ -200,8 +200,8 @@ function eventRecursion(pl, connection, channel) {
             playing = info;
             playStreamArgs(connection,info,function(plyer){
                 player = plyer;
-                msg.channel.sendMessage("Now playing " + info.title);
-                eventRecursion(player, connection, msg.channel);
+                channel.sendMessage("Now playing " + info.title);
+ -              eventRecursion(player, connection, channel);
             });
         }
         if (stopped) {
