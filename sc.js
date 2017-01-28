@@ -78,6 +78,7 @@ function resolve(url, followup) {
 
 function getStream(url, followup) {
     redirect(url, function (location) {
+        console.log(location);
         http.get(location, function (res) {
             followup(res);
         }).end();

@@ -173,8 +173,6 @@ function play(msg) {
         var info = queue.shift();
         playing = info;
         player = playStreamArgs(connection,info);
-        console.log(player);
-        console.log(voiceChannel);
         msg.channel.sendMessage("Now playing " + info.title);
         eventRecursion(player, connection, msg.channel);
     });
@@ -182,7 +180,6 @@ function play(msg) {
 
 function eventRecursion(pl, connection, channel) {
     pl.once('end', function () {
-        console.log("ended");
         if (jumpto || jumpto == 0) {
             player = playStreamArgs(connection,playing)
             eventRecursion(player, connection, channel);
