@@ -50,6 +50,7 @@ function get(url, followup, finished) {
 }
 
 function getInfo(url, followup) {
+    url = url.replace("https","http");
     http.get(url, function (res) {
         var body = '';
         res.on('data', function (data) {
@@ -85,6 +86,7 @@ function getStream(url, followup) {
 }
 
 function redirect(url, followup) {
+    url = url.replace("https","http");
     http.get(url + "?" + token, function (res) {
         var location = res.headers['location'];
         if (location)
