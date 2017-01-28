@@ -36,7 +36,7 @@ function get(url, followup, finished) {
                     if(track.streamable){
                         getStream(track.stream_url, function (stream) {
                             succ++;
-                            info.stream = stream;
+                            track.stream = stream;
                             followup(track);
                             if (succ == info.tracks.length) {
                                 finished(succ, info.tracks.length);
