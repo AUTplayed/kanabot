@@ -19,7 +19,7 @@ function get(q, followup, finished) {
     getBody(baseurl + "search?part=snippet&q=" + q + "&type=video,playlist&key=" + key, function(body) {
         var id = body.items[0].id;
         if (id.videoId) {
-            downloadInfo("https://www.youtube.com/watch?v=" + id.videoId, function(info) {
+            downloadInfo("https://www.youtube.com/watch?v=" + id.videoId, 0, function(info) {
                 followup(info);
                 if (finished)
                     finished(1, 1);
