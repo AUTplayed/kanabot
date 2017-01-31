@@ -2,87 +2,79 @@
 var https = require("https");
 var ytdl = require('ytdl-core');
 
+//Declarations
+var baseurl = "https://www.googleapis.com/youtube/v3/";
+var key;
+db.connectAndQuery("SELECT * FROM token WHERE name = 'yt'", function (rows) {
+    key = rows[0].key;
+});
+
 //Module exports
 module.exports.get = get;
 
-function get(urlOrQuery, followup, finished) {
-    if (urlOrQuery.startsWith("https://www.youtube.com/watch?v=")) {
-        downloadInfo(urlOrQuery, 0, function (info) {
-            followup(info);
-            if(finished)
-        		finished(1,1);
-        });
-    } else {
-        getHtml(getSearchUrl(urlOrQuery), function (html) {
-            var pattern = /<a href=\"\/watch\?v=.*?\"/g;
-            var matches = html.match(pattern);
-            if (!matches || matches.length < 1)
-                followup(undefined);
-            else {
-                matches = matches[0].split("\"")[1];
-                if (!matches.includes(";list=")) {
-                    downloadInfo(matches, 0, function (info) {
-                        followup(info);
-                        if(finished)
-		            		finished(1,1);
-                    });
-                }
-                else {
-                    var split = matches.split(";")[1];
-                    getHtml("https://www.youtube.com/playlist?" + split, function (html2) {
-                        pattern = /<a.*href=\"\/watch\?v=.*?;index=.*?"/g;
-                        matches = html2.match(pattern);
-                        if (!matches || matches.length < 1)
-                            followup(undefined);
-                        else {
-                            var url = [];
-                            matches.forEach(function (e) {
-                                e = e.split("href=\"")[1];
-                                e = e.split(";")[0];
-                                if (!url.includes(e))
-                                    url.push(e);
-                            });
-                            downloadInfos(url, function (info) {
-                                followup(info);
-                            },finished);
-                        }
-                    });
-                }
-            }
-        });
-    }
-}
-
-function getSearchUrl(query) {
-    query = query.replace(/%/g, "%25");
-    query = query.replace(/ /g, "+");
-    for (var i in query) {
-        if (query[i].charCodeAt() < 48 && query[i] != "+" && query[i] != "%") {
-            query = query.replace(query[i], "%" + query[i].charCodeAt().toString(16));
+function get(q, followup, finished) {
+    getBody(baseurl + "search?part=snippet&q=" + q + "&type=video,playlist&key=" + key, function(body) {
+        var id = body.items[0].id;
+        if (id.videoId) {
+            downloadInfo("https://www.youtube.com/watch?v=" + id.videoId, function(info) {
+                followup(info);
+                if (finished)
+                    finished(1, 1);
+            });
+        } else {
+            var progress = 0;
+            var success = 0;
+            var length;
+            getAllPlaylistElements(id.playlistId, function(len) {
+                length = len
+            }, function(videoId) {
+                console.log(videoId);
+                
+                downloadInfo("https://www.youtube.com/watch?v="+videoId, 0, function(info) {
+                    progress++;
+                    followup(info);
+                    if (info.title) success++;
+                    if (progress == length) {
+                        if (finished)
+                            finished(length, success);
+                    }
+                });
+            });
         }
-    }
-    return "https://www.youtube.com/results?search_query=" + query;
+    });
 }
 
-function getHtml(url, followup) {
-    https.get(url, function (res) {
-        var html = '';
-        res.on('data', function (data) {
-            html += data;
+function getAllPlaylistElements(id, len, followup) {
+    getBody(baseurl + "playlistItems?part=snippet&maxResults=50&playlistId=" + id + "&key=" + key, function(body) {
+        var iterations = Math.ceil(body.pageInfo.totalResults / 50);
+        len(body.pageInfo.totalResults);
+        body.items.forEach(function(item) {
+            followup(item.snippet.resourceId.videoId);
         });
-        res.once('end', function () {
-            followup(html);
-        })
-    }).end();
+        if (iterations > 1) {
+            recursiveGetElements(id, body.nextPageToken, iterations, followup);
+        }
+    });
+}
+
+function recursiveGetElements(id, pageToken, iterations, followup) {
+    getBody(baseurl + "playlistItems?part=snippet&maxResults=50&playlistId=" + id + "&pageToken=" + pageToken + "&key=" + key, function(body) {
+        body.items.forEach(function(item) {
+            followup(item.snippet.resourceId.videoId);
+        });
+        if (--iterations > 1) {
+            recursiveGetElements(id, body.nextPageToken, iterations, followup);
+        }
+    });
 }
 
 function downloadInfo(url, failcount, followup) {
-    ytdl.getInfo(url, function (err, info) {
+    ytdl.getInfo(url, function(err, info) {
         if (!info || err) {
             console.log(err);
             failcount++;
             if (failcount > 3)
-                followup("Failed to download: "+url+"\nReason: "+err.message);
+                followup("Failed to download: " + url + "\nReason: " + err.message);
             else
                 downloadInfo(url, failcount, followup);
         } else {
@@ -91,19 +83,14 @@ function downloadInfo(url, failcount, followup) {
     });
 }
 
-function downloadInfos(url, followup, finished) {
-    var progress = 0;
-    var success = 0;
-    var length = url.length;
-    url.forEach(function (video) {
-        downloadInfo(video, 0, function (info) {
-        	progress++;
-            followup(info);
-            if(info.title) success++;
-            if(progress==length){
-            	if(finished)
-            		finished(length,success);
-            }
+function getBody(url, followup) {
+    https.get(url, function(res) {
+        var html = '';
+        res.on('data', function(data) {
+            html += data;
         });
-    });
+        res.once('end', function() {
+            followup(JSON.parse(html));
+        })
+    }).end();
 }
