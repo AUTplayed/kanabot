@@ -2,6 +2,9 @@
 var https = require("https");
 var ytdl = require('ytdl-core');
 
+//Internal dependencies
+var db = require('./db.js');
+
 //Declarations
 var baseurl = "https://www.googleapis.com/youtube/v3/";
 var key;
