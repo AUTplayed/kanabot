@@ -19,6 +19,7 @@ function get(q, followup, finished) {
     getBody(baseurl + "search?part=snippet&q=" + q + "&type=video,playlist&key=" + key, function(body) {
         if(body.items.length < 1){
             finished(1,0);
+            return;
         }
         var id = body.items[0].id;
         if (id.videoId) {
