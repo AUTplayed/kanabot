@@ -18,28 +18,30 @@ module.exports.get = get;
 function get(q, followup, finished) {
     if (q.startsWith("https://www.youtube.com/")) {
         if (q.startsWith("https://www.youtube.com/watch?v=")) {
-            getVideo(filterId(q,"v"),followup,finished);
+            getVideo(filterId(q, "v"), followup, finished);
         } else if (q.startsWith("https://www.youtube.com/playlist?list=")) {
-            getPlaylist(filterId(q,"list"),followup,finished);
+            getPlaylist(filterId(q, "list"), followup, finished);
         }
     }
-    getBody(baseurl + "search?part=snippet&q=" + q + "&type=video,playlist&key=" + key, function (body) {
-        console.log(body.items.length);
-        if (body.items.length < 1) {
-            finished(1, 0);
-            return;
-        }
-        var id = body.items[0].id;
-        if (id.videoId) {
-            getVideo(id.videoId, followup, finished);
-        } else if (id.playlistId) {
-            getPlaylist(id.playlistId, followup, finished);
-        }
-    });
+    else {
+        getBody(baseurl + "search?part=snippet&q=" + q + "&type=video,playlist&key=" + key, function (body) {
+            console.log(body.items.length);
+            if (body.items.length < 1) {
+                finished(1, 0);
+                return;
+            }
+            var id = body.items[0].id;
+            if (id.videoId) {
+                getVideo(id.videoId, followup, finished);
+            } else if (id.playlistId) {
+                getPlaylist(id.playlistId, followup, finished);
+            }
+        });
+    }
 }
 
-function filterId(q,filter){
-    q = q.split("?"+filter+"=")[1];
+function filterId(q, filter) {
+    q = q.split("?" + filter + "=")[1];
     q = q.split("&")[0];
     return q;
 }
