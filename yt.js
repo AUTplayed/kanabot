@@ -39,7 +39,7 @@ function get(q, followup, finished) {
 }
 
 function filterId(q,filter){
-    q = q.split("?"+v+"=")[1];
+    q = q.split("?"+filter+"=")[1];
     q = q.split("&")[0];
     return q;
 }
