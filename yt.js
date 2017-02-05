@@ -102,7 +102,7 @@ function downloadInfo(url, failcount, followup) {
         if (!info || err) {
             console.log(err);
             failcount++;
-            if (failcount > 3)
+            if (failcount > 1)
                 followup("Failed to download: " + url + "\nReason: " + err.message);
             else
                 downloadInfo(url, failcount, followup);
