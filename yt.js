@@ -102,7 +102,11 @@ function recursiveGetElements(id, pageToken, iterations, followup) {
 function downloadInfo(url, failcount, followup) {
     ytdl.getInfo(url, function (err, info) {
         if (!info || err) {
-            console.log(err);
+            if(err.message == "Video does not contain any available formats"){
+                failcount = 10;
+            }else if(failcount > 0){
+                console.log(err);
+            }
             failcount++;
             if (failcount > 1)
                 followup("Failed to download: " + url + "\nReason: " + err.message);
