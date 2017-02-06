@@ -165,8 +165,12 @@ function play(msg) {
         return;
     }
     if (voiceChannel != undefined) {
-        msg.reply("Already playing");
-        return;
+        if(paused){
+            pauseUnpause(false);
+        }else{
+            msg.reply("Already playing");
+            return;
+        }
     }
     voiceChannel = msg.member.voiceChannel;
     voiceChannel.join().then(connection => {
