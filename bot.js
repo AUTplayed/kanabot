@@ -6,7 +6,7 @@ var http = require("http");
 //Internal dependencies
 var db = require('./db.js');
 var music = require('./music.js');
-var web = require('./web.js')
+var web = require('./web.js');
 
 //Declarations
 const DEV = "163651635845922816";
@@ -45,7 +45,7 @@ client.on('ready', () => {
             getUserById(DEV).sendMessage("why");
     }
     shutdown = false;
-    client.user.setGame("kanabot.duckdns.org");
+    client.user.setGame("kanabot.herokuapp.com");
 });
 
 //On Message

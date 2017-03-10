@@ -25,13 +25,11 @@ function start() {
     }, 25 * MINUTE);
 
     setInterval(function () {
-        db.connectAndQuery("SELECT * FROM token WHERE name = 'dns'", function (rows) {
-            https.request({
-                host: "www.duckdns.org",
-                path: "/update?domains=kanabot&token=" + rows[0].key
-            }, function () { }).end();
-        });
-    }, 10 * MINUTE);
+        http.request({
+            host: "kanabot.herokuapp.com",
+            path: "/refresh"
+        }, function () { }).end();
+    }, 25 * MINUTE);
 
     app.use(express.static(__dirname + '/public'));
     app.get('/', function (req, res) {
@@ -78,5 +76,5 @@ function start() {
             });
         }
     });
-    app.listen(8080);
+    app.listen(process.env.PORT || 8080);
 }

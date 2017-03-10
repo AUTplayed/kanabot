@@ -58,7 +58,8 @@ function devDatabase(query, msg) {
 
 //Database access
 function connectAndQuery(query, followup) {
-    pg.connect("postgres://pi@localhost:5432/pi", function (err, client, done) {
+    pg.defaults.ssl = true;
+    pg.connect(process.env.DATABASE_URL, function (err, client, done) {
         if (err) console.log(err);
         else {
             client.query(query, function (err, result) {
