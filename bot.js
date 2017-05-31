@@ -38,12 +38,13 @@ db.login(client);
 //On Ready
 client.on('ready', () => {
     console.log(`Logged in as ` + getIdentifier(client.user));
+    /*
     if(shutdown){
         getUserById(DEV).sendMessage("restart from shutdown");
     }else{
         if(getUserById(DEV).presence.status=="online")
-            getUserById(DEV).sendMessage("why");
-    }
+            //getUserById(DEV).sendMessage("why");
+    }*/
     shutdown = false;
     client.user.setGame("kanabot.herokuapp.com");
 });
