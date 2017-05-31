@@ -1,10 +1,10 @@
 # kanabot
 Originally a Discord bot for calling other people out on their grammar errors - evolved into a music bot
 
-##Command list:
+## Command list:
 
 
-###General commands: 
+### General commands: 
 
 gheat,gseng
 
@@ -15,7 +15,7 @@ kapparr \<url to shorten>
 med \<message>
 
 
-###Music commands: 
+### Music commands: 
 
 @kana music before all commands if you are not in a channel named "music"
 
@@ -45,8 +45,8 @@ volume [number] default is 1, 2 for example is double
 
 aeg
 
-###Website
+### Website
 
-http://kanabot.duckdns.org 
+https://kanabot.herokuapp.com 
 
-http://kanabot.duckdns.org/music
+https://kanabot.herokuapp.com/music
