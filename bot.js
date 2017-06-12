@@ -23,7 +23,7 @@ module.exports.getClient = function () { return client; };
 
 //Keep kanabot running forever
 setInterval(function () {
-    if (!client.token || !client.ws.ws ||client.ws.ws._closeReceived) {
+    if (!client.token || !client.ws.ws || client.ws.ws._closeReceived) {
         client.destroy();
         db.login(client);
     }
@@ -135,7 +135,8 @@ function reply(msg) {
         } else {
             msg.channel.sendMessage(med(cleanmsg.substring(4, cleanmsg.length)) + "\n-" + msg.author.toString());
         }
-
+    } else if (cleanmsg.startsWith('emojispam')){
+        emojispam(cleanmsg);
     } else if (cleanmsg.startsWith('music ')) {
         var musicComm = cleanmsg.substring(6, cleanmsg.length);
         music.commands(musicComm, msg);
@@ -249,7 +250,13 @@ function medmed(nomed) {
         for (var i = 0; i < e.length; i++) {
             med += ":regional_indicator_" + e[i].toLowerCase() + ": ";
         }
-        med+=" ";
+        med += " ";
     });
     return med;
+}
+
+function emojispam(msg) {
+    msg.guild.emojis.forEach(function (emoji) {
+        msg.react(emoji);
+    });
 }
