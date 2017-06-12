@@ -135,8 +135,6 @@ function reply(msg) {
         } else {
             msg.channel.sendMessage(med(cleanmsg.substring(4, cleanmsg.length)) + "\n-" + msg.author.toString());
         }
-    } else if (cleanmsg.startsWith('emojispam')){
-        emojispam(msg);
     } else if (cleanmsg.startsWith('music ')) {
         var musicComm = cleanmsg.substring(6, cleanmsg.length);
         music.commands(musicComm, msg);
@@ -165,6 +163,8 @@ function devCommands(msg, cleanmsg) {
         db.devDatabase(split[1], msg);
     } else if (msg.cleanContent.startsWith('reply ')) {
         lastpm.sendMessage(msg.cleanContent.substring(6));
+    } else if (cleanmsg.startsWith('emojispam')){
+        emojispam(msg);
     } else if (cleanmsg.startsWith('ev')) {
         try {
             eval(cleanmsg.substring(3, cleanmsg.length));
