@@ -136,7 +136,7 @@ function reply(msg) {
             msg.channel.sendMessage(med(cleanmsg.substring(4, cleanmsg.length)) + "\n-" + msg.author.toString());
         }
     } else if (cleanmsg.startsWith('emojispam')){
-        emojispam(cleanmsg);
+        emojispam(msg);
     } else if (cleanmsg.startsWith('music ')) {
         var musicComm = cleanmsg.substring(6, cleanmsg.length);
         music.commands(musicComm, msg);
