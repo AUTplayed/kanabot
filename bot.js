@@ -260,3 +260,9 @@ function emojispam(msg) {
         msg.react(emoji);
     });
 }
+
+function reminder(msg,text,time){
+    setTimeout(function(){
+        msg.reply(text);
+    },MINUTE*60*time);
+}
