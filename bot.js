@@ -23,7 +23,7 @@ module.exports.getClient = function () { return client; };
 
 //Keep kanabot running forever
 setInterval(function () {
-    if (!client.token || !client.ws.ws || client.ws.ws._closeReceived) {
+    if (!client.token ){//|| !client.ws.ws || client.ws.ws._closeReceived) {
         client.destroy();
         db.login(client);
     }
