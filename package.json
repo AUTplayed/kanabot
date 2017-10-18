@@ -23,7 +23,7 @@
 		"node-opus": "0.2.6",
 		"opusscript": "0.0.3",
 		"pg": "^6.1.0",
-		"ytdl-core": "^0.14.2"
+		"ytdl-core": "^0.18.1"
 	},
 	"engines": {
 		"node": "6.0.0"

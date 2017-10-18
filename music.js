@@ -91,6 +91,8 @@ function commands(cleanmsg, msg) {
     else if (cleanmsg.startsWith("aeg")) {
         if (msg.member.voiceChannel)
             msg.member.voiceChannel.join().then(() => msg.member.voiceChannel.leave());
+        paused = false;
+        voiceChannel = undefined;
     }
     else if (cleanmsg.startsWith("progress")) {
         msg.reply(progress());
